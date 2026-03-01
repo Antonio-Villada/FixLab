@@ -1,0 +1,41 @@
+package com.software.fixlab.controller;
+
+import com.software.fixlab.dto.req.CheckoutReqDTO;
+import com.software.fixlab.dto.resp.CheckoutRespDTO;
+import com.software.fixlab.entity.Pedido;
+import com.software.fixlab.service.impl.PagoService;
+import com.software.fixlab.service.impl.VentaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/ventas")
+@RequiredArgsConstructor
+public class VentaController {
+
+    private final VentaService ventaService;
+    private final PagoService pagoService; // <-- Inyectamos el servicio de pagos
+
+    @PostMapping("/checkout")
+    @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN')")
+    public ResponseEntity<CheckoutRespDTO> procesarCheckout(
+            @RequestBody CheckoutReqDTO checkoutDTO,
+            Authentication authentication) throws Exception {
+
+        String emailCliente = authentication.getName();
+
+        // 1. Guardamos el pedido en PostgreSQL validando stock e inventario
+        Pedido nuevoPedido = ventaService.procesarCheckout(emailCliente, checkoutDTO);
+
+        // 2. Nos comunicamos con Mercado Pago para generar el link seguro
+        String urlPago = pagoService.crearPreferenciaPago(nuevoPedido);
+
+        // 3. Devolvemos el link al cliente
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new CheckoutRespDTO(nuevoPedido.getId(), urlPago));
+    }
+}

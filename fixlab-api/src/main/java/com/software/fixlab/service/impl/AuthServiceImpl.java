@@ -9,6 +9,7 @@ import com.software.fixlab.mapper.UsuarioMapper;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ public class AuthServiceImpl implements AuthService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper; // <-- Inyectamos el Mapper
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final JwtService jwtService; // <-- Nueva inyección
+
 
     @Override
     @Transactional
@@ -56,7 +59,9 @@ public class AuthServiceImpl implements AuthService {
         usuario.setBloqueadoHasta(null);
         usuarioRepository.save(usuario);
 
-        return new TokenRespDTO("token_jwt_simulado_temporalmente", usuario.getRol().name());
+        // Generamos el token real usando nuestro nuevo servicio
+        String jwtToken = jwtService.generarToken(usuario);
+        return new TokenRespDTO(jwtToken, usuario.getRol().name());
     }
 
     private void manejarIntentoFallido(Usuario usuario) {

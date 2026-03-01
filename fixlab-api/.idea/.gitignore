@@ -1,10 +1,24 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Ignored default folder with query files
-/queries/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
-# Editor-based HTTP Client requests
-/httpRequests/
+cat << 'EOF' > .gitignore
+# Archivos compilados de Maven
+target/
+*.class
+*.jar
+*.war
+
+# Configuraciones de IDEs (IntelliJ, VS Code, Eclipse)
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# 🛑 SECRETOS Y CREDENCIALES DE FIXLAB 🛑
+# ==========================================
+src/main/resources/application.properties
+EOF
