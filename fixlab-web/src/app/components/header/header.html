@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-2">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/home">
+      <img src="images/Logo.jpeg" 
+           alt="FixLab Logo" 
+           style="height: 50px; width: auto; border-radius: 4px;">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/home" routerLinkActive="active">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active">Productos</a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-3">
+        <a routerLink="/carrito" class="btn btn-outline-light position-relative border-0 p-2">
+          <i class="bi bi-cart3 fs-4"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cartCount }}
+            <span class="visually-hidden">productos en carrito</span>
+          </span>
+        </a>
+
+        <div class="d-flex align-items-center gap-2 border-start ps-3">
+          @if (!authService.isLoggedIn()) {
+            <a routerLink="/login" class="btn btn-outline-light d-flex align-items-center">
+              <i class="bi bi-person-fill me-2"></i> Iniciar Sesión
+            </a>
+          } @else {
+            <a routerLink="/dashboard" class="btn btn-success d-flex align-items-center">
+              <i class="bi bi-speedometer2 me-2"></i> Mi Panel
+            </a>
+            <button (click)="authService.logout()" class="btn btn-outline-danger">
+              <i class="bi bi-box-arrow-right"></i>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

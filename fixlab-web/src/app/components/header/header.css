@@ -1,0 +1,18 @@
+.logo-custom {
+  height: 45px;       /* Altura ideal para que no rompa la navbar */
+  width: auto;         /* Mantiene la proporción original */
+  border-radius: 8px;  /* Suaviza las esquinas del logo cuadrado */
+  object-fit: contain; /* Asegura que la imagen no se deforme */
+  transition: transform 0.3s ease; /* Efecto suave al pasar el mouse */
+}
+
+.logo-custom:hover {
+  transform: scale(1.05); /* Pequeño zoom al pasar el cursor */
+}
+
+/* Ajuste opcional para centrar verticalmente el texto FixLab con el logo */
+.navbar-brand {
+  line-height: 1;
+  padding-top: 0;
+  padding-bottom: 0;
+}
