@@ -4,41 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/CloudinaryConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/DataInitializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/TestController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/VentaController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/CheckoutReqDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/ItemCarritoDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/CheckoutRespDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/DetallePedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/EstadoPedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/MotivoDevolucion.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Producto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/PedidoRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/ProductoRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PagoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/ProductoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/VentaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/JwtFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/JwtFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/JwtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/JwtFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/JwtFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario$UsuarioBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario$UsuarioBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/AuthServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/JwtService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/JwtService.class" afterDir="false" />
-    </list>
+    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -125,6 +91,7 @@
       <workItem from="1772144559033" duration="11141000" />
       <workItem from="1772327955352" duration="9262000" />
       <workItem from="1772342806322" duration="376000" />
+      <workItem from="1772343265461" duration="68000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />
