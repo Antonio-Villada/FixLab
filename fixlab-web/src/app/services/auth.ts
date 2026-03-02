@@ -14,7 +14,7 @@ export class AuthService {
   // Inyectamos el ID de la plataforma para saber si estamos en el navegador o servidor
   private platformId = inject(PLATFORM_ID);
 
-  private readonly URL = 'http://localhost:8080/api/auth';
+  private readonly URL = 'http://localhost:8081/api/auth';
   private readonly TOKEN_KEY = 'fixlab_auth_token';
 
   login(loginData: LoginReqDTO): Observable<TokenRespDTO> {
