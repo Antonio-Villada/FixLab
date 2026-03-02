@@ -4,25 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/FixlabApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/FixlabApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/LoginReqDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/LoginReqDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroReqDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroReqDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/MensajeRespDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/MensajeRespDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/TokenRespDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/TokenRespDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/RolUsuario.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/RolUsuario.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/GlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/GlobalExceptionHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/mapper/UsuarioMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/mapper/UsuarioMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/UsuarioRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/UsuarioRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/AuthService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/software/fixlab/FixlabApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/software/fixlab/FixlabApplicationTests.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/interceptors/auth-interceptor.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" afterDir="false" />
-    </list>
+    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,33 +33,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.FixlabApplication.executor": "Run",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "IvanBanol",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/antonio-villada/Escritorio/UQ/Sofware3/FixLab/FixLab/fixlab-api",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.FixlabApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;AntonioVillada&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/antonio-villada/Escritorio/UQ/Sofware3/FixLab/FixLab/fixlab-api&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="FixlabApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
