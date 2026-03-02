@@ -6,8 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/software/fixlab/FixlabApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/software/fixlab/FixlabApplicationTests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,12 +57,14 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.FixlabApplication.executor": "Run",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "IvanBanol",
+    "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/antonio-villada/Escritorio/UQ/Sofware3/FixLab/FixLab/fixlab-api",
+    "last_opened_file_path": "C:/FixLab/fixlab-api",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -81,7 +88,6 @@
     <attachedChunks>
       <set>
         <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
       </set>
     </attachedChunks>
   </component>
@@ -99,6 +105,7 @@
       <workItem from="1772327955352" duration="9262000" />
       <workItem from="1772342806322" duration="376000" />
       <workItem from="1772343265461" duration="68000" />
+      <workItem from="1772487259197" duration="1020000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />
