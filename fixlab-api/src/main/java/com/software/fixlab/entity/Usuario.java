@@ -14,16 +14,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Builder
 public class Usuario {
 
+    /** Identificación del usuario (cédula). No es autoincrementable; la ingresa el usuario. */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, unique = true, length = 20)
+    private String cedula;
 
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    @Column(nullable = false, length = 100)
+    private String apellidos;
+
     // Regla de negocio: El correo debe ser único en el sistema.
     @Column(nullable = false, unique = true, length = 150)
     private String email;
+
+    @Column(length = 255)
+    private String direccion;
 
     @JsonIgnore
     @Column(nullable = false)

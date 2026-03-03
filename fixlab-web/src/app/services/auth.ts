@@ -4,6 +4,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { LoginReqDTO, TokenRespDTO, RegistroReqDTO, MensajeRespDTO } from '../models/auth.model';
+import { environment } from '../../environments/environment';
+import { CartService } from './cart.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +14,14 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
+  private cartService = inject(CartService);
 
-  private readonly URL = 'http://localhost:8080/api/auth';
+  /** URL del API de auth: apiBaseUrl + /api/auth (si apiBaseUrl vacío, usa mismo origen) */
+  private readonly URL = environment.apiBaseUrl
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/api/auth`
+    : '/api/auth';
   private readonly TOKEN_KEY = 'fixlab_auth_token';
+  private readonly ROL_KEY = 'fixlab_user_rol';
 
   /**
    * Registers a new user (Client by default from component logic)
@@ -22,7 +29,7 @@ export class AuthService {
    * @returns Observable with success message
    */
   register(registerData: RegistroReqDTO): Observable<MensajeRespDTO> {
-    return this.http.post<MensajeRespDTO>(`${this.URL}/register`, registerData);
+    return this.http.post<MensajeRespDTO>(`${this.URL}/registro`, registerData);
   }
 
   /**
@@ -34,6 +41,9 @@ export class AuthService {
       tap(res => {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem(this.TOKEN_KEY, res.token);
+          if (res.rol) {
+            localStorage.setItem(this.ROL_KEY, res.rol);
+          }
         }
       })
     );
@@ -57,11 +67,28 @@ export class AuthService {
   }
 
   /**
+   * Obtiene el rol del usuario (CLIENTE | ADMIN | TECNICO). Requiere que el backend lo envíe en el login.
+   */
+  getRol(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.ROL_KEY);
+    }
+    return null;
+  }
+
+  /** Indica si el usuario actual es administrador */
+  isAdmin(): boolean {
+    return this.getRol() === 'ADMIN';
+  }
+
+  /**
    * Clears session data and redirects to login
    */
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.ROL_KEY);
+      this.cartService.clear();
     }
     this.router.navigate(['/login']);
   }

@@ -17,37 +17,52 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Definición del formulario reactivo con los campos de tu entidad Usuario
   registroForm = new FormGroup({
+    cedula: new FormControl('', [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.maxLength(20)
+    ]),
     nombre: new FormControl('', [
-      Validators.required, 
-      Validators.minLength(3)
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(100)
+    ]),
+    apellidos: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(100)
+    ]),
+    direccion: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(255)
     ]),
     email: new FormControl('', [
-      Validators.required, 
+      Validators.required,
       Validators.email
     ]),
     password: new FormControl('', [
-      Validators.required, 
-      Validators.minLength(6)
+      Validators.required,
+      Validators.minLength(8),
+      Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
     ]),
     telefono: new FormControl('', [
       Validators.required,
-      Validators.pattern('^[0-9]+$') // Validación básica para solo números
+      Validators.pattern('^[0-9]+$')
     ])
   });
 
   onSubmit() {
     if (this.registroForm.valid) {
-      // Extraemos los datos del formulario de forma segura
-      const { nombre, email, password, telefono } = this.registroForm.value;
-
-      // Construimos el objeto final forzando el rol CLIENTE
+      const v = this.registroForm.getRawValue();
       const datosRegistro: RegistroReqDTO = {
-        nombre: nombre!,
-        email: email!,
-        password: password!,
-        telefono: telefono!,
+        cedula: v.cedula!.trim(),
+        nombre: v.nombre!,
+        apellidos: v.apellidos!,
+        direccion: v.direccion!,
+        email: v.email!,
+        password: v.password!,
+        telefono: v.telefono!,
         rol: RolUsuario.CLIENTE
       };
 

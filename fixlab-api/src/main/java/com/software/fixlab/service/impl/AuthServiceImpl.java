@@ -28,13 +28,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public MensajeRespDTO registrarCliente(RegistroReqDTO dto) throws Exception {
+        if (usuarioRepository.existsByCedula(dto.getCedula().trim())) {
+            throw new Exception("La cédula ya se encuentra registrada.");
+        }
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
             throw new Exception("El correo electrónico ya se encuentra registrado.");
         }
 
-        // Usamos el Mapper para delegar la transformación
         Usuario nuevoUsuario = usuarioMapper.toEntity(dto);
-
         usuarioRepository.save(nuevoUsuario);
 
         return new MensajeRespDTO("Usuario registrado exitosamente");
