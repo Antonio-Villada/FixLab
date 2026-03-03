@@ -41,8 +41,38 @@ public class ProductoService {
         return productoRepository.save(nuevoProducto);
     }
 
-    // Método para el cliente: Solo ve productos disponibles
+    // Método para el cliente: Solo ve productos disponibles (activos y con stock)
     public List<Producto> listarCatalogoPublico() {
         return productoRepository.findByStockGreaterThanAndActivoTrue(0);
+    }
+
+    /** Lista todos los productos (para admin). */
+    public List<Producto> listarTodos() {
+        return productoRepository.findAll();
+    }
+
+    /** Actualiza un producto por ID (campos en JSON; no cambia la imagen salvo que se envíe imagenUrl). */
+    @Transactional
+    public Producto actualizarProducto(Long id, Producto datos) {
+        Producto existente = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+        existente.setNombre(datos.getNombre());
+        existente.setDescripcion(datos.getDescripcion() != null ? datos.getDescripcion() : "");
+        existente.setPrecio(datos.getPrecio());
+        existente.setStock(datos.getStock());
+        if (datos.getImagenUrl() != null) {
+            existente.setImagenUrl(datos.getImagenUrl());
+        }
+        existente.setActivo(datos.getActivo() != null ? datos.getActivo() : true);
+        return productoRepository.save(existente);
+    }
+
+    /** Soft delete: marca el producto como inactivo. */
+    @Transactional
+    public void desactivarProducto(Long id) {
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+        p.setActivo(false);
+        productoRepository.save(p);
     }
 }

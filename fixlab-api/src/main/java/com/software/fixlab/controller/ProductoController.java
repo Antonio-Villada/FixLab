@@ -19,15 +19,14 @@ public class ProductoController {
 
     private final ProductoService productoService;
 
-    // Ruta pública: Ver catálogo (clientes y visitantes)
-    @GetMapping
-    public ResponseEntity<List<Producto>> verCatalogo() {
-        return ResponseEntity.ok(productoService.listarCatalogoPublico());
+    /** Lista todos los productos. El frontend filtra por activo para el catálogo público. */
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Producto>> listarProductos() {
+        return ResponseEntity.ok(productoService.listarTodos());
     }
 
-    // Ruta protegida: Crear producto (Solo ADMIN)
-    // Usamos consumes = MULTIPART_FORM_DATA_VALUE porque recibiremos un archivo físico
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    /** Crear producto (solo ADMIN). Recibe multipart: sku, nombre, descripcion, precio, stock, imagen. */
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> crearProducto(
             @RequestParam("sku") String sku,
@@ -39,5 +38,21 @@ public class ProductoController {
 
         Producto productoCreado = productoService.crearProducto(sku, nombre, descripcion, precio, stock, imagen);
         return ResponseEntity.status(HttpStatus.CREATED).body(productoCreado);
+    }
+
+    /** Actualizar producto (solo ADMIN). Cuerpo JSON: nombre, descripcion, precio, stock, imagenUrl, activo. */
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto datos) {
+        Producto actualizado = productoService.actualizarProducto(id, datos);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    /** Soft delete: desactiva el producto (solo ADMIN). */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
+        productoService.desactivarProducto(id);
+        return ResponseEntity.noContent().build();
     }
 }

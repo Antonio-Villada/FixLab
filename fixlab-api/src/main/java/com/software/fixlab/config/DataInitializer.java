@@ -23,9 +23,12 @@ public class DataInitializer implements CommandLineRunner {
         if (!usuarioRepository.existsByEmail(correoAdmin)) {
 
             Usuario admin = Usuario.builder()
-                    .nombre("Administrador Principal")
+                    .cedula("00000000")
+                    .nombre("Administrador")
+                    .apellidos("Principal")
+                    .direccion("Sistema")
                     .email(correoAdmin)
-                    .password(passwordEncoder.encode("Admin123456")) // Cumple tu regla de mínimo 8 alfanuméricos
+                    .password(passwordEncoder.encode("Admin123456"))
                     .telefono("3001112233")
                     .rol(RolUsuario.ADMIN)
                     .intentosFallidos(0)

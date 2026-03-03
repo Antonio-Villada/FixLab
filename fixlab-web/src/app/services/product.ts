@@ -1,74 +1,51 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs'; // 'of' crea un Observable con datos estáticos
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Product } from '../models/product.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  
-  // Esta es la lista de "mentira" (Mock) que usaremos por ahora
-  private mockProducts: Product[] = [
-    {
-      id: 1,
-      name: 'Laptop HP Pavilion',
-      description: 'Procesador Intel i7, 16GB RAM, 512GB SSD.',
-      price: 2500000,
-      stock: 12,
-      imageUrl: 'images/Laptop-acer.jpg', // Se busca en: public/images/laptop.jpg
-      categoryId: 1
-    },
-    {
-      id: 2,
-      name: 'Mouse Gamer RGB',
-      description: 'Sensor óptico de alta precisión, 6 botones programables.',
-      price: 2100000,
-      stock: 50,
-      imageUrl: 'images/Laptop-hp.jpg', // Se busca en: public/images/mouse.jpg
-      categoryId: 2
-    },
-    {
-      id: 3,
-      name: 'Monitor 27" 4K',
-      description: 'Panel IPS, 144Hz, compatible con HDR10.',
-      price: 3200000,
-      stock: 8,
-      imageUrl: 'images/Laptop-aple.jpg', // Se busca en: public/images/monitor.jpg
-      categoryId: 1
-    },
-    {
-      id: 4,
-      name: 'Monitor 27" 4K',
-      description: 'Panel IPS, 144Hz, compatible con HDR10.',
-      price: 1900000,
-      stock: 8,
-      imageUrl: 'images/Laptop-Nitro.jpg', // Se busca en: public/images/monitor.jpg
-      categoryId: 1
-    },
-    {
-      id: 5,
-      name: 'Maus',
-      description: 'Sensor óptico de alta precisión, 6 botones programables.',
-      price: 100000,
-      stock: 8,
-      imageUrl: 'images/maus.jpg', // Se busca en: public/images/monitor.jpg
-      categoryId: 3
-    },
-     {
-      id: 6,
-      name: 'Router WiFi 6',
-      description: 'Rendimiento ultra rápido, cobertura ampliada, ideal para hogares inteligentes.',
-      price: 320000,
-      stock: 8,
-      imageUrl: 'images/router.jpg', // Se busca en: public/images/router.jpg
-      categoryId: 4
-    }
-  ];
+  private http = inject(HttpClient);
+  private readonly apiBase = environment.apiBaseUrl?.replace(/\/$/, '') ?? '';
+  private readonly baseUrl = this.apiBase ? `${this.apiBase}/api/productos` : '/api/productos';
 
-  constructor() { }
-
-  // Simulamos la petición al servidor devolviendo el array estático
   getProducts(): Observable<Product[]> {
-    return of(this.mockProducts);
+    return this.http.get<Product[]>(this.baseUrl);
+  }
+
+  getProduct(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.baseUrl}/${id}`);
+  }
+
+  /**
+   * Crea un producto enviando multipart/form-data al backend.
+   * Parámetros: sku, nombre, descripcion, precio, stock, imagen (archivo).
+   * Si imagen es null y el backend lo permite (imagen required=false), se envía sin archivo.
+   */
+  createWithMultipart(
+    data: { sku: string; nombre: string; descripcion: string; precio: number; stock: number },
+    imagen: File | null
+  ): Observable<Product> {
+    const formData = new FormData();
+    formData.append('sku', data.sku);
+    formData.append('nombre', data.nombre);
+    formData.append('descripcion', data.descripcion ?? '');
+    formData.append('precio', String(data.precio));
+    formData.append('stock', String(data.stock));
+    if (imagen) {
+      formData.append('imagen', imagen);
+    }
+    return this.http.post<Product>(this.baseUrl, formData);
+  }
+
+  update(id: number, product: Partial<Product>): Observable<Product> {
+    return this.http.put<Product>(`${this.baseUrl}/${id}`, product);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

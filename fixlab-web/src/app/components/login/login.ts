@@ -33,9 +33,14 @@ export class Login implements OnInit {
       
       this.authService.login(credentials).subscribe({
         next: (response) => {
-          console.log('Login exitoso', response);
-          // Redirigimos al Home o Dashboard según prefieras
-          this.router.navigate(['/home']); 
+          const rol = response.rol ?? this.authService.getRol();
+          if (rol === 'ADMIN') {
+            this.router.navigate(['/productos']);
+          } else if (rol === 'TECNICO') {
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         },
         error: (err) => {
           console.error('Error en el login', err);

@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Para usar @if
-import { AuthService } from '../../services/auth'; // Ajusta la ruta
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-header',
@@ -10,8 +11,11 @@ import { AuthService } from '../../services/auth'; // Ajusta la ruta
   templateUrl: './header.html'
 })
 export class HeaderComponent {
-  public authService = inject(AuthService); // Inyectamos el servicio de autenticación
+  public authService = inject(AuthService);
+  public cartService = inject(CartService);
+  private router = inject(Router);
 
-  // Variable para mostrar la cantidad de productos
-  cartCount: number = 0;
+  goToCart(): void {
+    this.router.navigate(['/carrito']);
+  }
 }

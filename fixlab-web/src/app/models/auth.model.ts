@@ -11,21 +11,23 @@ export interface LoginReqDTO {
   password: string;
 }
 
-// DTO para el registro (Basado en tu entidad Usuario)
+// DTO para el registro (alineado con backend: cedula como id, apellidos, direccion)
 export interface RegistroReqDTO {
+  cedula: string;
   nombre: string;
+  apellidos: string;
+  direccion: string;
   email: string;
   password: string;
   telefono: string;
-  rol: RolUsuario; // Enviará la cadena "CLIENTE"
+  rol: RolUsuario;
 }
 
-// Respuesta que contiene el JWT
+// Respuesta que contiene el JWT (y opcionalmente el rol para redirigir por tipo de usuario)
 export interface TokenRespDTO {
   token: string;
-  // Si tu backend devuelve más info, agrégala aquí:
-  // rol?: string;
-  // nombre?: string;
+  /** Rol del usuario: CLIENTE | ADMIN | TECNICO. Si el backend no lo envía, se puede decodificar del JWT. */
+  rol?: string;
 }
 
 // Respuesta genérica para mensajes (como el de registro exitoso)

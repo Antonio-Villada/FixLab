@@ -1,0 +1,148 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+      <i class="bi bi-box-seam me-2"></i>Gestión de Productos
+    </h1>
+    <button type="button" class="btn btn-primary" (click)="openCreate()">
+      <i class="bi bi-plus-lg me-1"></i> Nuevo producto
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ errorMessage() }}
+      <button type="button" class="btn-close" (click)="errorMessage.set(null)" aria-label="Cerrar"></button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">Cargando productos...</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>SKU</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Activo</th>
+            <th style="width: 140px;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of products(); track p.id ?? p.sku) {
+            <tr>
+              <td><code>{{ p.sku }}</code></td>
+              <td>{{ p.nombre }}</td>
+              <td>${{ p.precio | number:'1.2-2' }}</td>
+              <td>{{ p.stock }}</td>
+              <td>
+                @if (p.activo) {
+                  <span class="badge bg-success">Sí</span>
+                } @else {
+                  <span class="badge bg-secondary">No</span>
+                }
+              </td>
+              <td>
+                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(p)" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(p)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No hay productos. Crea uno con "Nuevo producto".</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Modal Crear/Editar -->
+  @if (modalVisible()) {
+    <div class="modal show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ isEditing() ? 'Editar producto' : 'Nuevo producto' }}</h5>
+            <button type="button" class="btn-close" (click)="closeModal()" aria-label="Cerrar"></button>
+          </div>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">SKU <span class="text-danger">*</span></label>
+                <input type="text" formControlName="sku" class="form-control" placeholder="Ej: LAP-001"
+                  [readonly]="isEditing()">
+                @if (form.get('sku')?.invalid && form.get('sku')?.touched) {
+                  <div class="text-danger small">SKU requerido, máx. 50 caracteres.</div>
+                }
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                <input type="text" formControlName="nombre" class="form-control" placeholder="Nombre del producto">
+                @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+                  <div class="text-danger small">Nombre requerido, máx. 150 caracteres.</div>
+                }
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea formControlName="descripcion" class="form-control" rows="2"
+                  placeholder="Descripción opcional"></textarea>
+              </div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label">Precio <span class="text-danger">*</span></label>
+                  <input type="number" formControlName="precio" class="form-control" min="0" step="0.01">
+                  @if (form.get('precio')?.invalid && form.get('precio')?.touched) {
+                    <div class="text-danger small">Precio &ge; 0.</div>
+                  }
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Stock <span class="text-danger">*</span></label>
+                  <input type="number" formControlName="stock" class="form-control" min="0">
+                  @if (form.get('stock')?.invalid && form.get('stock')?.touched) {
+                    <div class="text-danger small">Stock &ge; 0.</div>
+                  }
+                </div>
+              </div>
+              <div class="mb-3 mt-2">
+                <label class="form-label">URL imagen</label>
+                <input type="url" formControlName="imagenUrl" class="form-control"
+                  placeholder="https://... (solo al editar)">
+              </div>
+              @if (!isEditing()) {
+                <div class="mb-3">
+                  <label class="form-label">Imagen del producto <span class="text-danger">*</span></label>
+                  <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)">
+                  <small class="text-muted">Requerido al crear.</small>
+                </div>
+              }
+              <div class="form-check">
+                <input type="checkbox" formControlName="activo" class="form-check-input" id="activo">
+                <label class="form-check-label" for="activo">Producto activo (visible)</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+              <button type="submit" class="btn btn-primary"
+                [disabled]="form.invalid || (!isEditing() && !selectedFile()) || uploadingImage()">
+                @if (uploadingImage()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                {{ isEditing() ? 'Guardar cambios' : 'Crear producto' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>
