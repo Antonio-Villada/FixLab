@@ -1,7 +1,6 @@
 package com.software.fixlab.controller;
 
-import com.software.fixlab.dto.req.LoginReqDTO;
-import com.software.fixlab.dto.req.RegistroReqDTO;
+import com.software.fixlab.dto.req.*;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
 import com.software.fixlab.dto.resp.TokenRespDTO;
 import com.software.fixlab.service.interfaces.AuthService;
@@ -9,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +25,39 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
+    @PutMapping("/cambiar-rol")
+    @PreAuthorize("hasRole('ADMIN')") // <-- OTRA VEZ EL ESCUDO DE SEGURIDAD
+    public ResponseEntity<MensajeRespDTO> cambiarRol(@RequestBody CambioRolReqDTO dto) {
+        try {
+            MensajeRespDTO respuesta = authService.cambiarRol(dto);
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/verificar-correo")
+    public ResponseEntity<MensajeRespDTO> verificarCorreo(@RequestBody VerificarCorreoReqDTO dto) {
+        try {
+            return ResponseEntity.ok(authService.verificarCorreo(dto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
     @PostMapping("/login")
     public ResponseEntity<TokenRespDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) throws Exception {
         TokenRespDTO respuesta = authService.login(loginReqDTO);
         // Retornamos 200 OK con el token
         return ResponseEntity.ok(respuesta);
+    }
+    @PostMapping("/registro-empleado")
+    @PreAuthorize("hasRole('ADMIN')") // <-- ESTE ES EL ESCUDO DE SEGURIDAD
+    public ResponseEntity<MensajeRespDTO> registrarEmpleado(@RequestBody RegistroEmpleadoReqDTO dto) {
+        try {
+            MensajeRespDTO respuesta = authService.registrarEmpleado(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
+        }
     }
 }

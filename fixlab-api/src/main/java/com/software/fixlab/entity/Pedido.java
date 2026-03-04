@@ -18,9 +18,9 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación con el usuario que armamos en el Proceso 1
+    // Busca esta parte en tu Pedido.java y asegúrate de que quede así:
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "cliente_cedula", nullable = false) // Cambiamos a cliente_cedula
     private Usuario cliente;
 
     @Column(nullable = false)

@@ -4,7 +4,43 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login" />
+    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/CambioRolReqDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/RegistroEmpleadoReqDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/VerificarCorreoReqDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/EmailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CambioRolReqDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroEmpleadoReqDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/VerificarCorreoReqDTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/EmailService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/PagoService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/DataInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/DataInitializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/VentaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/VentaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/RegistroReqDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/RegistroReqDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Usuario.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/UsuarioRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/UsuarioRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/VentaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/VentaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/DataInitializer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/DataInitializer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/VentaController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/VentaController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroReqDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroReqDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario$UsuarioBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario$UsuarioBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/UsuarioRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/UsuarioRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/AuthServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/VentaService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/VentaService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/AuthService.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,6 +128,11 @@
       <workItem from="1772327955352" duration="9262000" />
       <workItem from="1772342806322" duration="376000" />
       <workItem from="1772343265461" duration="68000" />
+      <workItem from="1772402790787" duration="4922000" />
+      <workItem from="1772497408354" duration="626000" />
+      <workItem from="1772500203035" duration="30000" />
+      <workItem from="1772508856253" duration="8476000" />
+      <workItem from="1772640132115" duration="1938000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

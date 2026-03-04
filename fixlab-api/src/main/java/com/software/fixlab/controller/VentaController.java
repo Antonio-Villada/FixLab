@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/ventas")
@@ -37,5 +39,19 @@ public class VentaController {
         // 3. Devolvemos el link al cliente
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CheckoutRespDTO(nuevoPedido.getId(), urlPago));
+    }
+    @GetMapping("/pago-exitoso")
+    public ResponseEntity<String> pagoExitoso(
+            @RequestParam(name = "collection_status") String status,
+            @RequestParam(name = "external_reference") String externalReference) {
+
+        try {
+            // Llamamos a nuestro servicio para actualizar todo
+            String mensaje = ventaService.confirmarPago(externalReference, status);
+            return ResponseEntity.ok(mensaje);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al procesar el pago: " + e.getMessage());
+        }
     }
 }

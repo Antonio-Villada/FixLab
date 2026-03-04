@@ -9,6 +9,8 @@ import com.software.fixlab.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -80,5 +82,44 @@ public class VentaService {
 
         // Guardamos todo en cascada (Pedido + Detalles) gracias al CascadeType.ALL que configuramos
         return pedidoRepository.save(nuevoPedido);
+    }
+    @Transactional
+    public String confirmarPago(String externalReference, String status) throws Exception {
+
+        // Verificamos que Mercado Pago nos confirme que fue aprobado
+        if (!"approved".equals(status)) {
+            throw new Exception("El pago no fue aprobado. Estado: " + status);
+        }
+
+        Long pedidoId = Long.parseLong(externalReference);
+
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new Exception("Pedido no encontrado: " + pedidoId));
+
+        // Evitamos descontar el inventario dos veces si el usuario recarga la página
+        if (pedido.getEstado() == EstadoPedido.PAGADO) {
+            return "Este pedido ya había sido procesado y pagado anteriormente.";
+        }
+
+        // 1. Actualizamos el estado y la fecha del pedido
+        pedido.setEstado(EstadoPedido.PAGADO);
+        pedido.setFechaPago(LocalDateTime.now());
+
+        // 2. Descontamos el stock de cada producto vendido
+        for (DetallePedido detalle : pedido.getDetalles()) {
+            Producto producto = detalle.getProducto();
+
+            // Verificación de seguridad por si el stock cambió mientras el cliente pagaba
+            if (producto.getStock() < detalle.getCantidad()) {
+                throw new Exception("Stock insuficiente al intentar confirmar el pago para: " + producto.getNombre());
+            }
+
+            producto.setStock(producto.getStock() - detalle.getCantidad());
+            productoRepository.save(producto);
+        }
+
+        pedidoRepository.save(pedido);
+
+        return "¡Pago exitoso! El pedido #" + pedidoId + " ha sido confirmado y el inventario actualizado.";
     }
 }

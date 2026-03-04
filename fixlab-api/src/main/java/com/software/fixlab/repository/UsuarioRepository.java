@@ -7,10 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-
-    // Método clave para el login y para evitar duplicidad en el registro
+public interface UsuarioRepository extends JpaRepository<Usuario, String> { // <-- Cambió a String
     Optional<Usuario> findByEmail(String email);
-
-    boolean existsByEmail(String email);
 }
