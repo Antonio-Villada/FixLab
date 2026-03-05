@@ -19,9 +19,12 @@ public class UsuarioMapper {
         }
 
         return Usuario.builder()
+                .cedula(dto.getCedula().trim())
                 .nombre(dto.getNombre())
+                .apellidos(dto.getApellidos())
+                .direccion(dto.getDireccion() != null ? dto.getDireccion() : "")
                 .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword())) // <-- ¡Encriptación aplicada!
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .telefono(dto.getTelefono())
                 .rol(RolUsuario.CLIENTE)
                 .intentosFallidos(0)

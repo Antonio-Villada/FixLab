@@ -28,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public MensajeRespDTO registrarCliente(RegistroReqDTO dto) throws Exception {
+<<<<<<< HEAD
 
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new Exception("El correo electrónico ya se encuentra registrado.");
@@ -56,6 +57,16 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         // Ahora sí, guardamos el usuario con la cédula garantizada
+=======
+        if (usuarioRepository.existsByCedula(dto.getCedula().trim())) {
+            throw new Exception("La cédula ya se encuentra registrada.");
+        }
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new Exception("El correo electrónico ya se encuentra registrado.");
+        }
+
+        Usuario nuevoUsuario = usuarioMapper.toEntity(dto);
+>>>>>>> ebc21313413cb4bf66ee58a55f8bed5b9e914097
         usuarioRepository.save(nuevoUsuario);
 
         // Enviamos el correo real

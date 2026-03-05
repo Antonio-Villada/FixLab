@@ -1,13 +1,36 @@
+// Definimos el Enum para que coincida exactamente con @Enumerated(EnumType.STRING)
+export enum RolUsuario {
+  CLIENTE = 'CLIENTE',
+  ADMIN = 'ADMIN',
+  TECNICO = 'TECNICO'
+}
+
+// DTO para el inicio de sesión
 export interface LoginReqDTO {
   email: string;
   password: string;
 }
 
-export interface TokenRespDTO {
-  token: string;
-  // Añade aquí otros campos si tu DTO de Spring los tiene (ej: nombre, rol)
+// DTO para el registro (alineado con backend: cedula como id, apellidos, direccion)
+export interface RegistroReqDTO {
+  cedula: string;
+  nombre: string;
+  apellidos: string;
+  direccion: string;
+  email: string;
+  password: string;
+  telefono: string;
+  rol: RolUsuario;
 }
 
+// Respuesta que contiene el JWT (y opcionalmente el rol para redirigir por tipo de usuario)
+export interface TokenRespDTO {
+  token: string;
+  /** Rol del usuario: CLIENTE | ADMIN | TECNICO. Si el backend no lo envía, se puede decodificar del JWT. */
+  rol?: string;
+}
+
+// Respuesta genérica para mensajes (como el de registro exitoso)
 export interface MensajeRespDTO {
   mensaje: string;
 }

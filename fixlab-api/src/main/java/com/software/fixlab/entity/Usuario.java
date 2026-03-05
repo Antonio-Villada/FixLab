@@ -15,18 +15,33 @@ import java.time.LocalDateTime;
 @Builder
 public class Usuario {
 
+    /** Identificación del usuario (cédula). No es autoincrementable; la ingresa el usuario. */
     @Id
+<<<<<<< HEAD
     @Column(name = "cedula", length = 20, nullable = false, unique = true)
+=======
+    @Column(nullable = false, unique = true, length = 20)
+>>>>>>> ebc21313413cb4bf66ee58a55f8bed5b9e914097
     private String cedula;
 
     @Column(nullable = false, length = 100)
     private String nombre;
 
     @Column(nullable = false, length = 100)
+<<<<<<< HEAD
     private String apellido;
 
     @Column(nullable = false, unique = true)
+=======
+    private String apellidos;
+
+    // Regla de negocio: El correo debe ser único en el sistema.
+    @Column(nullable = false, unique = true, length = 150)
+>>>>>>> ebc21313413cb4bf66ee58a55f8bed5b9e914097
     private String email;
+
+    @Column(length = 255)
+    private String direccion;
 
     @JsonIgnore
     @Column(nullable = false)

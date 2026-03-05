@@ -1,11 +1,13 @@
+/**
+ * Modelo alineado con la entidad Producto del backend (JPA).
+ */
 export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
+  id?: number;
+  sku: string;
+  nombre: string;
+  descripcion?: string;
+  precio: number;
   stock: number;
-  imageUrl: string;
-  categoryId: number; // Relación con la tabla Categories
+  imagenUrl?: string;
+  activo: boolean;
 }
-
-export const _dummy = true; // Agrega esta línea temporalmente
