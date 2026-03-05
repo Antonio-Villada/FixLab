@@ -13,7 +13,7 @@ import { CheckoutReqDTO } from '../../models/checkout.model';
   standalone: true,
   imports: [CommonModule, RouterLink, DecimalPipe, FormsModule],
   templateUrl: './carrito.html',
-  styleUrl: './carrito.css'
+  styleUrl: './carrito.css',
 })
 export class CarritoComponent {
   cartService = inject(CartService);
@@ -42,7 +42,7 @@ export class CarritoComponent {
       return;
     }
     const items = this.cartService.cartItems();
-    const conId = items.filter(i => i.product.id != null);
+    const conId = items.filter((i) => i.product.id != null);
     if (conId.length === 0) {
       this.errorPago.set('Los productos del carrito no tienen ID. Vuelve a añadirlos desde la tienda.');
       return;
@@ -67,31 +67,35 @@ export class CarritoComponent {
       return;
     }
 
-    const items = this.cartService.cartItems()
-      .filter(i => i.product.id != null)
-      .map(i => ({ productoId: i.product.id!, cantidad: i.quantity }));
+    const items = this.cartService
+      .cartItems()
+      .filter((i) => i.product.id != null)
+      .map((i) => ({ productoId: i.product.id!, cantidad: i.quantity }));
 
     const body: CheckoutReqDTO = {
       direccionEnvio: dir,
-      items
+      items,
     };
 
     this.loadingPago.set(true);
     this.errorPago.set(null);
 
-    this.checkoutService.checkout(body).subscribe({
+    this.checkoutService.crearPedido(body).subscribe({
       next: (res) => {
         this.cartService.clear();
         this.showDireccionModal.set(false);
         this.loadingPago.set(false);
-        window.location.href = res.urlPago;
+        const redirectUrl = typeof window !== 'undefined' ? `${window.location.origin}/productos` : undefined;
+        this.checkoutService.openWompiCheckout(res, redirectUrl, () => {
+          // Usuario cerró o completó el pago en el widget; el webhook confirmará en el backend
+        });
       },
       error: (err) => {
         this.loadingPago.set(false);
         this.errorPago.set(
-          err.error?.mensaje || err.message || 'Error al crear el pago. Intenta de nuevo.'
+          err.error?.mensaje || err.message || 'Error al crear el pedido. Intenta de nuevo.'
         );
-      }
+      },
     });
   }
 }

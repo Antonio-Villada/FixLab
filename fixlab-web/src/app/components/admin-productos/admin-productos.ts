@@ -2,20 +2,27 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService } from '../../services/product';
-import { Product } from '../../models/product.model';
+import {
+  Product,
+  ProductoReqDTO,
+  CategoriaRespDTO,
+  TipoProductoRespDTO,
+} from '../../models/product.model';
 
 @Component({
   selector: 'app-admin-productos',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-productos.html',
-  styleUrl: './admin-productos.css'
+  styleUrl: './admin-productos.css',
 })
 export class AdminProductosComponent implements OnInit {
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
 
   products = signal<Product[]>([]);
+  categorias = signal<CategoriaRespDTO[]>([]);
+  tiposProducto = signal<TipoProductoRespDTO[]>([]);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   modalVisible = signal(false);
@@ -30,13 +37,15 @@ export class AdminProductosComponent implements OnInit {
     precio: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
     imagenUrl: ['', [Validators.maxLength(500)]],
-    activo: [true]
+    categoriaId: [null as number | null, [Validators.required]],
+    tipoProductoId: [null as number | null, [Validators.required]],
   });
 
   isEditing = computed(() => this.editingProduct() !== null);
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadCategoriasAndTipos();
   }
 
   loadProducts(): void {
@@ -50,14 +59,34 @@ export class AdminProductosComponent implements OnInit {
       error: (err) => {
         this.errorMessage.set(err.error?.mensaje || 'Error al cargar productos');
         this.loading.set(false);
-      }
+      },
+    });
+  }
+
+  loadCategoriasAndTipos(): void {
+    this.productService.getCategorias().subscribe({
+      next: (list) => this.categorias.set(list),
+      error: () => this.categorias.set([]),
+    });
+    this.productService.getTiposProducto().subscribe({
+      next: (list) => this.tiposProducto.set(list),
+      error: () => this.tiposProducto.set([]),
     });
   }
 
   openCreate(): void {
     this.editingProduct.set(null);
     this.selectedFile.set(null);
-    this.form.reset({ sku: '', nombre: '', descripcion: '', precio: 0, stock: 0, imagenUrl: '', activo: true });
+    this.form.reset({
+      sku: '',
+      nombre: '',
+      descripcion: '',
+      precio: 0,
+      stock: 0,
+      imagenUrl: '',
+      categoriaId: null,
+      tipoProductoId: null,
+    });
     this.modalVisible.set(true);
   }
 
@@ -70,8 +99,10 @@ export class AdminProductosComponent implements OnInit {
       precio: product.precio,
       stock: product.stock,
       imagenUrl: product.imagenUrl ?? '',
-      activo: product.activo
+      categoriaId: product.categoria?.id ?? null,
+      tipoProductoId: product.tipoProducto?.id ?? null,
     });
+    this.selectedFile.set(null);
     this.modalVisible.set(true);
   }
 
@@ -96,27 +127,33 @@ export class AdminProductosComponent implements OnInit {
       return;
     }
     const value = this.form.getRawValue();
-    const productPayload = {
+    const data: ProductoReqDTO = {
       sku: value.sku,
       nombre: value.nombre,
       descripcion: value.descripcion || '',
       precio: Number(value.precio),
       stock: Number(value.stock),
       imagenUrl: value.imagenUrl || '',
-      activo: !!value.activo
+      categoriaId: Number(value.categoriaId),
+      tipoProductoId: Number(value.tipoProductoId),
     };
 
     const editing = this.editingProduct();
     if (editing?.id != null) {
-      this.productService.update(editing.id, productPayload).subscribe({
-        next: () => {
-          this.loadProducts();
-          this.closeModal();
-        },
-        error: (err) => {
-          this.errorMessage.set(err.error?.mensaje || 'Error al actualizar');
-        }
-      });
+      this.uploadingImage.set(true);
+      this.productService
+        .updateWithMultipart(editing.id, data, this.selectedFile())
+        .subscribe({
+          next: () => {
+            this.uploadingImage.set(false);
+            this.loadProducts();
+            this.closeModal();
+          },
+          error: (err) => {
+            this.uploadingImage.set(false);
+            this.errorMessage.set(err.error?.mensaje || 'Error al actualizar');
+          },
+        });
     } else {
       const file = this.selectedFile();
       if (!file) {
@@ -124,13 +161,6 @@ export class AdminProductosComponent implements OnInit {
         return;
       }
       this.uploadingImage.set(true);
-      const data = {
-        sku: value.sku,
-        nombre: value.nombre,
-        descripcion: value.descripcion || '',
-        precio: Number(value.precio),
-        stock: Number(value.stock)
-      };
       this.productService.createWithMultipart(data, file).subscribe({
         next: () => {
           this.uploadingImage.set(false);
@@ -140,19 +170,19 @@ export class AdminProductosComponent implements OnInit {
         error: (err) => {
           this.uploadingImage.set(false);
           this.errorMessage.set(err.error?.mensaje || 'Error al crear (¿SKU duplicado?)');
-        }
+        },
       });
     }
   }
 
   confirmDelete(product: Product): void {
     if (!product.id) return;
-    if (!confirm(`¿Eliminar el producto "${product.nombre}"?`)) return;
+    if (!confirm(`¿Desactivar el producto "${product.nombre}"?`)) return;
     this.productService.delete(product.id).subscribe({
       next: () => this.loadProducts(),
       error: (err) => {
         this.errorMessage.set(err.error?.mensaje || 'Error al eliminar');
-      }
+      },
     });
   }
 }

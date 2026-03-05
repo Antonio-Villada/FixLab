@@ -138,6 +138,7 @@ public class ProductoServiceImpl implements ProductoService {
                 .stock(producto.getStock())
                 .sku(producto.getSku())
                 .imagenUrl(producto.getImagenUrl())
+                .activo(producto.getActivo())
                 .categoria(CategoriaRespDTO.builder()
                         .id(producto.getCategoria().getId())
                         .nombre(producto.getCategoria().getNombre())

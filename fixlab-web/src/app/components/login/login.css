@@ -10,3 +10,7 @@
 .card:hover {
   transform: translateY(-5px);
 }
+
+#recaptcha-container {
+  min-height: 78px;
+}

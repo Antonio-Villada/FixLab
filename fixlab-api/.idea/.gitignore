@@ -13,6 +13,8 @@ target/
 .project
 .settings/
 
+
+
 # Archivos temporales del sistema operativo
 .DS_Store
 Thumbs.db
@@ -22,3 +24,5 @@ Thumbs.db
 # ==========================================
 src/main/resources/application.properties
 EOF
+#
+target/

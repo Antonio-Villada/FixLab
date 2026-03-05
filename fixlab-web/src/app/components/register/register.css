@@ -1,1 +1,207 @@
-/* Estilos del formulario de registro */
+/* Página de registro - diseño tipo imagen: split layout y gradiente */
+
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #7dd3a8 0%, #4db8a8 40%, #2d8b9e 70%, #1a6b7a 100%);
+  background-attachment: fixed;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.register-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.register-container {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .register-container {
+    grid-template-columns: 1fr;
+  }
+  .promo-panel {
+    display: none;
+  }
+}
+
+/* Panel izquierdo: formulario */
+.form-panel {
+  padding: 2.5rem 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.brand {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sign-in-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+.sign-in-link strong {
+  color: #a8e6cf;
+  text-decoration: underline;
+}
+
+.sign-in-link:hover {
+  opacity: 1;
+}
+
+.sign-in-link:hover strong {
+  color: #d4f5e4;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.75rem 0;
+  letter-spacing: -0.02em;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 520px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+  padding: 0.65rem 0.85rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+.form-group input::placeholder {
+  color: #888;
+}
+
+.form-group .error {
+  font-size: 0.8rem;
+  color: #ffcccb;
+}
+
+.terms-group {
+  margin-top: 0.25rem;
+}
+
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.terms-label input[type="checkbox"] {
+  margin-top: 0.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #1a4d5c;
+}
+
+.terms-label strong {
+  color: #a8e6cf;
+  text-decoration: underline;
+}
+
+.btn-create {
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: #1a4d5c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-create:hover:not(:disabled) {
+  background: #234d5c;
+}
+
+.btn-create:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.footer-copy {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+/* Panel derecho: logo FixLab */
+.promo-panel {
+  padding: 2.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo-image {
+  max-width: 100%;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
