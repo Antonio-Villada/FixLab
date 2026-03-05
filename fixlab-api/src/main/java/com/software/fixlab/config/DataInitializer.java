@@ -23,16 +23,9 @@ public class DataInitializer implements CommandLineRunner {
         if (usuarioRepository.findByEmail(correoAdmin).isEmpty()) {
 
             Usuario admin = Usuario.builder()
-<<<<<<< HEAD
                     .cedula("0000000000") // <- Nueva llave primaria
                     .nombre("Administrador") // <- Separado
                     .apellido("Principal") // <- Separado
-=======
-                    .cedula("00000000")
-                    .nombre("Administrador")
-                    .apellidos("Principal")
-                    .direccion("Sistema")
->>>>>>> ebc21313413cb4bf66ee58a55f8bed5b9e914097
                     .email(correoAdmin)
                     .password(passwordEncoder.encode("Admin123456"))
                     .telefono("3001112233")
