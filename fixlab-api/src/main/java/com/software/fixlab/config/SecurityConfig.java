@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
+                        .requestMatchers("/api/webhooks/**").permitAll()
                 )
                 // Agregamos nuestro filtro JUSTO ANTES del filtro de validación estándar de Spring
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

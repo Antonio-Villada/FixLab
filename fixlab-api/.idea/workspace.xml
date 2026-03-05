@@ -4,7 +4,39 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login" />
+    <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/PedidoReqDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiDataDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiWebhookDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/WompiCheckoutDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/DetallePedidoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/VentaController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/DetallePedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/DetallePedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/PedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/PedidoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PagoService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/VentaService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/VentaController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/DetallePedido$DetallePedidoBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/DetallePedido$DetallePedidoBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/DetallePedido.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/DetallePedido.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido$PedidoBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido$PedidoBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/PedidoRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/PedidoRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/EmailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/EmailService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/PagoService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/VentaService.class" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,6 +124,14 @@
       <workItem from="1772327955352" duration="9262000" />
       <workItem from="1772342806322" duration="376000" />
       <workItem from="1772343265461" duration="68000" />
+      <workItem from="1772402790787" duration="4922000" />
+      <workItem from="1772497408354" duration="626000" />
+      <workItem from="1772500203035" duration="30000" />
+      <workItem from="1772508856253" duration="8476000" />
+      <workItem from="1772640132115" duration="11721000" />
+      <workItem from="1772656427192" duration="155000" />
+      <workItem from="1772656680220" duration="103000" />
+      <workItem from="1772657135211" duration="1441000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

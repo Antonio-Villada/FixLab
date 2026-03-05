@@ -19,23 +19,26 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         String correoAdmin = "admin@fixlab.com";
 
-        // Comprobamos si el administrador ya existe para no duplicarlo al reiniciar el servidor
-        if (!usuarioRepository.existsByEmail(correoAdmin)) {
+        // Usamos findByEmail().isEmpty() ya que es el método que tenemos en el repositorio
+        if (usuarioRepository.findByEmail(correoAdmin).isEmpty()) {
 
             Usuario admin = Usuario.builder()
-                    .nombre("Administrador Principal")
+                    .cedula("0000000000") // <- Nueva llave primaria
+                    .nombre("Administrador") // <- Separado
+                    .apellido("Principal") // <- Separado
                     .email(correoAdmin)
-                    .password(passwordEncoder.encode("Admin123456")) // Cumple tu regla de mínimo 8 alfanuméricos
+                    .password(passwordEncoder.encode("Admin123456"))
                     .telefono("3001112233")
                     .rol(RolUsuario.ADMIN)
                     .intentosFallidos(0)
+                    .correoVerificado(true) // <- Nace verificado para que no lo bloquee el sistema
                     .build();
 
             usuarioRepository.save(admin);
 
-            // Un pequeño mensaje en la consola de Ubuntu para avisarte que funcionó
             System.out.println("=========================================================");
             System.out.println("✅ USUARIO ADMINISTRADOR CREADO AUTOMÁTICAMENTE");
+            System.out.println("🆔 Cédula: 0000000000");
             System.out.println("📧 Correo: " + correoAdmin);
             System.out.println("🔑 Clave: Admin123456");
             System.out.println("=========================================================");

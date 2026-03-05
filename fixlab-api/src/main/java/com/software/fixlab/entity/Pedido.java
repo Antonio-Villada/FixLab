@@ -2,8 +2,9 @@ package com.software.fixlab.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
@@ -16,30 +17,20 @@ public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    // Relación con el usuario que armamos en el Proceso 1
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario cliente;
-
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechaCreacion;
-
-    private LocalDateTime fechaPago;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EstadoPedido estado;
 
     @Column(nullable = false)
     private Double total;
 
-    // Dirección de envío ingresada en el Checkout
-    @Column(length = 255)
-    private String direccionEnvio;
+    @Column(nullable = false, length = 20)
+    private String estado; // Ej: PENDIENTE, PAGADO, ENVIADO
 
-    // Relación con los productos comprados
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetallePedido> detalles;
+    // Relación con el Cliente (Usando tu nueva llave primaria: Cédula)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_cedula", nullable = false)
+    private Usuario cliente;
 }

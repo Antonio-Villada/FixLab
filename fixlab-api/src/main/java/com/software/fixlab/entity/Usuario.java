@@ -1,9 +1,10 @@
 package com.software.fixlab.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "usuarios")
@@ -15,14 +16,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "cedula", length = 20, nullable = false, unique = true)
+    private String cedula;
 
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    // Regla de negocio: El correo debe ser único en el sistema.
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, length = 100)
+    private String apellido;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     @JsonIgnore
@@ -36,12 +39,17 @@ public class Usuario {
     @Column(nullable = false)
     private RolUsuario rol;
 
-    // --- Control de seguridad: Bloqueo tras 3 intentos fallidos ---
-
-    @Column(name = "intentos_fallidos", nullable = false)
-    @Builder.Default
-    private int intentosFallidos = 0;
-
-    @Column(name = "bloqueado_hasta")
+    // Control de seguridad
+    private int intentosFallidos;
     private LocalDateTime bloqueadoHasta;
+
+    // ... otros campos ...
+    @Column(nullable = false)
+    private boolean correoVerificado;
+
+    // --- NUEVOS CAMPOS PARA EL CÓDIGO DE VERIFICACIÓN ---
+    @Column(length = 6)
+    private String codigoVerificacion;
+
+    private LocalDateTime expiracionCodigo;
 }

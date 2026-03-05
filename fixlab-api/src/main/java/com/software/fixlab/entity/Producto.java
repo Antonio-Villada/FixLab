@@ -38,4 +38,15 @@ public class Producto {
 
     @Column(nullable = false)
     private Boolean activo; // Para no borrar productos si hay facturas asociadas (Soft Delete)
+
+    // Relación con Categoría (Ej: Repuestos, Accesorios, Herramientas)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
+
+    // Relación con Tipo de Producto (Ej: Pantallas, Baterías, Cargadores)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_producto_id", nullable = false)
+    private TipoProducto tipoProducto;
+
 }
