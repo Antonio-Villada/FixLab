@@ -14,6 +14,6 @@ export class AdminRedirectComponent {
   private router = inject(Router);
 
   constructor() {
-    this.router.navigate(['/productos'], { replaceUrl: true });
+    this.router.navigate(['/admin/productos'], { replaceUrl: true });
   }
 }

@@ -32,3 +32,38 @@ export interface TokenRespDTO {
 export interface MensajeRespDTO {
   mensaje: string;
 }
+
+// Usuario (GET /api/usuarios)
+export interface UsuarioRespDTO {
+  cedula: string;
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono?: string | null;
+  rol: RolUsuario;
+  correoVerificado: boolean;
+}
+
+// Actualizar usuario (PUT /api/usuarios/{cedula})
+export interface UsuarioUpdateReqDTO {
+  nombre: string;
+  apellido: string;
+  telefono: string;
+}
+
+// Crear empleado (POST /api/auth/registro-empleado) - solo ADMIN
+export interface RegistroEmpleadoReqDTO {
+  cedula: string;
+  nombre: string;
+  apellido: string;
+  email: string;
+  password: string;
+  telefono: string;
+  rol: RolUsuario;
+}
+
+// Cambiar rol (PUT /api/auth/cambiar-rol) - solo ADMIN
+export interface CambioRolReqDTO {
+  cedula: string;
+  nuevoRol: RolUsuario;
+}

@@ -18,6 +18,20 @@
         <li class="nav-item">
           <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active">Productos</a>
         </li>
+        @if (authService.isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/productos" routerLinkActive="active">Gest. Productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/categorias" routerLinkActive="active">Categorías</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/tipos-producto" routerLinkActive="active">Tipos de producto</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+          </li>
+        }
       </ul>
 
       <div class="d-flex align-items-center gap-3">
@@ -41,11 +55,7 @@
               <i class="bi bi-person-fill me-2"></i> Iniciar Sesión
             </a>
           } @else {
-            @if (authService.isAdmin()) {
-              <a routerLink="/productos" class="btn btn-outline-warning d-flex align-items-center" routerLinkActive="active">
-                <i class="bi bi-box-seam me-2"></i> Admin Productos
-              </a>
-            } @else {
+            @if (!authService.isAdmin()) {
               <a routerLink="/dashboard" class="btn btn-success d-flex align-items-center" routerLinkActive="active">
                 <i class="bi bi-speedometer2 me-2"></i> Mi Panel
               </a>
