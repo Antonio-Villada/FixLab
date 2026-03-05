@@ -7,7 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ProductoService {
-    // Agregamos el MultipartFile a la firma del método
-    ProductoRespDTO crearProducto(ProductoReqDTO dto, MultipartFile imagen) throws Exception;
+    ProductoRespDTO crearProducto(ProductoReqDTO dto, MultipartFile imagen);
     List<ProductoRespDTO> obtenerTodosLosProductos();
+    ProductoRespDTO obtenerPorId(Long id);
+    ProductoRespDTO actualizarProducto(Long id, ProductoReqDTO dto, MultipartFile imagen);
+    void eliminarProducto(Long id);
 }

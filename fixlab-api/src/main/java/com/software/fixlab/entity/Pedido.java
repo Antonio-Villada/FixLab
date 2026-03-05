@@ -33,4 +33,7 @@ public class Pedido {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_cedula", nullable = false)
     private Usuario cliente;
+
+    @Column(length = 255)
+    private String direccionEnvio;
 }

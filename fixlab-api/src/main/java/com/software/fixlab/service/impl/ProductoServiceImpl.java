@@ -7,12 +7,15 @@ import com.software.fixlab.dto.resp.TipoProductoRespDTO;
 import com.software.fixlab.entity.Categoria;
 import com.software.fixlab.entity.Producto;
 import com.software.fixlab.entity.TipoProducto;
+import com.software.fixlab.exception.BadRequestException;
+import com.software.fixlab.exception.NoExisteCategoriaException;
+import com.software.fixlab.exception.NoExisteProductoException;
+import com.software.fixlab.exception.NoExisteTipoProductoException;
 import com.software.fixlab.repository.CategoriaRepository;
 import com.software.fixlab.repository.ProductoRepository;
 import com.software.fixlab.repository.TipoProductoRepository;
-import com.software.fixlab.service.interfaces.ProductoService;
-// IMPORTANTE: Asegúrate de importar aquí tu servicio real de Cloudinary
 import com.software.fixlab.service.interfaces.CloudinaryService;
+import com.software.fixlab.service.interfaces.ProductoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,48 +31,102 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final TipoProductoRepository tipoProductoRepository;
-    private final CloudinaryService cloudinaryService; // <-- Inyectamos tu servicio de imágenes
+    private final CloudinaryService cloudinaryService;
 
     @Override
     @Transactional
-    public ProductoRespDTO crearProducto(ProductoReqDTO dto, MultipartFile imagen) throws Exception {
-
-        // 1. Validamos que la categoría y el tipo existan
+    public ProductoRespDTO crearProducto(ProductoReqDTO dto, MultipartFile imagen) {
+        // Validación de relaciones
         Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new Exception("La categoría con ID " + dto.getCategoriaId() + " no existe."));
+                .orElseThrow(() -> new NoExisteCategoriaException("La categoría con ID " + dto.getCategoriaId() + " no existe."));
 
         TipoProducto tipoProducto = tipoProductoRepository.findById(dto.getTipoProductoId())
-                .orElseThrow(() -> new Exception("El tipo de producto con ID " + dto.getTipoProductoId() + " no existe."));
+                .orElseThrow(() -> new NoExisteTipoProductoException("El tipo de producto con ID " + dto.getTipoProductoId() + " no existe."));
 
-        // 2. Subimos la imagen a Cloudinary y obtenemos la URL segura
-        // (Si tu método devuelve un Map en lugar de un String, cámbialo a: cloudinaryService.subirImagen(imagen).get("url").toString();)
-        String urlImagenSubida = cloudinaryService.subirImagen(imagen);
+        // Subida de imagen
+        String urlImagenSubida;
+        try {
+            urlImagenSubida = cloudinaryService.subirImagen(imagen);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al subir la imagen a Cloudinary", e);
+        }
 
-        // 3. Construimos el producto con la URL real
         Producto nuevoProducto = Producto.builder()
                 .nombre(dto.getNombre())
                 .descripcion(dto.getDescripcion())
                 .precio(dto.getPrecio())
                 .stock(dto.getStock())
                 .sku(dto.getSku())
-                .imagenUrl(urlImagenSubida) // <-- URL alojada en Cloudinary
+                .imagenUrl(urlImagenSubida)
                 .categoria(categoria)
                 .tipoProducto(tipoProducto)
+                .activo(true) // Se inicializa como activo
                 .build();
 
         productoRepository.save(nuevoProducto);
-
         return mapearADto(nuevoProducto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ProductoRespDTO> obtenerTodosLosProductos() {
-        List<Producto> productos = productoRepository.findAll();
-
-        return productos.stream()
+        return productoRepository.findAll().stream()
                 .map(this::mapearADto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductoRespDTO obtenerPorId(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NoExisteProductoException("Producto no encontrado con ID: " + id));
+        return mapearADto(producto);
+    }
+
+    @Override
+    @Transactional
+    public ProductoRespDTO actualizarProducto(Long id, ProductoReqDTO dto, MultipartFile imagen) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NoExisteProductoException("Producto no encontrado con ID: " + id));
+
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new NoExisteCategoriaException("La categoría con ID " + dto.getCategoriaId() + " no existe."));
+
+        TipoProducto tipoProducto = tipoProductoRepository.findById(dto.getTipoProductoId())
+                .orElseThrow(() -> new NoExisteTipoProductoException("El tipo de producto con ID " + dto.getTipoProductoId() + " no existe."));
+
+        // Actualizar datos básicos
+        producto.setNombre(dto.getNombre());
+        producto.setDescripcion(dto.getDescripcion());
+        producto.setPrecio(dto.getPrecio());
+        producto.setStock(dto.getStock());
+        producto.setSku(dto.getSku());
+        producto.setCategoria(categoria);
+        producto.setTipoProducto(tipoProducto);
+
+        // Si se envió una nueva imagen, se sube y se actualiza la URL
+        if (imagen != null && !imagen.isEmpty()) {
+            try {
+                String nuevaUrl = cloudinaryService.subirImagen(imagen);
+                producto.setImagenUrl(nuevaUrl);
+            } catch (Exception e) {
+                throw new RuntimeException("Error al subir la nueva imagen a Cloudinary", e);
+            }
+        }
+
+        productoRepository.save(producto);
+        return mapearADto(producto);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarProducto(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NoExisteProductoException("Producto no encontrado con ID: " + id));
+
+        // Soft delete: en lugar de borrarlo físicamente, lo desactivamos
+        producto.setActivo(false);
+        productoRepository.save(producto);
     }
 
     private ProductoRespDTO mapearADto(Producto producto) {

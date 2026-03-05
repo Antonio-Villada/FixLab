@@ -2,7 +2,12 @@ package com.software.fixlab.controller;
 
 import com.software.fixlab.dto.req.PedidoReqDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
+import com.software.fixlab.dto.resp.PedidoRespDTO;
 import com.software.fixlab.dto.resp.WompiCheckoutDTO;
+import com.software.fixlab.exception.BadRequestException;
+import com.software.fixlab.exception.NoExistePedidoException;
+import com.software.fixlab.exception.NoExisteProductoException;
+import com.software.fixlab.exception.ResourceNotFoundException;
 import com.software.fixlab.service.interfaces.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/pedidos")
 @RequiredArgsConstructor
@@ -18,37 +25,62 @@ public class PedidoController {
 
     private final PedidoService pedidoService;
 
-    /**
-     * PASO 1: Crear el pedido y generar firma de Wompi.
-     * El Frontend (Angular) llama a este endpoint antes de abrir el widget de pagos.
-     */
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN')")
     public ResponseEntity<?> crearPedido(@RequestBody PedidoReqDTO dto, Authentication authentication) {
         try {
-            // Obtenemos el email directamente del token de seguridad
-            String emailUsuarioLogueado = authentication.getName();
-
-            // Llamamos al servicio que ahora devuelve todo lo necesario para Wompi
-            WompiCheckoutDTO response = pedidoService.crearPedido(dto, emailUsuarioLogueado);
-
+            WompiCheckoutDTO response = pedidoService.crearPedido(dto, authentication.getName());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
+        } catch (NoExisteProductoException | ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespDTO(e.getMessage()));
+        } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
         }
     }
 
-    /**
-     * PASO 2: Confirmar el pago.
-     * Este endpoint se activa cuando recibimos la notificación de éxito de la pasarela.
-     */
     @PostMapping("/{id}/confirmar-pago")
     public ResponseEntity<?> confirmarPagoWompi(@PathVariable Integer id) {
         try {
             String resultado = pedidoService.confirmarPago(id);
             return ResponseEntity.ok(new MensajeRespDTO(resultado));
-        } catch (Exception e) {
+        } catch (NoExistePedidoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespDTO(e.getMessage()));
+        } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
+
+    // --- NUEVAS RUTAS ADMINISTRATIVAS Y DE CLIENTE ---
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<PedidoRespDTO>> obtenerTodos() {
+        return ResponseEntity.ok(pedidoService.obtenerTodos());
+    }
+
+    @GetMapping("/mis-pedidos")
+    @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN')")
+    public ResponseEntity<List<PedidoRespDTO>> obtenerMisPedidos(Authentication authentication) {
+        return ResponseEntity.ok(pedidoService.obtenerMisPedidos(authentication.getName()));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN')")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(pedidoService.obtenerPorId(id));
+        } catch (NoExistePedidoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
+
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarEstado(@PathVariable Integer id, @RequestParam String nuevoEstado) {
+        try {
+            return ResponseEntity.ok(pedidoService.actualizarEstado(id, nuevoEstado));
+        } catch (NoExistePedidoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespDTO(e.getMessage()));
         }
     }
 }

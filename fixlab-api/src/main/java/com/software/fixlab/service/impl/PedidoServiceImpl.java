@@ -2,11 +2,17 @@ package com.software.fixlab.service.impl;
 
 import com.software.fixlab.dto.req.ItemCarritoDTO;
 import com.software.fixlab.dto.req.PedidoReqDTO;
+import com.software.fixlab.dto.resp.DetallePedidoRespDTO;
+import com.software.fixlab.dto.resp.PedidoRespDTO;
 import com.software.fixlab.dto.resp.WompiCheckoutDTO;
 import com.software.fixlab.entity.DetallePedido;
 import com.software.fixlab.entity.Pedido;
 import com.software.fixlab.entity.Producto;
 import com.software.fixlab.entity.Usuario;
+import com.software.fixlab.exception.BadRequestException;
+import com.software.fixlab.exception.NoExistePedidoException;
+import com.software.fixlab.exception.NoExisteProductoException;
+import com.software.fixlab.exception.ResourceNotFoundException;
 import com.software.fixlab.repository.DetallePedidoRepository;
 import com.software.fixlab.repository.PedidoRepository;
 import com.software.fixlab.repository.ProductoRepository;
@@ -19,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,38 +42,35 @@ public class PedidoServiceImpl implements PedidoService {
     private final WompiServiceImpl wompiService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public WompiCheckoutDTO crearPedido(PedidoReqDTO dto, String emailUsuario) throws Exception {
-        // 1. Buscamos al cliente
+    @Transactional
+    public WompiCheckoutDTO crearPedido(PedidoReqDTO dto, String emailUsuario) {
         Usuario cliente = usuarioRepository.findByEmail(emailUsuario)
-                .orElseThrow(() -> new Exception("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
 
         if (dto.getItems() == null || dto.getItems().isEmpty()) {
-            throw new Exception("El carrito de compras está vacío");
+            throw new BadRequestException("El carrito de compras está vacío");
         }
 
         double totalPedido = 0.0;
         List<DetallePedido> detallesParaGuardar = new ArrayList<>();
 
-        // 2. Creamos el pedido inicial en estado PENDIENTE
         Pedido nuevoPedido = Pedido.builder()
                 .cliente(cliente)
                 .estado("PENDIENTE")
                 .total(0.0)
+                .direccionEnvio(dto.getDireccionEnvio()) // <-- Guardamos la dirección
                 .build();
 
         pedidoRepository.save(nuevoPedido);
 
-        // 3. Procesamos los productos y validamos stock
         for (ItemCarritoDTO item : dto.getItems()) {
             Producto producto = productoRepository.findById(item.getProductoId())
-                    .orElseThrow(() -> new Exception("Producto con ID " + item.getProductoId() + " no encontrado"));
+                    .orElseThrow(() -> new NoExisteProductoException("Producto con ID " + item.getProductoId() + " no encontrado"));
 
             if (producto.getStock() < item.getCantidad()) {
-                throw new Exception("Stock insuficiente para: " + producto.getNombre());
+                throw new BadRequestException("Stock insuficiente para: " + producto.getNombre());
             }
 
-            // Descontamos stock temporalmente (Reserva)
             producto.setStock(producto.getStock() - item.getCantidad());
             productoRepository.save(producto);
 
@@ -82,20 +86,14 @@ public class PedidoServiceImpl implements PedidoService {
             detallesParaGuardar.add(detalle);
         }
 
-        // 4. Guardamos detalles y actualizamos el total del pedido
         detallePedidoRepository.saveAll(detallesParaGuardar);
         nuevoPedido.setTotal(totalPedido);
         pedidoRepository.save(nuevoPedido);
 
-        // 5. Preparamos la información para Wompi
-        // Wompi requiere el monto en centavos (Ej: 1000.0 -> 100000)
         long montoEnCentavos = (long) (totalPedido * 100);
         String referencia = "FIX-" + nuevoPedido.getId() + "-" + System.currentTimeMillis();
-
-        // Generamos la firma de integridad SHA-256
         String firma = wompiService.generarFirma(referencia, montoEnCentavos, "COP");
 
-        // 6. Retornamos el DTO que Angular usará para abrir el Widget
         return WompiCheckoutDTO.builder()
                 .pedidoId(nuevoPedido.getId())
                 .referencia(referencia)
@@ -108,19 +106,17 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     @Transactional
-    public String confirmarPago(Integer pedidoId) throws Exception {
+    public String confirmarPago(Integer pedidoId) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new Exception("Pedido no encontrado"));
+                .orElseThrow(() -> new NoExistePedidoException("Pedido no encontrado"));
 
         if ("PAGADO".equals(pedido.getEstado())) {
-            throw new Exception("Este pedido ya fue pagado anteriormente.");
+            throw new BadRequestException("Este pedido ya fue pagado anteriormente.");
         }
 
-        // 1. Cambiamos el estado de la base de datos
         pedido.setEstado("PAGADO");
         pedidoRepository.save(pedido);
 
-        // 2. Enviamos la factura legal al correo del cliente
         emailService.enviarFacturaVenta(
                 pedido.getCliente().getEmail(),
                 pedido.getCliente().getNombre(),
@@ -129,5 +125,68 @@ public class PedidoServiceImpl implements PedidoService {
         );
 
         return "Pago confirmado exitosamente. Factura enviada al cliente.";
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PedidoRespDTO> obtenerTodos() {
+        return pedidoRepository.findAll().stream()
+                .map(this::mapearADto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PedidoRespDTO> obtenerMisPedidos(String emailUsuario) {
+        Usuario cliente = usuarioRepository.findByEmail(emailUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+
+        return pedidoRepository.findByCliente_Cedula(cliente.getCedula()).stream()
+                .map(this::mapearADto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PedidoRespDTO obtenerPorId(Integer id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NoExistePedidoException("Pedido no encontrado con ID: " + id));
+        return mapearADto(pedido);
+    }
+
+    @Override
+    @Transactional
+    public PedidoRespDTO actualizarEstado(Integer id, String nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NoExistePedidoException("Pedido no encontrado con ID: " + id));
+
+        pedido.setEstado(nuevoEstado); // Ej: "ENVIADO", "ENTREGADO", "CANCELADO"
+        pedidoRepository.save(pedido);
+
+        return mapearADto(pedido);
+    }
+
+    // Método auxiliar para armar la respuesta limpia
+    private PedidoRespDTO mapearADto(Pedido pedido) {
+        List<DetallePedido> detalles = detallePedidoRepository.findByPedido(pedido);
+
+        List<DetallePedidoRespDTO> detallesDto = detalles.stream().map(d -> DetallePedidoRespDTO.builder()
+                .productoId(d.getProducto().getId())
+                .nombreProducto(d.getProducto().getNombre())
+                .cantidad(d.getCantidad())
+                .precioUnitario(d.getPrecioUnitario())
+                .subtotal(d.getCantidad() * d.getPrecioUnitario())
+                .build()).collect(Collectors.toList());
+
+        return PedidoRespDTO.builder()
+                .id(pedido.getId())
+                .fechaCreacion(pedido.getFechaCreacion())
+                .total(pedido.getTotal())
+                .estado(pedido.getEstado())
+                .clienteCedula(pedido.getCliente().getCedula())
+                .clienteNombre(pedido.getCliente().getNombre() + " " + pedido.getCliente().getApellido())
+                .direccionEnvio(pedido.getDireccionEnvio())
+                .detalles(detallesDto)
+                .build();
     }
 }
