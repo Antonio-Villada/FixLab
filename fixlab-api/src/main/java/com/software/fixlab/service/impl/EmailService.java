@@ -24,4 +24,23 @@ public class EmailService {
 
         mailSender.send(mensaje);
     }
+
+
+    public void enviarFacturaVenta(String destino, String nombre, String numeroPedido, Double total) {
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(destino);
+        mensaje.setSubject("Factura de Venta - Pedido #" + numeroPedido + " - FixLab");
+        mensaje.setText("Hola " + nombre + ",\n\n"
+                + "¡Tu pago ha sido procesado exitosamente!\n\n"
+                + "Adjuntamos los detalles de tu factura de venta:\n"
+                + "--------------------------------------------------\n"
+                + "No. de Pedido: " + numeroPedido + "\n"
+                + "Estado: PAGADO\n"
+                + "Total Pagado: $" + total + "\n"
+                + "--------------------------------------------------\n\n"
+                + "Ya estamos preparando tus productos para el envío o entrega.\n"
+                + "¡Gracias por confiar en FixLab!");
+
+        mailSender.send(mensaje);
+    }
 }

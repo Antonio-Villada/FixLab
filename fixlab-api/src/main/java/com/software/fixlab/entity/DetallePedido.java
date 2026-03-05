@@ -2,7 +2,6 @@ package com.software.fixlab.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "detalles_pedido")
@@ -15,29 +14,21 @@ public class DetallePedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @JsonIgnore
+    @Column(nullable = false)
+    private Integer cantidad;
+
+    @Column(name = "precio_unitario", nullable = false)
+    private Double precioUnitario;
+
+    // A qué pedido (factura) pertenece este ítem
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
+    // Qué producto se está comprando
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
-
-    // Regla de negocio: Máximo 5 unidades por cliente de la misma referencia
-    @Column(nullable = false)
-    private Integer cantidad;
-
-    @Column(nullable = false)
-    private Double precioUnitario;
-
-    // Si este detalle en específico fue devuelto (para devoluciones parciales)
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean devuelto = false;
-
-    @Enumerated(EnumType.STRING)
-    private MotivoDevolucion motivoDevolucion;
 }
