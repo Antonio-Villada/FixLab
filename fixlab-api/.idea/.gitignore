@@ -1,6 +1,6 @@
 cat << 'EOF' > .gitignore
 # Archivos compilados de Maven
-/target/
+
 *.class
 *.jar
 *.war
@@ -12,6 +12,11 @@ cat << 'EOF' > .gitignore
 .classpath
 .project
 .settings/
+*.class
+# IntelliJ
+
+
+
 
 
 
@@ -24,5 +29,5 @@ Thumbs.db
 # ==========================================
 src/main/resources/application.properties
 EOF
-#
+# Maven
 target/
