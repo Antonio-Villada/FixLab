@@ -23,6 +23,9 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  showPassword = false;
+  showConfirmPassword = false;
+
   registroForm = new FormGroup(
     {
       cedula: new FormControl('', [

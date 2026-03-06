@@ -1,6 +1,6 @@
 cat << 'EOF' > .gitignore
 # Archivos compilados de Maven
-target/
+/target/
 *.class
 *.jar
 *.war

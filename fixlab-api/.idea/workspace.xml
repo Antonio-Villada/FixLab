@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.css" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,6 +112,7 @@
       <workItem from="1772674068935" duration="546000" />
       <workItem from="1772684396042" duration="3172000" />
       <workItem from="1772730058444" duration="4226000" />
+      <workItem from="1772815819983" duration="393000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

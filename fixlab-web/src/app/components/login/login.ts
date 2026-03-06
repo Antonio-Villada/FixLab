@@ -35,6 +35,7 @@ export class Login implements OnInit, AfterViewInit {
   recaptchaSiteKey = environment.recaptchaSiteKey ?? '';
   captchaWidgetId: number | null = null;
   captchaReady = false;
+  showPassword = false;
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
