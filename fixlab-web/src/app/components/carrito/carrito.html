@@ -71,7 +71,7 @@
               <div class="alert alert-danger py-2 mt-2 mb-0 small">{{ errorPago() }}</div>
             }
             @if (!authService.isLoggedIn()) {
-              <p class="text-muted small mt-2 mb-0">Inicia sesión para pagar con Mercado Pago.</p>
+              <p class="text-muted small mt-2 mb-0">Inicia sesión para pagar con Wompi.</p>
               <a routerLink="/login" class="btn btn-outline-primary w-100 mt-2">Iniciar sesión</a>
             } @else {
               <button type="button" class="btn btn-primary w-100 mt-2 py-2 fw-semibold" (click)="procederAPagar()"
@@ -79,7 +79,7 @@
                 @if (loadingPago()) {
                   <span class="spinner-border spinner-border-sm me-2"></span>
                 }
-                <i class="bi bi-credit-card me-2"></i>Proceder a pagar (Mercado Pago)
+                <i class="bi bi-credit-card me-2"></i>Proceder a pagar (Wompi)
               </button>
             }
             <button type="button" class="btn btn-outline-secondary w-100 mt-2" (click)="cartService.clear()">
@@ -102,7 +102,7 @@
             <button type="button" class="btn-close" (click)="cancelarPago()" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body">
-            <p class="text-muted small">Serás redirigido a Mercado Pago para completar el pago.</p>
+            <p class="text-muted small">Serás redirigido a Wompi para completar el pago de forma segura.</p>
             <label class="form-label fw-semibold">Dirección de envío <span class="text-danger">*</span></label>
             <textarea [(ngModel)]="direccionEnvio" class="form-control" rows="3"
               placeholder="Calle, número, ciudad, departamento"></textarea>
@@ -116,7 +116,7 @@
               @if (loadingPago()) {
                 <span class="spinner-border spinner-border-sm me-1"></span>
               }
-              Ir a Mercado Pago
+              Ir a Wompi a pagar
             </button>
           </div>
         </div>

@@ -4,14 +4,19 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ProductService } from '../../services/product';
 import { AuthService } from '../../services/auth';
 import { CartService } from '../../services/cart.service';
-import { Product } from '../../models/product.model';
+import {
+  Product,
+  ProductoReqDTO,
+  CategoriaRespDTO,
+  TipoProductoRespDTO,
+} from '../../models/product.model';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [DecimalPipe, CommonModule, ReactiveFormsModule],
   templateUrl: './product-list.html',
-  styleUrl: './product-list.css'
+  styleUrl: './product-list.css',
 })
 export class ProductListComponent implements OnInit {
   private productService = inject(ProductService);
@@ -20,21 +25,21 @@ export class ProductListComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   products = signal<Product[]>([]);
+  categorias = signal<CategoriaRespDTO[]>([]);
+  tiposProducto = signal<TipoProductoRespDTO[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
   modalVisible = signal(false);
   editingProduct = signal<Product | null>(null);
-  /** Vista previa: URL local del archivo seleccionado o la URL del formulario */
   imagePreviewUrl = signal<string | null>(null);
-  /** Archivo seleccionado para subir (al enviar se sube y se usa la URL devuelta) */
   selectedFile = signal<File | null>(null);
   uploadingImage = signal(false);
 
   isAdmin = computed(() => this.authService.isAdmin());
-  /** Para clientes solo productos activos; para admin todos */
+  /** Clientes: solo productos activos. Admin: todos. */
   productsToShow = computed(() => {
     const list = this.products();
-    return this.isAdmin() ? list : list.filter(p => p.activo);
+    return this.isAdmin() ? list : list.filter((p) => p.activo !== false);
   });
   isEditing = computed(() => this.editingProduct() !== null);
 
@@ -45,11 +50,13 @@ export class ProductListComponent implements OnInit {
     precio: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
     imagenUrl: ['', [Validators.maxLength(500)]],
-    activo: [true]
+    categoriaId: [null as number | null, [Validators.required]],
+    tipoProductoId: [null as number | null, [Validators.required]],
   });
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadCategoriasAndTipos();
   }
 
   loadProducts(): void {
@@ -63,7 +70,18 @@ export class ProductListComponent implements OnInit {
       error: (err) => {
         this.errorMessage.set(err.error?.mensaje || 'Error al cargar productos');
         this.loading.set(false);
-      }
+      },
+    });
+  }
+
+  loadCategoriasAndTipos(): void {
+    this.productService.getCategorias().subscribe({
+      next: (list) => this.categorias.set(list),
+      error: () => this.categorias.set([]),
+    });
+    this.productService.getTiposProducto().subscribe({
+      next: (list) => this.tiposProducto.set(list),
+      error: () => this.tiposProducto.set([]),
     });
   }
 
@@ -73,7 +91,16 @@ export class ProductListComponent implements OnInit {
 
   openCreate(): void {
     this.editingProduct.set(null);
-    this.form.reset({ sku: '', nombre: '', descripcion: '', precio: 0, stock: 0, imagenUrl: '', activo: true });
+    this.form.reset({
+      sku: '',
+      nombre: '',
+      descripcion: '',
+      precio: 0,
+      stock: 0,
+      imagenUrl: '',
+      categoriaId: null,
+      tipoProductoId: null,
+    });
     this.clearImagePreview();
     this.modalVisible.set(true);
   }
@@ -87,7 +114,8 @@ export class ProductListComponent implements OnInit {
       precio: product.precio,
       stock: product.stock,
       imagenUrl: product.imagenUrl ?? '',
-      activo: product.activo
+      categoriaId: product.categoria?.id ?? null,
+      tipoProductoId: product.tipoProducto?.id ?? null,
     });
     this.selectedFile.set(null);
     this.imagePreviewUrl.set(product.imagenUrl || null);
@@ -102,7 +130,7 @@ export class ProductListComponent implements OnInit {
 
   private clearImagePreview(): void {
     const url = this.imagePreviewUrl();
-    if (url && url.startsWith('blob:')) {
+    if (url?.startsWith('blob:')) {
       URL.revokeObjectURL(url);
     }
     this.imagePreviewUrl.set(null);
@@ -112,7 +140,7 @@ export class ProductListComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file?.type.startsWith('image/')) return;
     this.clearImagePreview();
     this.selectedFile.set(file);
     this.imagePreviewUrl.set(URL.createObjectURL(file));
@@ -120,7 +148,6 @@ export class ProductListComponent implements OnInit {
     input.value = '';
   }
 
-  /** Quita la imagen seleccionada para poder usar solo el campo URL o guardar sin imagen. */
   removeSelectedImage(): void {
     this.clearImagePreview();
     this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
@@ -138,40 +165,40 @@ export class ProductListComponent implements OnInit {
       return;
     }
     const value = this.form.getRawValue();
+    const data: ProductoReqDTO = {
+      sku: value.sku,
+      nombre: value.nombre,
+      descripcion: value.descripcion || '',
+      precio: Number(value.precio),
+      stock: Number(value.stock),
+      imagenUrl: value.imagenUrl || '',
+      categoriaId: Number(value.categoriaId),
+      tipoProductoId: Number(value.tipoProductoId),
+    };
     const editing = this.editingProduct();
     const file = this.selectedFile();
 
     if (editing?.id != null) {
-      // Editar: se envía JSON (PUT). Si tu backend tiene PUT con multipart, se puede cambiar.
-      const payload = {
-        sku: value.sku,
-        nombre: value.nombre,
-        descripcion: value.descripcion || '',
-        precio: Number(value.precio),
-        stock: Number(value.stock),
-        imagenUrl: value.imagenUrl || '',
-        activo: !!value.activo
-      };
-      this.productService.update(editing.id, payload).subscribe({
-        next: () => { this.loadProducts(); this.closeModal(); },
-        error: (err) => this.errorMessage.set(err.error?.mensaje || 'Error al actualizar')
+      this.uploadingImage.set(true);
+      this.productService.updateWithMultipart(editing.id, data, file).subscribe({
+        next: () => {
+          this.uploadingImage.set(false);
+          this.loadProducts();
+          this.closeModal();
+        },
+        error: (err) => {
+          this.uploadingImage.set(false);
+          this.errorMessage.set(err.error?.mensaje || 'Error al actualizar');
+        },
       });
       return;
     }
 
-    // Crear: multipart con imagen (tu controlador POST espera sku, nombre, descripcion, precio, stock, imagen)
     if (!file) {
       this.errorMessage.set('Selecciona una imagen para el producto.');
       return;
     }
     this.uploadingImage.set(true);
-    const data = {
-      sku: value.sku,
-      nombre: value.nombre,
-      descripcion: value.descripcion || '',
-      precio: Number(value.precio),
-      stock: Number(value.stock)
-    };
     this.productService.createWithMultipart(data, file).subscribe({
       next: () => {
         this.uploadingImage.set(false);
@@ -181,16 +208,16 @@ export class ProductListComponent implements OnInit {
       error: (err) => {
         this.uploadingImage.set(false);
         this.errorMessage.set(err.error?.mensaje || err.message || 'Error al crear el producto.');
-      }
+      },
     });
   }
 
   confirmDelete(product: Product): void {
     if (!product.id) return;
-    if (!confirm(`¿Eliminar el producto "${product.nombre}"?`)) return;
+    if (!confirm(`¿Desactivar el producto "${product.nombre}"?`)) return;
     this.productService.delete(product.id).subscribe({
       next: () => this.loadProducts(),
-      error: (err) => this.errorMessage.set(err.error?.mensaje || 'Error al eliminar')
+      error: (err) => this.errorMessage.set(err.error?.mensaje || 'Error al eliminar'),
     });
   }
 }

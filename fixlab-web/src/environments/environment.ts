@@ -7,6 +7,7 @@ import type { Environment } from './environment.model';
 export const environment: Environment = {
   production: false,
   apiBaseUrl: 'http://localhost:8081',
-  /** Activa cuando el backend tenga POST /api/upload que devuelva { url: string } */
   useImageUpload: false,
+  /** Clave de sitio reCAPTCHA v2. En desarrollo puedes usar la de prueba: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI */
+  recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 };

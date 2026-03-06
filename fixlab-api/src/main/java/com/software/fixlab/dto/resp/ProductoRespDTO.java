@@ -10,13 +10,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductoRespDTO {
-    private Long id; // <-- Cambiado a Long para coincidir con tu BD
+    private Long id;
     private String nombre;
     private String descripcion;
-    private Double precio; // <-- Cambiado a Double
+    private Double precio;
     private Integer stock;
     private String sku;
     private String imagenUrl;
+    private Boolean activo;
 
     private CategoriaRespDTO categoria;
     private TipoProductoRespDTO tipoProducto;

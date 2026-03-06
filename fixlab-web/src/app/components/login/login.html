@@ -31,6 +31,12 @@
           <div class="invalid-feedback">La contraseña debe ser de al menos 6 caracteres.</div>
         </div>
 
+        @if (recaptchaSiteKey) {
+          <div class="mb-3 d-flex justify-content-center">
+            <div id="recaptcha-container"></div>
+          </div>
+        }
+
         <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
           <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
         </button>

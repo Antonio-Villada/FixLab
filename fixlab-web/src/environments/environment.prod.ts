@@ -9,4 +9,6 @@ export const environment: Environment = {
   production: true,
   apiBaseUrl: '',
   useImageUpload: false,
+  /** Sustituir por tu clave de sitio reCAPTCHA v2 de producción */
+  recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 };

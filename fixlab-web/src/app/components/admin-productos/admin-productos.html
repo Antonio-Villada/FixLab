@@ -3,9 +3,14 @@
     <h1 class="h3 mb-0">
       <i class="bi bi-box-seam me-2"></i>Gestión de Productos
     </h1>
-    <button type="button" class="btn btn-primary" (click)="openCreate()">
-      <i class="bi bi-plus-lg me-1"></i> Nuevo producto
-    </button>
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/categorias" class="btn btn-outline-secondary">Categorías</a>
+      <a routerLink="/admin/tipos-producto" class="btn btn-outline-secondary">Tipos de producto</a>
+      <a routerLink="/admin/usuarios" class="btn btn-outline-secondary">Usuarios</a>
+      <button type="button" class="btn btn-primary" (click)="openCreate()">
+        <i class="bi bi-plus-lg me-1"></i> Nuevo producto
+      </button>
+    </div>
   </div>
 
   @if (errorMessage()) {
@@ -27,6 +32,8 @@
           <tr>
             <th>SKU</th>
             <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Tipo</th>
             <th>Precio</th>
             <th>Stock</th>
             <th>Activo</th>
@@ -38,10 +45,12 @@
             <tr>
               <td><code>{{ p.sku }}</code></td>
               <td>{{ p.nombre }}</td>
+              <td>{{ p.categoria?.nombre ?? '-' }}</td>
+              <td>{{ p.tipoProducto?.nombre ?? '-' }}</td>
               <td>${{ p.precio | number:'1.2-2' }}</td>
               <td>{{ p.stock }}</td>
               <td>
-                @if (p.activo) {
+                @if (p.activo !== false) {
                   <span class="badge bg-success">Sí</span>
                 } @else {
                   <span class="badge bg-secondary">No</span>
@@ -51,14 +60,14 @@
                 <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(p)" title="Editar">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(p)" title="Eliminar">
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(p)" title="Desactivar">
                   <i class="bi bi-trash"></i>
                 </button>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">No hay productos. Crea uno con "Nuevo producto".</td>
+              <td colspan="8" class="text-center text-muted py-4">No hay productos. Crea uno con "Nuevo producto".</td>
             </tr>
           }
         </tbody>
@@ -93,6 +102,30 @@
                 }
               </div>
               <div class="mb-3">
+                <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                <select formControlName="categoriaId" class="form-select">
+                  <option [ngValue]="null">Seleccione categoría</option>
+                  @for (c of categorias(); track c.id) {
+                    <option [ngValue]="c.id">{{ c.nombre }}</option>
+                  }
+                </select>
+                @if (form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched) {
+                  <div class="text-danger small">Seleccione una categoría.</div>
+                }
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Tipo de producto <span class="text-danger">*</span></label>
+                <select formControlName="tipoProductoId" class="form-select">
+                  <option [ngValue]="null">Seleccione tipo</option>
+                  @for (t of tiposProducto(); track t.id) {
+                    <option [ngValue]="t.id">{{ t.nombre }}</option>
+                  }
+                </select>
+                @if (form.get('tipoProductoId')?.invalid && form.get('tipoProductoId')?.touched) {
+                  <div class="text-danger small">Seleccione un tipo de producto.</div>
+                }
+              </div>
+              <div class="mb-3">
                 <label class="form-label">Descripción</label>
                 <textarea formControlName="descripcion" class="form-control" rows="2"
                   placeholder="Descripción opcional"></textarea>
@@ -116,19 +149,21 @@
               <div class="mb-3 mt-2">
                 <label class="form-label">URL imagen</label>
                 <input type="url" formControlName="imagenUrl" class="form-control"
-                  placeholder="https://... (solo al editar)">
+                  placeholder="(Opcional; al editar se usa la subida si envías archivo)">
               </div>
               @if (!isEditing()) {
                 <div class="mb-3">
                   <label class="form-label">Imagen del producto <span class="text-danger">*</span></label>
                   <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)">
-                  <small class="text-muted">Requerido al crear.</small>
+                  <small class="text-muted">Requerido al crear. Se sube a Cloudinary.</small>
+                </div>
+              } @else {
+                <div class="mb-3">
+                  <label class="form-label">Nueva imagen (opcional)</label>
+                  <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)">
+                  <small class="text-muted">Dejar vacío para mantener la imagen actual.</small>
                 </div>
               }
-              <div class="form-check">
-                <input type="checkbox" formControlName="activo" class="form-check-input" id="activo">
-                <label class="form-check-label" for="activo">Producto activo (visible)</label>
-              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>

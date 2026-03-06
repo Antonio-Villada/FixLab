@@ -3,7 +3,14 @@ import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { LoginReqDTO, TokenRespDTO, RegistroReqDTO, MensajeRespDTO } from '../models/auth.model';
+import {
+  LoginReqDTO,
+  TokenRespDTO,
+  RegistroReqDTO,
+  MensajeRespDTO,
+  RegistroEmpleadoReqDTO,
+  CambioRolReqDTO,
+} from '../models/auth.model';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart.service';
 
@@ -30,6 +37,14 @@ export class AuthService {
    */
   register(registerData: RegistroReqDTO): Observable<MensajeRespDTO> {
     return this.http.post<MensajeRespDTO>(`${this.URL}/registro`, registerData);
+  }
+
+  registrarEmpleado(data: RegistroEmpleadoReqDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/registro-empleado`, data);
+  }
+
+  cambiarRol(data: CambioRolReqDTO): Observable<MensajeRespDTO> {
+    return this.http.put<MensajeRespDTO>(`${this.URL}/cambiar-rol`, data);
   }
 
   /**
