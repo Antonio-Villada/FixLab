@@ -92,7 +92,12 @@ public class PedidoServiceImpl implements PedidoService {
 
         long montoEnCentavos = (long) (totalPedido * 100);
         String referencia = "FIX-" + nuevoPedido.getId() + "-" + System.currentTimeMillis();
-        String firma = wompiService.generarFirma(referencia, montoEnCentavos, "COP");
+        String firma;
+        try {
+            firma = wompiService.generarFirma(referencia, montoEnCentavos, "COP");
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo generar la firma de pago: " + e.getMessage());
+        }
 
         return WompiCheckoutDTO.builder()
                 .pedidoId(nuevoPedido.getId())
