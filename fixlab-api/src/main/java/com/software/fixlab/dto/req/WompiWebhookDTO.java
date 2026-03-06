@@ -6,6 +6,7 @@ import lombok.Data;
 public class WompiWebhookDTO {
     private String event;
     private WompiDataDTO data;
-    private Long sent_at;
-    private String signature;
+    private String environment;
+    private WompiSignatureDTO signature;
+    private Long timestamp;
 }

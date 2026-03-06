@@ -15,24 +15,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor // <-- Agregado para poder inyectar el JwtFilter
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter; // <-- Inyectamos nuestro nuevo filtro
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // Hacemos que la sesión sea "Stateless" (Sin estado).
-                // Esto es vital para JWT, obliga a Spring a no guardar sesiones en memoria RAM.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/webhooks/**").permitAll() // <-- ¡MOVIDO ARRIBA! Antes del anyRequest
                         .anyRequest().authenticated()
-                        .requestMatchers("/api/webhooks/**").permitAll()
                 )
-                // Agregamos nuestro filtro JUSTO ANTES del filtro de validación estándar de Spring
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -5,35 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/UsuarioUpdateReqDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/DetallePedidoRespDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/PedidoRespDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/UsuarioRespDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/exception/BadRequestException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/exception/NoExisteCategoriaException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/exception/NoExistePedidoException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/exception/NoExisteProductoException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/exception/NoExisteTipoProductoException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/exception/ResourceNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiSignatureDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/WompiService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/CategoriaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/CategoriaController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/TipoProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/TipoProductoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Pedido.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/mapper/UsuarioMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/mapper/UsuarioMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/DetallePedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/DetallePedidoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/CategoriaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/CategoriaServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/ProductoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/ProductoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/TipoProductoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/TipoProductoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/CategoriaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/CategoriaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/ProductoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/ProductoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/TipoProductoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/TipoProductoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiDataDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiDataDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiWebhookDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiWebhookDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,33 +45,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.FixlabApplication.executor": "Run",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/antonio-villada/Escritorio/UQ/Sofware3/FixLab/FixLab/fixlab-api",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.FixlabApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;AntonioVillada&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/antonio-villada/Escritorio/UQ/Sofware3/FixLab/FixLab/fixlab-api&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="FixlabApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -132,7 +113,8 @@
       <workItem from="1772656680220" duration="103000" />
       <workItem from="1772657135211" duration="1441000" />
       <workItem from="1772674068935" duration="546000" />
-      <workItem from="1772684396042" duration="3172000" />
+      <workItem from="1772684396042" duration="3474000" />
+      <workItem from="1772748741758" duration="1952000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

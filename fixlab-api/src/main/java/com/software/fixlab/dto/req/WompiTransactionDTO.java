@@ -5,8 +5,7 @@ import lombok.Data;
 @Data
 public class WompiTransactionDTO {
     private String id;
+    private String status;
     private Long amount_in_cents;
     private String reference;
-    private String status; // APPROVED, DECLINED, VOIDED
-    private String payment_method_type;
 }
