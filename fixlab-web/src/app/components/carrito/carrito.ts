@@ -81,7 +81,11 @@ export class CarritoComponent {
     this.loadingPago.set(true);
     this.errorPago.set(null);
 
-    const redirectUrl = typeof window !== 'undefined' ? `${window.location.origin}/productos` : undefined;
+    // Wompi devuelve 403 si redirect-url es localhost; solo enviar en producción (dominio real)
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const redirectUrl = origin && !/localhost|127\.0\.0\.1/i.test(origin)
+      ? `${origin}/pago-exitoso`
+      : undefined;
 
     this.checkoutService
       .crearPedido(body)

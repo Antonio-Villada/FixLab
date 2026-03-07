@@ -5,9 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/WompiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/WompiService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +40,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;boty19&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Antonio-Villada/FixLab.git&quot;,
+    &quot;accountId&quot;: &quot;d3fac209-a91d-4afd-a257-f787874edd1c&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -109,6 +135,7 @@
       <workItem from="1772684396042" duration="3172000" />
       <workItem from="1772821325578" duration="250000" />
       <workItem from="1772821749452" duration="1255000" />
+      <workItem from="1772838882669" duration="6932000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

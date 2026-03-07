@@ -19,6 +19,11 @@ export class UsuarioService {
     return this.http.get<UsuarioRespDTO>(`${url}/${cedula}`);
   }
 
+  /** Perfil del usuario actual (requiere estar autenticado). */
+  getMe(): Observable<UsuarioRespDTO> {
+    return this.http.get<UsuarioRespDTO>(`${url}/me`);
+  }
+
   update(cedula: string, dto: UsuarioUpdateReqDTO): Observable<UsuarioRespDTO> {
     return this.http.put<UsuarioRespDTO>(`${url}/${cedula}`, dto);
   }

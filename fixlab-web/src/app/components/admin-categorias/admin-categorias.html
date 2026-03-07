@@ -3,14 +3,9 @@
     <h1 class="h3 mb-0">
       <i class="bi bi-tags me-2"></i>Gestión de Categorías
     </h1>
-    <div class="d-flex gap-2">
-      <a routerLink="/admin/productos" class="btn btn-outline-secondary">Productos</a>
-      <a routerLink="/admin/tipos-producto" class="btn btn-outline-secondary">Tipos de producto</a>
-      <a routerLink="/admin/usuarios" class="btn btn-outline-secondary">Usuarios</a>
-      <button type="button" class="btn btn-primary" (click)="openCreate()">
-        <i class="bi bi-plus-lg me-1"></i> Nueva categoría
-      </button>
-    </div>
+    <button type="button" class="btn btn-primary" (click)="openCreate()">
+      <i class="bi bi-plus-lg me-1"></i> Nueva categoría
+    </button>
   </div>
 
   @if (errorMessage()) {

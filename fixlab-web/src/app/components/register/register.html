@@ -1,12 +1,13 @@
 <div class="register-page">
   <div class="register-container">
-    <!-- Panel izquierdo: formulario -->
+    <!-- Panel izquierdo: formulario o verificación -->
     <section class="form-panel">
       <div class="form-header">
         <span class="brand">FixLab</span>
         <a routerLink="/login" class="sign-in-link">¿Ya tienes cuenta? <strong>Inicia sesión aquí</strong></a>
       </div>
 
+      @if (!emailParaVerificar()) {
       <h1 class="form-title">Crear una cuenta</h1>
 
       <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="register-form">
@@ -98,6 +99,31 @@
 
         <p class="footer-copy">© FixLab. Solo clientes se registran aquí; empleados son dados de alta por el administrador.</p>
       </form>
+      } @else {
+      <h1 class="form-title">Verifica tu correo</h1>
+      <p class="text-muted mb-3">Enviamos un código de 6 dígitos a <strong>{{ emailParaVerificar() }}</strong>. Ingresa el código aquí para completar tu registro.</p>
+      <div class="register-form">
+        <div class="form-group">
+          <label for="codigo">Código de verificación</label>
+          <input
+            id="codigo"
+            type="text"
+            [formControl]="codigoVerificacion"
+            placeholder="000000"
+            maxlength="6"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+          />
+          @if (codigoVerificacion.invalid && codigoVerificacion.touched) {
+            <span class="error">Ingresa los 6 dígitos que recibiste por correo.</span>
+          }
+        </div>
+        <button type="button" class="btn-create" (click)="onVerificar()" [disabled]="codigoVerificacion.invalid || verifying">
+          {{ verifying ? 'Verificando...' : 'Verificar y continuar' }}
+        </button>
+        <p class="footer-copy mt-2">Si no recibes el código, revisa la carpeta de spam o vuelve a registrarte más tarde.</p>
+      </div>
+      }
     </section>
 
     <!-- Panel derecho: logo FixLab -->

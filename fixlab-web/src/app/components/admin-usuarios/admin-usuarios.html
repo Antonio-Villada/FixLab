@@ -3,14 +3,9 @@
     <h1 class="h3 mb-0">
       <i class="bi bi-people me-2"></i>Gestión de Usuarios
     </h1>
-    <div class="d-flex gap-2">
-      <a routerLink="/admin/productos" class="btn btn-outline-secondary">Productos</a>
-      <a routerLink="/admin/categorias" class="btn btn-outline-secondary">Categorías</a>
-      <a routerLink="/admin/tipos-producto" class="btn btn-outline-secondary">Tipos de producto</a>
-      <button type="button" class="btn btn-primary" (click)="openCreate()">
-        <i class="bi bi-person-plus me-1"></i> Nuevo empleado
-      </button>
-    </div>
+    <button type="button" class="btn btn-primary" (click)="openCreate()">
+      <i class="bi bi-person-plus me-1"></i> Nuevo empleado
+    </button>
   </div>
 
   @if (errorMessage()) {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -62,6 +62,13 @@ export class RegisterComponent {
   );
 
   submitting = false;
+  /** Después del registro exitoso se muestra el paso de verificación. */
+  emailParaVerificar = signal<string | null>(null);
+  codigoVerificacion = new FormControl<string>('', [
+    Validators.required,
+    Validators.pattern(/^\d{6}$/),
+  ]);
+  verifying = false;
 
   onSubmit(): void {
     if (this.registroForm.invalid) {
@@ -83,14 +90,35 @@ export class RegisterComponent {
     this.authService.register(datosRegistro).subscribe({
       next: (res) => {
         this.submitting = false;
-        alert(res.mensaje || 'Cuenta de cliente creada. Revisa tu correo para verificar.');
-        this.router.navigate(['/login']);
+        this.emailParaVerificar.set(datosRegistro.email);
+        this.codigoVerificacion.reset('');
       },
       error: (err) => {
         this.submitting = false;
         const msgError =
           err.error?.mensaje || 'No se pudo completar el registro. Intenta de nuevo.';
         alert('Error: ' + msgError);
+      },
+    });
+  }
+
+  onVerificar(): void {
+    const email = this.emailParaVerificar();
+    const codigo = this.codigoVerificacion.value?.trim();
+    if (!email || !codigo || this.codigoVerificacion.invalid) {
+      this.codigoVerificacion.markAsTouched();
+      return;
+    }
+    this.verifying = true;
+    this.authService.verificarCorreo({ email, codigo }).subscribe({
+      next: (res) => {
+        this.verifying = false;
+        alert(res.mensaje || 'Cuenta verificada. Ya puedes iniciar sesión.');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.verifying = false;
+        alert(err.error?.mensaje || 'Código incorrecto o expirado. Revisa tu correo e intenta de nuevo.');
       },
     });
   }

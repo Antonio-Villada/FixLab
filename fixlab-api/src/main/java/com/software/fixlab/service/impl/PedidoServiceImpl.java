@@ -160,6 +160,17 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public PedidoRespDTO obtenerPorIdParaCliente(Integer id, String emailUsuario) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NoExistePedidoException("Pedido no encontrado con ID: " + id));
+        if (!pedido.getCliente().getEmail().equalsIgnoreCase(emailUsuario)) {
+            throw new ResourceNotFoundException("No tiene acceso a este pedido");
+        }
+        return mapearADto(pedido);
+    }
+
+    @Override
     @Transactional
     public PedidoRespDTO actualizarEstado(Integer id, String nuevoEstado) {
         Pedido pedido = pedidoRepository.findById(id)

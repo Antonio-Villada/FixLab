@@ -66,10 +66,15 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN')")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable Integer id, Authentication authentication) {
         try {
-            return ResponseEntity.ok(pedidoService.obtenerPorId(id));
-        } catch (NoExistePedidoException e) {
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+            if (isAdmin) {
+                return ResponseEntity.ok(pedidoService.obtenerPorId(id));
+            }
+            return ResponseEntity.ok(pedidoService.obtenerPorIdParaCliente(id, authentication.getName()));
+        } catch (NoExistePedidoException | ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespDTO(e.getMessage()));
         }
     }

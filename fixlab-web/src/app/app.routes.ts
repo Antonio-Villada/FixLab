@@ -12,16 +12,22 @@ import { AdminProductosComponent } from './components/admin-productos/admin-prod
 import { AdminCategoriasComponent } from './components/admin-categorias/admin-categorias';
 import { AdminTiposProductoComponent } from './components/admin-tipos-producto/admin-tipos-producto';
 import { AdminUsuariosComponent } from './components/admin-usuarios/admin-usuarios';
+import { AdminPedidosComponent } from './components/admin-pedidos/admin-pedidos';
+import { PagoExitosoComponent } from './components/pago-exitoso/pago-exitoso';
+import { FacturaComponent } from './components/factura/factura';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
   { path: 'productos', component: ProductListComponent },
   { path: 'carrito', component: CarritoComponent },
+  { path: 'pago-exitoso', component: PagoExitosoComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  { path: 'factura/:id', component: FacturaComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminRedirectComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/productos', component: AdminProductosComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'admin/pedidos', component: AdminPedidosComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/categorias', component: AdminCategoriasComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/tipos-producto', component: AdminTiposProductoComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [authGuard, adminGuard] },

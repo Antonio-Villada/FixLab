@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { CheckoutReqDTO, WompiCheckoutDTO } from '../models/checkout.model';
+import { CheckoutReqDTO, WompiCheckoutDTO, PedidoRespDTO } from '../models/checkout.model';
 
 const WOMPI_CHECKOUT_BASE = 'https://checkout.wompi.co/p/';
 const WOMPI_WIDGET_SCRIPT = 'https://checkout.wompi.co/widget.js';
@@ -33,6 +33,21 @@ export class CheckoutService {
 
   crearPedido(body: CheckoutReqDTO): Observable<WompiCheckoutDTO> {
     return this.http.post<WompiCheckoutDTO>(this.baseUrl, body);
+  }
+
+  /** Lista de pedidos del usuario actual. */
+  getMisPedidos(): Observable<PedidoRespDTO[]> {
+    return this.http.get<PedidoRespDTO[]>(`${this.baseUrl}/mis-pedidos`);
+  }
+
+  /** Todos los pedidos (solo ADMIN). */
+  getTodosPedidos(): Observable<PedidoRespDTO[]> {
+    return this.http.get<PedidoRespDTO[]>(this.baseUrl);
+  }
+
+  /** Obtener un pedido por ID (cliente: solo los suyos; admin: cualquiera). */
+  getPedidoPorId(id: number): Observable<PedidoRespDTO> {
+    return this.http.get<PedidoRespDTO>(`${this.baseUrl}/${id}`);
   }
 
   /**
