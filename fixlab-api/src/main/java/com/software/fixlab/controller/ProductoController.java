@@ -3,14 +3,17 @@ package com.software.fixlab.controller;
 import com.software.fixlab.dto.req.ProductoReqDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
 import com.software.fixlab.dto.resp.ProductoRespDTO;
-import com.software.fixlab.exception.*;
+import com.software.fixlab.exception.BadRequestException;
+import com.software.fixlab.exception.NoExisteCategoriaException;
+import com.software.fixlab.exception.NoExisteProductoException;
+import com.software.fixlab.exception.NoExisteTipoProductoException;
 import com.software.fixlab.service.interfaces.ProductoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,23 +24,21 @@ public class ProductoController {
 
     private final ProductoService productoService;
 
-    // --- CREACIÓN (ADMIN) ---
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = "multipart/form-data")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> crearProducto(@ModelAttribute ProductoReqDTO dto) {
+    public ResponseEntity<?> crearProducto(
+            @ModelAttribute ProductoReqDTO dto,
+            @RequestParam("imagen") MultipartFile imagen) {
         try {
-            // Nota: El 'imagen' viene dentro del DTO como MultipartFile
-            ProductoRespDTO productoCreado = productoService.crearProducto(dto, dto.getImagen());
+            ProductoRespDTO productoCreado = productoService.crearProducto(dto, imagen);
             return ResponseEntity.status(HttpStatus.CREATED).body(productoCreado);
         } catch (NoExisteCategoriaException | NoExisteTipoProductoException | BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MensajeRespDTO("Error al subir producto: " + e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MensajeRespDTO("Error interno del servidor al procesar la solicitud."));
         }
     }
 
-    // --- CONSULTA (PÚBLICO) ---
     @GetMapping
     public ResponseEntity<List<ProductoRespDTO>> obtenerProductos() {
         return ResponseEntity.ok(productoService.obtenerTodosLosProductos());
@@ -52,23 +53,23 @@ public class ProductoController {
         }
     }
 
-    // --- ACTUALIZACIÓN (ADMIN) ---
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizarProducto(@PathVariable Long id, @ModelAttribute ProductoReqDTO dto) {
+    public ResponseEntity<?> actualizarProducto(
+            @PathVariable Long id,
+            @ModelAttribute ProductoReqDTO dto,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
-            return ResponseEntity.ok(productoService.actualizarProducto(id, dto, dto.getImagen()));
+            return ResponseEntity.ok(productoService.actualizarProducto(id, dto, imagen));
         } catch (NoExisteProductoException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespDTO(e.getMessage()));
         } catch (NoExisteCategoriaException | NoExisteTipoProductoException | BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MensajeRespDTO("Error al actualizar: " + e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MensajeRespDTO("Error interno del servidor al procesar la solicitud."));
         }
     }
 
-    // --- ELIMINACIÓN/DESACTIVACIÓN (ADMIN) ---
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {

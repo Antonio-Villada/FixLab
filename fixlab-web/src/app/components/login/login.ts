@@ -35,6 +35,7 @@ export class Login implements OnInit, AfterViewInit {
   recaptchaSiteKey = environment.recaptchaSiteKey ?? '';
   captchaWidgetId: number | null = null;
   captchaReady = false;
+  showPassword = false;
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -104,7 +105,7 @@ export class Login implements OnInit, AfterViewInit {
       next: (response) => {
         const rol = response.rol ?? this.authService.getRol();
         if (rol === 'ADMIN') {
-          this.router.navigate(['/productos']);
+          this.router.navigate(['/home']);
         } else if (rol === 'TECNICO') {
           this.router.navigate(['/dashboard']);
         } else {

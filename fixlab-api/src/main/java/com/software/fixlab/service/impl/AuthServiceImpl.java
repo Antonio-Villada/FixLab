@@ -8,7 +8,6 @@ import com.software.fixlab.entity.Usuario;
 import com.software.fixlab.mapper.UsuarioMapper;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.AuthService;
-import com.software.fixlab.service.interfaces.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -111,7 +110,10 @@ public class AuthServiceImpl implements AuthService {
             throw new Exception("Credenciales incorrectas");
         }
 
-        // Aquí más adelante activaremos la validación: si (!usuario.isCorreoVerificado()) throw Exception...
+        // Clientes deben tener el correo verificado para poder iniciar sesión
+        if (usuario.getRol() == RolUsuario.CLIENTE && !usuario.isCorreoVerificado()) {
+            throw new Exception("Debes verificar tu correo antes de iniciar sesión. Revisa el código de 6 dígitos que enviamos a tu email.");
+        }
 
         usuario.setIntentosFallidos(0);
         usuario.setBloqueadoHasta(null);

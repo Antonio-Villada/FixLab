@@ -14,5 +14,7 @@ public interface PedidoService {
     List<PedidoRespDTO> obtenerTodos();
     List<PedidoRespDTO> obtenerMisPedidos(String emailUsuario);
     PedidoRespDTO obtenerPorId(Integer id);
+    /** Obtiene un pedido por ID solo si pertenece al cliente con el email dado. */
+    PedidoRespDTO obtenerPorIdParaCliente(Integer id, String emailUsuario);
     PedidoRespDTO actualizarEstado(Integer id, String nuevoEstado);
 }

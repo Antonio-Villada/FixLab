@@ -7,6 +7,7 @@ import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth';
 import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutReqDTO } from '../../models/checkout.model';
+import { timeout, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-carrito',
@@ -80,22 +81,34 @@ export class CarritoComponent {
     this.loadingPago.set(true);
     this.errorPago.set(null);
 
-    this.checkoutService.crearPedido(body).subscribe({
-      next: (res) => {
-        this.cartService.clear();
-        this.showDireccionModal.set(false);
-        this.loadingPago.set(false);
-        const redirectUrl = typeof window !== 'undefined' ? `${window.location.origin}/productos` : undefined;
-        this.checkoutService.openWompiCheckout(res, redirectUrl, () => {
-          // Usuario cerró o completó el pago en el widget; el webhook confirmará en el backend
-        });
-      },
-      error: (err) => {
-        this.loadingPago.set(false);
-        this.errorPago.set(
-          err.error?.mensaje || err.message || 'Error al crear el pedido. Intenta de nuevo.'
-        );
-      },
-    });
+    // Wompi devuelve 403 si redirect-url es localhost; solo enviar en producción (dominio real)
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const redirectUrl = origin && !/localhost|127\.0\.0\.1/i.test(origin)
+      ? `${origin}/pago-exitoso`
+      : undefined;
+
+    this.checkoutService
+      .crearPedido(body)
+      .pipe(
+        timeout(20000),
+        finalize(() => this.loadingPago.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.cartService.clear();
+          this.showDireccionModal.set(false);
+          this.checkoutService.openWompiCheckout(res, redirectUrl, () => {
+            // Usuario cerró o completó el pago en el widget; el webhook confirmará en el backend
+          });
+        },
+        error: (err) => {
+          const isTimeout = err?.name === 'TimeoutError' || err?.message?.includes('timeout');
+          this.errorPago.set(
+            isTimeout
+              ? 'El servidor no respondió a tiempo. Comprueba que la API esté en ejecución e inténtalo de nuevo.'
+              : err?.error?.mensaje || err?.message || 'Error al crear el pedido. Intenta de nuevo.'
+          );
+        },
+      });
   }
 }

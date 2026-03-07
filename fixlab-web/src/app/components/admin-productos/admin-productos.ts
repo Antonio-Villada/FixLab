@@ -28,6 +28,7 @@ export class AdminProductosComponent implements OnInit {
   errorMessage = signal<string | null>(null);
   modalVisible = signal(false);
   editingProduct = signal<Product | null>(null);
+  imagePreviewUrl = signal<string | null>(null);
   selectedFile = signal<File | null>(null);
   uploadingImage = signal(false);
 
@@ -77,7 +78,6 @@ export class AdminProductosComponent implements OnInit {
 
   openCreate(): void {
     this.editingProduct.set(null);
-    this.selectedFile.set(null);
     this.form.reset({
       sku: '',
       nombre: '',
@@ -88,6 +88,7 @@ export class AdminProductosComponent implements OnInit {
       categoriaId: null,
       tipoProductoId: null,
     });
+    this.clearImagePreview();
     this.modalVisible.set(true);
   }
 
@@ -104,22 +105,45 @@ export class AdminProductosComponent implements OnInit {
       tipoProductoId: product.tipoProducto?.id ?? null,
     });
     this.selectedFile.set(null);
+    this.imagePreviewUrl.set(product.imagenUrl || null);
     this.modalVisible.set(true);
   }
 
   closeModal(): void {
     this.modalVisible.set(false);
     this.editingProduct.set(null);
+    this.clearImagePreview();
+  }
+
+  private clearImagePreview(): void {
+    const url = this.imagePreviewUrl();
+    if (url?.startsWith('blob:')) {
+      URL.revokeObjectURL(url);
+    }
+    this.imagePreviewUrl.set(null);
     this.selectedFile.set(null);
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (file?.type.startsWith('image/')) {
-      this.selectedFile.set(file);
-    }
+    if (!file?.type.startsWith('image/')) return;
+    this.clearImagePreview();
+    this.selectedFile.set(file);
+    this.imagePreviewUrl.set(URL.createObjectURL(file));
+    this.form.patchValue({ imagenUrl: '' });
     input.value = '';
+  }
+
+  removeSelectedImage(): void {
+    this.clearImagePreview();
+    this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
+  }
+
+  onImagenUrlChange(): void {
+    if (!this.selectedFile()) {
+      this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
+    }
   }
 
   onSubmit(): void {

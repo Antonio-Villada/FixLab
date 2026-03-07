@@ -35,11 +35,22 @@ export class ProductListComponent implements OnInit {
   selectedFile = signal<File | null>(null);
   uploadingImage = signal(false);
 
+  /** Filtros para la vista cliente (categoría y/o tipo). null = ver todos. */
+  filterCategoriaId = signal<number | null>(null);
+  filterTipoProductoId = signal<number | null>(null);
+
   isAdmin = computed(() => this.authService.isAdmin());
-  /** Clientes: solo productos activos. Admin: todos. */
+  /** Clientes: solo productos activos + filtros. Admin: todos. */
   productsToShow = computed(() => {
     const list = this.products();
-    return this.isAdmin() ? list : list.filter((p) => p.activo !== false);
+    let result = this.isAdmin() ? list : list.filter((p) => p.activo !== false);
+    if (!this.isAdmin()) {
+      const catId = this.filterCategoriaId();
+      const tipoId = this.filterTipoProductoId();
+      if (catId != null) result = result.filter((p) => p.categoria?.id === catId);
+      if (tipoId != null) result = result.filter((p) => p.tipoProducto?.id === tipoId);
+    }
+    return result;
   });
   isEditing = computed(() => this.editingProduct() !== null);
 

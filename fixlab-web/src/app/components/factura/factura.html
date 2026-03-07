@@ -1,0 +1,85 @@
+<div class="factura-container">
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">Cargando factura...</p>
+    </div>
+  } @else if (error()) {
+    <div class="alert alert-warning">
+      {{ error() }}
+      <a routerLink="/dashboard" class="btn btn-sm btn-outline-primary mt-2">Volver a Mi Panel</a>
+    </div>
+  } @else if (pedido(); as p) {
+    <div class="no-print mb-3 d-flex justify-content-between align-items-center">
+      <a routerLink="/dashboard" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Volver a Mi Panel
+      </a>
+      <button type="button" class="btn btn-primary" (click)="imprimir()">
+        <i class="bi bi-printer me-1"></i> Imprimir / Guardar como PDF
+      </button>
+    </div>
+
+    <div class="factura-paper shadow-sm">
+      <header class="factura-header">
+        <h1 class="factura-title">FIXLAB</h1>
+        <p class="text-muted mb-0 small">Comprobante de venta</p>
+      </header>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h2 class="h6 text-uppercase text-muted mb-2">Factura Nº</h2>
+          <p class="fw-bold mb-0">#{{ p.id }}</p>
+          <p class="small text-muted mb-0">Fecha: {{ formatFecha(p.fechaCreacion) }}</p>
+        </div>
+        <div class="col-md-6">
+          <h2 class="h6 text-uppercase text-muted mb-2">Cliente</h2>
+          <p class="mb-0">{{ p.clienteNombre ?? '-' }}</p>
+          <p class="small text-muted mb-0">Cédula: {{ p.clienteCedula ?? '-' }}</p>
+          @if (p.direccionEnvio) {
+            <p class="small mb-0 mt-1"><strong>Envío:</strong> {{ p.direccionEnvio }}</p>
+          }
+        </div>
+      </div>
+
+      <table class="table table-bordered factura-tabla">
+        <thead class="table-light">
+          <tr>
+            <th>Producto</th>
+            <th class="text-center">Cantidad</th>
+            <th class="text-end">Precio unit.</th>
+            <th class="text-end">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (p.detalles && p.detalles.length > 0) {
+            @for (d of p.detalles; track d.productoId) {
+              <tr>
+                <td>{{ d.nombreProducto }}</td>
+                <td class="text-center">{{ d.cantidad }}</td>
+                <td class="text-end">${{ d.precioUnitario | number:'1.2-2' }}</td>
+                <td class="text-end">${{ d.subtotal | number:'1.2-2' }}</td>
+              </tr>
+            }
+          }
+          @if (!p.detalles || p.detalles.length === 0) {
+            <tr>
+              <td colspan="4" class="text-center text-muted">Sin detalle</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-end">
+        <div class="factura-total">
+          <span class="text-muted me-2">Total:</span>
+          <span class="fs-4 fw-bold">${{ p.total | number:'1.2-2' }} COP</span>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-top text-center text-muted small">
+        <p class="mb-0">Estado: <strong>{{ p.estado || 'Pendiente' }}</strong></p>
+        <p class="mb-0 mt-1">Gracias por su compra — FixLab</p>
+      </div>
+    </div>
+  }
+</div>

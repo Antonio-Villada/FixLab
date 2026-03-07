@@ -67,3 +67,9 @@ export interface CambioRolReqDTO {
   cedula: string;
   nuevoRol: RolUsuario;
 }
+
+// Verificar correo con código de 6 dígitos (POST /api/auth/verificar-correo)
+export interface VerificarCorreoReqDTO {
+  email: string;
+  codigo: string;
+}

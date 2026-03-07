@@ -10,6 +10,7 @@ import {
   MensajeRespDTO,
   RegistroEmpleadoReqDTO,
   CambioRolReqDTO,
+  VerificarCorreoReqDTO,
 } from '../models/auth.model';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart.service';
@@ -41,6 +42,11 @@ export class AuthService {
 
   registrarEmpleado(data: RegistroEmpleadoReqDTO): Observable<MensajeRespDTO> {
     return this.http.post<MensajeRespDTO>(`${this.URL}/registro-empleado`, data);
+  }
+
+  /** Verificar correo con el código de 6 dígitos enviado al email. */
+  verificarCorreo(data: VerificarCorreoReqDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/verificar-correo`, data);
   }
 
   cambiarRol(data: CambioRolReqDTO): Observable<MensajeRespDTO> {

@@ -7,6 +7,7 @@ import com.software.fixlab.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,12 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioRespDTO>> obtenerTodos() {
         return ResponseEntity.ok(usuarioService.obtenerTodos());
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UsuarioRespDTO> obtenerMiPerfil(Authentication authentication) {
+        return ResponseEntity.ok(usuarioService.obtenerPorEmail(authentication.getName()));
     }
 
     @GetMapping("/{cedula}")

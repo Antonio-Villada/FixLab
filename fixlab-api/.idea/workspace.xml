@@ -5,13 +5,159 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/annotation/AuditarAccion.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/aspect/AuditoriaAspect.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/RegistroAuditoria.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/AuditoriaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuditoriaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ai/mcp/mcp.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/annotation/AuditarAccion.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/aspect/AuditoriaAspect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/DataInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/DataInitializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/WebhookController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/ProductoReqDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/ProductoReqDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/WompiTransactionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/RegistroAuditoria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/AuditoriaRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuditoriaServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/EmailServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/WompiServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/EmailService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/WompiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/WompiService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/FixlabApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/annotation/AuditarAccion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/aspect/AuditoriaAspect.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/CloudinaryConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/DataInitializer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/JwtFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/CategoriaController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/PedidoController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/ProductoController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/TestController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/TipoProductoController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/UsuarioController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/WebhookController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/WebhookController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CambioRolReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CategoriaReqDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CategoriaReqDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CheckoutReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/ItemCarritoDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/LoginReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/PedidoReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/ProductoReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroEmpleadoReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/RegistroReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/TipoProductoReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/UsuarioUpdateReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/VerificarCorreoReqDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiDataDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiDataDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiSignatureDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiSignatureDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiTransactionDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiWebhookDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/WompiWebhookDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/CategoriaRespDTO$CategoriaRespDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/CategoriaRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/CheckoutRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/DetallePedidoRespDTO$DetallePedidoRespDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/DetallePedidoRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/MensajeRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/PedidoRespDTO$PedidoRespDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/PedidoRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/ProductoRespDTO$ProductoRespDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/ProductoRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/TipoProductoRespDTO$TipoProductoRespDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/TipoProductoRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/TokenRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/UsuarioRespDTO$UsuarioRespDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/UsuarioRespDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/WompiCheckoutDTO$WompiCheckoutDTOBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/resp/WompiCheckoutDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Categoria$CategoriaBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Categoria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/DetallePedido$DetallePedidoBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/DetallePedido.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/EstadoPedido.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/MotivoDevolucion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido$PedidoBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Pedido.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Producto$ProductoBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Producto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/RegistroAuditoria$RegistroAuditoriaBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/RegistroAuditoria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/RolUsuario.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/TipoProducto$TipoProductoBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/TipoProducto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario$UsuarioBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/entity/Usuario.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/BadRequestException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/GlobalExceptionHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/NoExisteCategoriaException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/NoExistePedidoException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/NoExisteProductoException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/NoExisteTipoProductoException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/exception/ResourceNotFoundException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/mapper/UsuarioMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/AuditoriaRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/CategoriaRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/DetallePedidoRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/PedidoRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/ProductoRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/TipoProductoRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/repository/UsuarioRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/AuditoriaServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/AuthServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/CategoriaServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/CloudinaryServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/EmailServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/JwtService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/PedidoServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/ProductoServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/TipoProductoServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/UsuarioServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/impl/WompiServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/AuthService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/CategoriaService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/CloudinaryService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/EmailService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/PedidoService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/PedidoService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/ProductoService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/TipoProductoService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/UsuarioService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/WompiService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/WompiService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-categorias/admin-categorias.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-categorias/admin-categorias.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-tipos-producto/admin-tipos-producto.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-tipos-producto/admin-tipos-producto.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-usuarios/admin-usuarios.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-usuarios/admin-usuarios.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/carrito/carrito.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/carrito/carrito.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/product-list/product-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/product-list/product-list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/product-list/product-list.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/product-list/product-list.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.css" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/models/checkout.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/models/checkout.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/checkout.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/checkout.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/usuario.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/usuario.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +169,6 @@
       <list>
         <option value="package-info" />
         <option value="Exception" />
-        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -31,6 +176,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;boty19&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Antonio-Villada/FixLab.git&quot;,
+    &quot;accountId&quot;: &quot;d3fac209-a91d-4afd-a257-f787874edd1c&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -45,7 +202,6 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.FixlabApplication.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
@@ -58,10 +214,10 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.FixlabApplication.executor": "Run",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "AntonioVillada",
+    "git-widget-placeholder": "IvanBanol",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/antonio-villada/Escritorio/UQ/Sofware3/FixLab/FixLab/fixlab-api",
+    "last_opened_file_path": "C:/FixLab/fixlab-api",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -71,25 +227,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/main/java/com/software/fixlab" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Spring Boot.FixlabApplication">
-    <configuration name="FixlabApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.software.fixlab.FixlabApplication" />
-      <module name="fixlab" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.software.fixlab.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager">
     <configuration name="FixlabApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="fixlab" />
@@ -98,11 +236,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.FixlabApplication" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -136,7 +269,11 @@
       <workItem from="1772657135211" duration="1441000" />
       <workItem from="1772674068935" duration="546000" />
       <workItem from="1772684396042" duration="3172000" />
-      <workItem from="1772845771723" duration="498000" />
+      <workItem from="1772821325578" duration="250000" />
+      <workItem from="1772821749452" duration="1255000" />
+      <workItem from="1772838882669" duration="6932000" />
+      <workItem from="1772908047486" duration="9000" />
+      <workItem from="1772908263165" duration="530000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

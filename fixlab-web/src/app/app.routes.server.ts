@@ -12,6 +12,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'register', renderMode: RenderMode.Prerender },
   { path: 'productos', renderMode: RenderMode.Server },
   { path: 'carrito', renderMode: RenderMode.Server },
+  { path: 'pago-exitoso', renderMode: RenderMode.Server },
   { path: 'dashboard', renderMode: RenderMode.Server },
+  { path: 'factura/**', renderMode: RenderMode.Server },
   { path: 'admin/**', renderMode: RenderMode.Server },
 ];

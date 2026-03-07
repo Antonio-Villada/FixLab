@@ -9,6 +9,7 @@ public interface UsuarioService {
     // Read
     List<UsuarioRespDTO> obtenerTodos();
     UsuarioRespDTO obtenerPorCedula(String cedula);
+    UsuarioRespDTO obtenerPorEmail(String email);
 
     // Update
     UsuarioRespDTO actualizarUsuario(String cedula, UsuarioUpdateReqDTO dto);

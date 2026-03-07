@@ -38,6 +38,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public UsuarioRespDTO obtenerPorEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
+        return usuarioMapper.toDto(usuario);
+    }
+
+    @Override
     @Transactional
     public UsuarioRespDTO actualizarUsuario(String cedula, UsuarioUpdateReqDTO dto) {
         Usuario usuario = usuarioRepository.findById(cedula)

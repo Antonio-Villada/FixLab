@@ -25,3 +25,24 @@ export interface CheckoutRespDTO {
   pedidoId: number;
   urlPago?: string;
 }
+
+/** Detalle de un ítem en un pedido (GET /api/pedidos/mis-pedidos). */
+export interface DetallePedidoRespDTO {
+  productoId: number;
+  nombreProducto: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+}
+
+/** Pedido del usuario (GET /api/pedidos/mis-pedidos). */
+export interface PedidoRespDTO {
+  id: number;
+  fechaCreacion: string;
+  total: number;
+  estado: string;
+  clienteCedula?: string;
+  clienteNombre?: string;
+  direccionEnvio?: string;
+  detalles?: DetallePedidoRespDTO[];
+}
