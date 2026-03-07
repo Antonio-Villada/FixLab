@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import java.time.LocalDateTime;
 
@@ -176,5 +178,42 @@ public class AuthServiceImpl implements AuthService {
         usuarioRepository.save(usuario);
 
         return new MensajeRespDTO("¡Cuenta verificada con éxito! Ya puedes iniciar sesión.");
+    }
+
+    @Override
+    public void solicitarRecuperacionPassword(String email) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email) // <-- CORREGIDO
+                .orElseThrow(() -> new Exception("No existe un usuario con ese correo"));
+
+        String token = UUID.randomUUID().toString();
+        usuario.setTokenRecuperacion(token);
+        usuario.setExpiracionToken(LocalDateTime.now().plusMinutes(15));
+
+        usuarioRepository.save(usuario);
+
+        String enlaceRestablecimiento = "http://localhost:4200/reset-password?token=" + token;
+        String mensaje = "Hola " + usuario.getNombre() + ",\n\n" +
+                "Has solicitado restablecer tu contraseña en FixLab.\n" +
+                "Haz clic en el siguiente enlace para crear una nueva (tienes 15 minutos):\n\n" +
+                enlaceRestablecimiento;
+
+        // <-- CORREGIDO: Usa getEmail() en lugar de getCorreo()
+        emailService.enviarCorreo(usuario.getEmail(), "Recuperación de Contraseña - FixLab", mensaje);
+    }
+
+    @Override
+    public void cambiarPasswordConToken(String token, String nuevaPassword) throws Exception {
+        Usuario usuario = usuarioRepository.findByTokenRecuperacion(token)
+                .orElseThrow(() -> new Exception("Token inválido o no existe"));
+
+        if (usuario.getExpiracionToken().isBefore(LocalDateTime.now())) {
+            throw new Exception("El token ha expirado. Solicita uno nuevo.");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuario.setTokenRecuperacion(null);
+        usuario.setExpiracionToken(null);
+
+        usuarioRepository.save(usuario);
     }
 }

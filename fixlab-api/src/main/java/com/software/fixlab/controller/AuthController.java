@@ -60,4 +60,25 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
         }
     }
+
+    @PostMapping("/recuperar-password")
+    public ResponseEntity<?> solicitarRecuperacion(@RequestBody SolicitarRecuperacionDTO dto) {
+        try {
+            authService.solicitarRecuperacionPassword(dto.getEmail());
+            // Siempre respondemos OK por seguridad, incluso si el correo no existe, para evitar filtración de datos (Enumeration Attack)
+            return ResponseEntity.ok(new MensajeRespDTO("Si el correo existe, se han enviado las instrucciones."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetearPassword(@RequestBody ResetearPasswordDTO dto) {
+        try {
+            authService.cambiarPasswordConToken(dto.getToken(), dto.getNuevaPassword());
+            return ResponseEntity.ok(new MensajeRespDTO("Contraseña actualizada correctamente. Ya puedes iniciar sesión."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
 }

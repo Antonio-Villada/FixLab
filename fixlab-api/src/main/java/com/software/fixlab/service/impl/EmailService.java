@@ -13,7 +13,7 @@ public class EmailService {
 
     public void enviarCodigoVerificacion(String destino, String nombre, String codigo) {
         SimpleMailMessage mensaje = new SimpleMailMessage();
-        mensaje.setFrom("FixLab Soporte <tu_correo@gmail.com>"); // Opcional, Spring usa el de properties por defecto
+        mensaje.setFrom("FixLab Soporte <tu_correo@gmail.com>");
         mensaje.setTo(destino);
         mensaje.setSubject("Tu código de verificación - FixLab");
         mensaje.setText("Hola " + nombre + ",\n\n"
@@ -42,5 +42,15 @@ public class EmailService {
                 + "¡Gracias por confiar en FixLab!");
 
         mailSender.send(mensaje);
+    }
+
+    // Si usas interfaz EmailService, recuerda declarar este método allí también.
+    public void enviarCorreo(String destinatario, String asunto, String mensaje) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(destinatario);
+        mailMessage.setSubject(asunto);
+        mailMessage.setText(mensaje);
+        mailMessage.setFrom("labfix64@gmail.com");
+        mailSender.send(mailMessage);
     }
 }

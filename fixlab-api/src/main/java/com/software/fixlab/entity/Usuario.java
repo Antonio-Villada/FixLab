@@ -52,4 +52,10 @@ public class Usuario {
     private String codigoVerificacion;
 
     private LocalDateTime expiracionCodigo;
+
+    @Column(name = "token_recuperacion")
+    private String tokenRecuperacion;
+
+    @Column(name = "expiracion_token")
+    private LocalDateTime expiracionToken;
 }

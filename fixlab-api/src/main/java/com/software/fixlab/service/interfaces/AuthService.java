@@ -7,17 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface AuthService {
     MensajeRespDTO registrarCliente(RegistroReqDTO dto) throws Exception;
-
-    // Nuevo método para los empleados
     MensajeRespDTO registrarEmpleado(RegistroEmpleadoReqDTO dto) throws Exception;
-
     TokenRespDTO login(LoginReqDTO dto) throws Exception;
-
-    // ... otros métodos ...
-
-    // Nuevo método para ascender o cambiar roles
     MensajeRespDTO cambiarRol(CambioRolReqDTO dto) throws Exception;
 
     @Transactional
     MensajeRespDTO verificarCorreo(VerificarCorreoReqDTO dto) throws Exception;
+    void solicitarRecuperacionPassword(String email) throws Exception;
+    void cambiarPasswordConToken(String token, String nuevaPassword) throws Exception;
 }
