@@ -8,6 +8,7 @@ import com.software.fixlab.entity.Usuario;
 import com.software.fixlab.mapper.UsuarioMapper;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.AuthService;
+import com.software.fixlab.service.interfaces.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
