@@ -73,3 +73,14 @@ export interface VerificarCorreoReqDTO {
   email: string;
   codigo: string;
 }
+
+// Solicitar recuperación de contraseña (POST /api/auth/recuperar-password)
+export interface SolicitarRecuperacionDTO {
+  email: string;
+}
+
+// Restablecer contraseña con token del correo (POST /api/auth/reset-password)
+export interface ResetearPasswordDTO {
+  token: string;
+  nuevaPassword: string;
+}

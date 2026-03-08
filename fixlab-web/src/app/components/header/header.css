@@ -1,18 +1,134 @@
-.logo-custom {
-  height: 45px;       /* Altura ideal para que no rompa la navbar */
-  width: auto;         /* Mantiene la proporción original */
-  border-radius: 8px;  /* Suaviza las esquinas del logo cuadrado */
-  object-fit: contain; /* Asegura que la imagen no se deforme */
-  transition: transform 0.3s ease; /* Efecto suave al pasar el mouse */
+/* Header con la misma altura que el footer (py-3 py-md-4) */
+.header-navbar {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  min-height: 56px;
+}
+@media (min-width: 768px) {
+  .header-navbar {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    min-height: 68px;
+  }
 }
 
-.logo-custom:hover {
-  transform: scale(1.05); /* Pequeño zoom al pasar el cursor */
-}
-
-/* Ajuste opcional para centrar verticalmente el texto FixLab con el logo */
 .navbar-brand {
   line-height: 1;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  max-width: 120px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand .fixlab-logo,
+.logo-custom,
+.fixlab-logo {
+  display: block;
+  height: 42px !important;
+  width: auto !important;
+  max-width: 120px !important;
+  min-width: 0;
+  border-radius: 6px;
+  object-fit: contain;
+  object-position: left center;
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand .fixlab-logo:hover,
+.logo-custom:hover,
+.fixlab-logo:hover {
+  transform: scale(1.03);
+}
+
+@media (max-width: 575.98px) {
+  .header-navbar {
+    min-height: 52px;
+  }
+  .navbar-brand {
+    max-width: 100px;
+  }
+  .navbar-brand .fixlab-logo,
+  .fixlab-logo {
+    height: 36px !important;
+    max-width: 100px !important;
+  }
+}
+
+/* ===== Móvil: menú como overlay (no comparte espacio con el contenido) ===== */
+@media (max-width: 991.98px) {
+  .navbar {
+    position: relative;
+  }
+
+  /* Cuando el menú está abierto, el collapse cubre la pantalla debajo del header */
+  .navbar-collapse {
+    position: fixed;
+    top: 56px; /* justo debajo del header (py-3 en móvil) */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1020;
+    background-color: var(--bs-dark);
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 56px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Oculto por defecto (Bootstrap lo controla con .collapse) */
+  .navbar-collapse:not(.show) {
+    display: none;
+  }
+
+  .navbar-collapse.show {
+    display: block !important;
+  }
+
+  /* Enlaces en columna, tamaño táctil */
+  .navbar-collapse .navbar-nav {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .navbar-collapse .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+  }
+
+  .navbar-collapse .nav-link:hover,
+  .navbar-collapse .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Botones (Carrito, Iniciar sesión, etc.) también en columna */
+  .navbar-collapse .d-flex.align-items-center.gap-3 {
+    flex-direction: column;
+    align-items: stretch !important;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 0.5rem !important;
+  }
+
+  .navbar-collapse .d-flex.align-items-center.gap-3 .btn,
+  .navbar-collapse .d-flex.align-items-center.gap-3 > div {
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem 1rem !important;
+    border-left: none !important;
+  }
+
+  .navbar-collapse .d-flex.align-items-center.gap-2 {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+}
+@media (max-width: 991.98px) and (min-width: 768px) {
+  .navbar-collapse {
+    top: 68px;
+    max-height: calc(100vh - 68px);
+  }
 }

@@ -9,4 +9,9 @@ export interface Environment {
   useImageUpload?: boolean;
   /** Clave del sitio de Google reCAPTCHA v2 (checkbox). Obtener en https://www.google.com/recaptcha/admin */
   recaptchaSiteKey?: string;
+  /**
+   * URL base del frontend para redirect de Wompi (p. ej. https://tu-tunel.ngrok.io).
+   * Úsala cuando pruebes pagos en local: abre la app por esta URL para evitar 403 de Wompi.
+   */
+  appBaseUrlForWompi?: string;
 }

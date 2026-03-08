@@ -1,28 +1,17 @@
-/* Página de registro - diseño tipo imagen: split layout y gradiente */
+/* Página de registro - fondo blanco */
 
 .register-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #7dd3a8 0%, #4db8a8 40%, #2d8b9e 70%, #1a6b7a 100%);
-  background-attachment: fixed;
+  background: #fff;
   position: relative;
   overflow-x: hidden;
-}
-
-.register-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
-  pointer-events: none;
 }
 
 .register-container {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   min-height: 100vh;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -37,12 +26,29 @@
   }
 }
 
+@media (max-width: 576px) {
+  .form-panel {
+    padding: 1.25rem 1rem 1.5rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .form-title {
+    font-size: 1.5rem;
+  }
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
 /* Panel izquierdo: formulario */
 .form-panel {
   padding: 2.5rem 3rem 2rem;
   display: flex;
   flex-direction: column;
-  color: #fff;
+  color: #1a1a1a;
 }
 
 .form-header {
@@ -59,23 +65,22 @@
 }
 
 .sign-in-link {
-  color: #fff;
+  color: #333;
   text-decoration: none;
   font-size: 0.9rem;
-  opacity: 0.95;
 }
 
 .sign-in-link strong {
-  color: #a8e6cf;
+  color: #0d6efd;
   text-decoration: underline;
 }
 
 .sign-in-link:hover {
-  opacity: 1;
+  color: #1a1a1a;
 }
 
 .sign-in-link:hover strong {
-  color: #d4f5e4;
+  color: #0a58ca;
 }
 
 .form-title {
@@ -114,7 +119,7 @@
 .form-group input[type="tel"],
 .form-group input[type="password"] {
   padding: 0.65rem 0.85rem;
-  border: none;
+  border: 1px solid #ced4da;
   border-radius: 6px;
   font-size: 0.95rem;
   background: #fff;
@@ -129,7 +134,7 @@
 .password-input-wrap input {
   flex: 1;
   padding-right: 2.5rem;
-  border: none;
+  border: 1px solid #ced4da;
   border-radius: 6px;
   font-size: 0.95rem;
   background: #fff;
@@ -157,7 +162,7 @@
 
 .form-group .error {
   font-size: 0.8rem;
-  color: #ffcccb;
+  color: #dc3545;
 }
 
 .terms-group {
@@ -181,7 +186,7 @@
 }
 
 .terms-label strong {
-  color: #a8e6cf;
+  color: #0d6efd;
   text-decoration: underline;
 }
 
@@ -210,7 +215,7 @@
 .footer-copy {
   margin-top: 1.5rem;
   font-size: 0.75rem;
-  opacity: 0.85;
+  color: #6c757d;
 }
 
 /* Panel derecho: logo FixLab */
@@ -219,6 +224,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f8f9fa;
+  border-left: 1px solid #e9ecef;
 }
 
 .logo-wrap {

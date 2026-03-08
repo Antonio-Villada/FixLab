@@ -9,6 +9,9 @@ import com.software.fixlab.mapper.UsuarioMapper;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,12 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
+
+    /** URL base del frontend (ej. https://tuapp.com). En local puede ser http://localhost:4200 */
+    @Value("${fixlab.frontend.url:http://localhost:4200}")
+    private String frontendBaseUrl;
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
@@ -182,7 +191,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void solicitarRecuperacionPassword(String email) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(email) // <-- CORREGIDO
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("No existe un usuario con ese correo"));
 
         String token = UUID.randomUUID().toString();
@@ -191,13 +200,13 @@ public class AuthServiceImpl implements AuthService {
 
         usuarioRepository.save(usuario);
 
-        String enlaceRestablecimiento = "http://localhost:4200/reset-password?token=" + token;
+        String enlaceRestablecimiento = frontendBaseUrl.replaceAll("/$", "") + "/reset-password?token=" + token;
         String mensaje = "Hola " + usuario.getNombre() + ",\n\n" +
                 "Has solicitado restablecer tu contraseña en FixLab.\n" +
                 "Haz clic en el siguiente enlace para crear una nueva (tienes 15 minutos):\n\n" +
                 enlaceRestablecimiento;
 
-        // <-- CORREGIDO: Usa getEmail() en lugar de getCorreo()
+        log.info("Enviando correo de recuperación de contraseña a {}", usuario.getEmail());
         emailService.enviarCorreo(usuario.getEmail(), "Recuperación de Contraseña - FixLab", mensaje);
     }
 

@@ -16,6 +16,7 @@ export class AdminPedidosComponent implements OnInit {
   pedidos = signal<PedidoRespDTO[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
+  confirmingId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.loadPedidos();
@@ -55,5 +56,27 @@ export class AdminPedidosComponent implements OnInit {
     if (e === 'ENVIADO' || e === 'ENTREGADO') return 'bg-info';
     if (e === 'CANCELADO') return 'bg-danger';
     return 'bg-warning text-dark';
+  }
+
+  puedeConfirmarPago(estado: string): boolean {
+    const e = (estado || '').toUpperCase();
+    return e === 'PENDIENTE' || e === 'PROCESANDO_PAGO' || e === '';
+  }
+
+  confirmarPago(p: PedidoRespDTO): void {
+    if (!p.id || !this.puedeConfirmarPago(p.estado)) return;
+    if (!confirm(`¿Confirmar pago del pedido #${p.id}?`)) return;
+    this.confirmingId.set(p.id);
+    this.errorMessage.set(null);
+    this.checkoutService.confirmarPago(p.id).subscribe({
+      next: () => {
+        this.confirmingId.set(null);
+        this.loadPedidos();
+      },
+      error: (err) => {
+        this.confirmingId.set(null);
+        this.errorMessage.set(err.error?.mensaje || 'Error al confirmar el pago');
+      },
+    });
   }
 }

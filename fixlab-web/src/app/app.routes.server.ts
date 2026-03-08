@@ -10,6 +10,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'home', renderMode: RenderMode.Prerender },
   { path: 'login', renderMode: RenderMode.Prerender },
   { path: 'register', renderMode: RenderMode.Prerender },
+  { path: 'recuperar-password', renderMode: RenderMode.Prerender },
+  { path: 'reset-password', renderMode: RenderMode.Server },
   { path: 'productos', renderMode: RenderMode.Server },
   { path: 'carrito', renderMode: RenderMode.Server },
   { path: 'pago-exitoso', renderMode: RenderMode.Server },

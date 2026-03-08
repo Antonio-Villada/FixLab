@@ -3,6 +3,7 @@ import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { signal } from '@angular/core';
 import {
   LoginReqDTO,
   TokenRespDTO,
@@ -11,6 +12,7 @@ import {
   RegistroEmpleadoReqDTO,
   CambioRolReqDTO,
   VerificarCorreoReqDTO,
+  ResetearPasswordDTO,
 } from '../models/auth.model';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart.service';
@@ -24,12 +26,21 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private cartService = inject(CartService);
 
+  /** Estado de sesión reactivo: se actualiza al iniciar (navegador) y al hacer login/logout. Evita verse "no logueado" al volver con Atrás desde Wompi. */
+  readonly isLoggedInSignal = signal(false);
+
   /** URL del API de auth: apiBaseUrl + /api/auth (si apiBaseUrl vacío, usa mismo origen) */
   private readonly URL = environment.apiBaseUrl
     ? `${environment.apiBaseUrl.replace(/\/$/, '')}/api/auth`
     : '/api/auth';
   private readonly TOKEN_KEY = 'fixlab_auth_token';
   private readonly ROL_KEY = 'fixlab_user_rol';
+
+  constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isLoggedInSignal.set(!!this.getToken());
+    }
+  }
 
   /**
    * Registers a new user (Client by default from component logic)
@@ -53,6 +64,16 @@ export class AuthService {
     return this.http.put<MensajeRespDTO>(`${this.URL}/cambiar-rol`, data);
   }
 
+  /** Solicitar envío de correo para recuperar contraseña (POST /api/auth/recuperar-password). */
+  solicitarRecuperacionPassword(email: string): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/recuperar-password`, { email });
+  }
+
+  /** Restablecer contraseña con el token recibido por correo (POST /api/auth/reset-password). */
+  resetPassword(data: ResetearPasswordDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/reset-password`, data);
+  }
+
   /**
    * Authenticates a user and stores the JWT token
    * @param loginData Email and Password
@@ -65,6 +86,7 @@ export class AuthService {
           if (res.rol) {
             localStorage.setItem(this.ROL_KEY, res.rol);
           }
+          this.isLoggedInSignal.set(true);
         }
       })
     );
@@ -110,7 +132,15 @@ export class AuthService {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.ROL_KEY);
       this.cartService.clear();
+      this.isLoggedInSignal.set(false);
     }
     this.router.navigate(['/login']);
+  }
+
+  /** Sincroniza el signal con localStorage. Llamar en el navegador al cargar (p. ej. desde app o header) para que al volver con Atrás se vea la sesión. */
+  syncLoginStateFromStorage(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isLoggedInSignal.set(!!this.getToken());
+    }
   }
 }

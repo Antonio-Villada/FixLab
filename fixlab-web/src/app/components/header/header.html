@@ -1,9 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-2">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center" routerLink="/home">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm header-navbar">
+  <div class="container flex-nowrap">
+    <a class="navbar-brand d-flex align-items-center py-0" routerLink="/home">
       <img src="images/Logo.jpeg" 
            alt="FixLab Logo" 
-           style="height: 50px; width: auto; border-radius: 4px;">
+           class="fixlab-logo">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -40,7 +40,7 @@
       </ul>
 
       <div class="d-flex align-items-center gap-3">
-        @if (authService.isLoggedIn()) {
+        @if (authService.isLoggedInSignal()) {
           <button type="button" class="btn btn-outline-light position-relative d-flex align-items-center gap-1 px-3"
             title="Ver productos que vas a comprar" (click)="goToCart()">
             <i class="bi bi-cart3 fs-4"></i>
@@ -55,7 +55,7 @@
         }
 
         <div class="d-flex align-items-center gap-2 border-start ps-3">
-          @if (!authService.isLoggedIn()) {
+          @if (!authService.isLoggedInSignal()) {
             <a routerLink="/login" class="btn btn-outline-light d-flex align-items-center">
               <i class="bi bi-person-fill me-2"></i> Iniciar Sesión
             </a>

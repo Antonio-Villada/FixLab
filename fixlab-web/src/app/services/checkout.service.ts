@@ -50,6 +50,11 @@ export class CheckoutService {
     return this.http.get<PedidoRespDTO>(`${this.baseUrl}/${id}`);
   }
 
+  /** Confirmar pago manualmente (útil si el webhook de Wompi no llegó). */
+  confirmarPago(id: number): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.baseUrl}/${id}/confirmar-pago`, {});
+  }
+
   /**
    * Construye la URL de pago de Wompi (por si se usa redirección).
    * Parámetro con nombre literal "signature:integrity" para evitar 403 por encoding.

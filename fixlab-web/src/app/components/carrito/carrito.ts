@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
@@ -7,6 +7,7 @@ import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth';
 import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutReqDTO } from '../../models/checkout.model';
+import { environment } from '../../../environments/environment';
 import { timeout, finalize } from 'rxjs/operators';
 
 @Component({
@@ -16,7 +17,7 @@ import { timeout, finalize } from 'rxjs/operators';
   templateUrl: './carrito.html',
   styleUrl: './carrito.css',
 })
-export class CarritoComponent {
+export class CarritoComponent implements OnInit {
   cartService = inject(CartService);
   authService = inject(AuthService);
   private checkoutService = inject(CheckoutService);
@@ -26,7 +27,8 @@ export class CarritoComponent {
   loadingPago = signal(false);
   errorPago = signal<string | null>(null);
 
-  constructor() {
+  ngOnInit(): void {
+    this.authService.syncLoginStateFromStorage();
     if (!this.authService.isLoggedIn()) {
       this.cartService.clear();
     }
@@ -81,11 +83,11 @@ export class CarritoComponent {
     this.loadingPago.set(true);
     this.errorPago.set(null);
 
-    // Wompi devuelve 403 si redirect-url es localhost; solo enviar en producción (dominio real)
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const redirectUrl = origin && !/localhost|127\.0\.0\.1/i.test(origin)
-      ? `${origin}/pago-exitoso`
-      : undefined;
+    // Redirect tras el pago: Wompi rechaza localhost (error 483). Solo enviar si appBaseUrlForWompi está definido (URL de ngrok del frontend).
+    const baseForRedirect = (typeof environment !== 'undefined' && environment?.appBaseUrlForWompi)
+      ? environment.appBaseUrlForWompi.replace(/\/$/, '')
+      : null;
+    const redirectUrl = baseForRedirect ? `${baseForRedirect}/pago-exitoso` : undefined;
 
     this.checkoutService
       .crearPedido(body)

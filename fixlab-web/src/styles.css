@@ -1,1 +1,47 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===== Estilos globales responsive (móvil y PC) ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Imágenes que no desborden en pantallas pequeñas */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Logo del header: tamaño proporcional al header */
+nav.navbar .navbar-brand img.fixlab-logo {
+  height: 42px !important;
+  max-width: 120px !important;
+  width: auto !important;
+  object-fit: contain;
+}
+@media (max-width: 575.98px) {
+  nav.navbar .navbar-brand img.fixlab-logo {
+    height: 36px !important;
+    max-width: 100px !important;
+  }
+}
+
+/* Contenedores con padding lateral en móvil */
+@media (max-width: 575.98px) {
+  .container,
+  .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}

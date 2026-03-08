@@ -1,16 +1,30 @@
-/* Un degradado suave para el fondo si no quieres el gris plano */
+/* Fondo y card compacta para que todo quepa sin scroll */
 .container-fluid {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-.card {
-  transition: transform 0.3s ease;
+.login-card-compact {
+  transition: transform 0.2s ease;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+.login-card-compact:hover {
+  transform: translateY(-2px);
+}
+
+.login-logo {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+/* reCAPTCHA un poco más compacto en móvil */
+.recaptcha-wrap {
+  transform: scale(0.95);
+  transform-origin: center;
 }
 
 #recaptcha-container {
-  min-height: 78px;
+  min-height: 65px;
 }

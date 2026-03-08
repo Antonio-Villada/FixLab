@@ -15,10 +15,14 @@ import { AdminUsuariosComponent } from './components/admin-usuarios/admin-usuari
 import { AdminPedidosComponent } from './components/admin-pedidos/admin-pedidos';
 import { PagoExitosoComponent } from './components/pago-exitoso/pago-exitoso';
 import { FacturaComponent } from './components/factura/factura';
+import { RecuperarPasswordComponent } from './components/recuperar-password/recuperar-password';
+import { RestablecerPasswordComponent } from './components/restablecer-password/restablecer-password';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
+  { path: 'recuperar-password', component: RecuperarPasswordComponent },
+  { path: 'reset-password', component: RestablecerPasswordComponent },
   { path: 'productos', component: ProductListComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'pago-exitoso', component: PagoExitosoComponent },
