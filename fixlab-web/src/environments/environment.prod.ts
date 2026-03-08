@@ -10,9 +10,8 @@ export const environment: Environment = {
   /** Sustituir por tu clave de sitio reCAPTCHA v2 de producción */
   recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
   /**
-   * URL donde los usuarios acceden al frontend (ej. http://34.75.187.247 o https://tu-dominio.com).
+   * URL donde los usuarios acceden al frontend.
    * Necesaria para que Wompi redirija tras el pago a /pago-exitoso.
-   * Si el frontend está en otro puerto, incluir: http://34.75.187.247:PUERTO
    */
-  appBaseUrlForWompi: 'http://34.75.187.247',
+  appBaseUrlForWompi: 'http://34.171.85.92',
 };

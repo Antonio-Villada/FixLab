@@ -52,7 +52,11 @@ public class SecurityConfig {
                 "http://34.75.187.247",
                 "http://34.75.187.247:*",
                 "https://34.75.187.247",
-                "https://34.75.187.247:*"
+                "https://34.75.187.247:*",
+                "http://34.171.85.92",
+                "http://34.171.85.92:*",
+                "https://34.171.85.92",
+                "https://34.171.85.92:*"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
