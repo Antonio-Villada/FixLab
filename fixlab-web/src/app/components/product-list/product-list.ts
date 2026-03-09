@@ -30,6 +30,8 @@ export class ProductListComponent implements OnInit {
   loading = signal(true);
   errorMessage = signal<string | null>(null);
   modalVisible = signal(false);
+  detailModalVisible = signal(false);
+  detailProduct = signal<Product | null>(null);
   editingProduct = signal<Product | null>(null);
   imagePreviewUrl = signal<string | null>(null);
   selectedFile = signal<File | null>(null);
@@ -60,7 +62,6 @@ export class ProductListComponent implements OnInit {
     descripcion: [''],
     precio: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
-    imagenUrl: ['', [Validators.maxLength(500)]],
     categoriaId: [null as number | null, [Validators.required]],
     tipoProductoId: [null as number | null, [Validators.required]],
   });
@@ -100,6 +101,16 @@ export class ProductListComponent implements OnInit {
     this.cartService.addItem(product);
   }
 
+  openDetail(product: Product): void {
+    this.detailProduct.set(product);
+    this.detailModalVisible.set(true);
+  }
+
+  closeDetail(): void {
+    this.detailModalVisible.set(false);
+    this.detailProduct.set(null);
+  }
+
   openCreate(): void {
     this.editingProduct.set(null);
     this.form.reset({
@@ -108,7 +119,6 @@ export class ProductListComponent implements OnInit {
       descripcion: '',
       precio: 0,
       stock: 0,
-      imagenUrl: '',
       categoriaId: null,
       tipoProductoId: null,
     });
@@ -124,7 +134,6 @@ export class ProductListComponent implements OnInit {
       descripcion: product.descripcion ?? '',
       precio: product.precio,
       stock: product.stock,
-      imagenUrl: product.imagenUrl ?? '',
       categoriaId: product.categoria?.id ?? null,
       tipoProductoId: product.tipoProducto?.id ?? null,
     });
@@ -155,18 +164,14 @@ export class ProductListComponent implements OnInit {
     this.clearImagePreview();
     this.selectedFile.set(file);
     this.imagePreviewUrl.set(URL.createObjectURL(file));
-    this.form.patchValue({ imagenUrl: '' });
     input.value = '';
   }
 
   removeSelectedImage(): void {
     this.clearImagePreview();
-    this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
-  }
-
-  onImagenUrlChange(): void {
-    if (!this.selectedFile()) {
-      this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
+    const product = this.editingProduct();
+    if (product?.imagenUrl) {
+      this.imagePreviewUrl.set(product.imagenUrl);
     }
   }
 
@@ -176,17 +181,19 @@ export class ProductListComponent implements OnInit {
       return;
     }
     const value = this.form.getRawValue();
+    const editing = this.editingProduct();
+    const imagenUrl =
+      editing && !this.selectedFile() ? (editing.imagenUrl ?? '') : '';
     const data: ProductoReqDTO = {
       sku: value.sku,
       nombre: value.nombre,
       descripcion: value.descripcion || '',
       precio: Number(value.precio),
       stock: Number(value.stock),
-      imagenUrl: value.imagenUrl || '',
+      imagenUrl,
       categoriaId: Number(value.categoriaId),
       tipoProductoId: Number(value.tipoProductoId),
     };
-    const editing = this.editingProduct();
     const file = this.selectedFile();
 
     if (editing?.id != null) {

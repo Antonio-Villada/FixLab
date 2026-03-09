@@ -101,7 +101,7 @@
                 </div>
               } @else {
                 <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-outline-primary flex-grow-1">Ver detalles</button>
+                  <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openDetail(product)">Ver detalles</button>
                   <button type="button" class="btn btn-primary" title="Agregar al carrito" (click)="addToCart(product)">
                     <i class="bi bi-cart-plus fs-5"></i>
                   </button>
@@ -121,6 +121,60 @@
           </div>
         </div>
       }
+    </div>
+  }
+
+  <!-- Modal Ver detalles (cliente) -->
+  @if (detailModalVisible() && detailProduct(); as product) {
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Detalle del producto</h5>
+            <button type="button" class="btn-close" (click)="closeDetail()" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-5 text-center mb-3 mb-md-0">
+                @if (product.imagenUrl) {
+                  <img [src]="product.imagenUrl" [alt]="product.nombre" class="img-fluid rounded" style="max-height: 280px; object-fit: contain;">
+                } @else {
+                  <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
+                    Sin imagen
+                  </div>
+                }
+              </div>
+              <div class="col-md-7">
+                <h4 class="fw-bold">{{ product.nombre }}</h4>
+                <p class="text-muted mb-2"><code>{{ product.sku }}</code></p>
+                @if (product.categoria || product.tipoProducto) {
+                  <p class="mb-2">
+                    @if (product.categoria) {
+                      <span class="badge bg-secondary me-1">{{ product.categoria.nombre }}</span>
+                    }
+                    @if (product.tipoProducto) {
+                      <span class="badge bg-secondary">{{ product.tipoProducto.nombre }}</span>
+                    }
+                  </p>
+                }
+                @if (product.descripcion) {
+                  <p class="text-muted">{{ product.descripcion }}</p>
+                } @else {
+                  <p class="text-muted fst-italic">Sin descripción.</p>
+                }
+                <p class="fs-3 fw-bold text-primary mb-2">${{ product.precio | number:'1.2-2' }}</p>
+                <p class="text-muted small mb-0">Stock disponible: {{ product.stock }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDetail()">Cerrar</button>
+            <button type="button" class="btn btn-primary" (click)="addToCart(product); closeDetail()">
+              <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   }
 
@@ -188,11 +242,6 @@
                       <label class="form-label">Stock <span class="text-danger">*</span></label>
                       <input type="number" formControlName="stock" class="form-control" min="0">
                     </div>
-                  </div>
-                  <div class="mb-3 mt-2">
-                    <label class="form-label">URL de imagen</label>
-                    <input type="url" formControlName="imagenUrl" class="form-control" placeholder="https://... (opcional)"
-                      (input)="onImagenUrlChange()">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Imagen del producto</label>

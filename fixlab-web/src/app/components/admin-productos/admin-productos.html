@@ -135,11 +135,6 @@
                       <input type="number" formControlName="stock" class="form-control" min="0">
                     </div>
                   </div>
-                  <div class="mb-3 mt-2">
-                    <label class="form-label">URL de imagen</label>
-                    <input type="url" formControlName="imagenUrl" class="form-control" placeholder="https://... (opcional)"
-                      (input)="onImagenUrlChange()">
-                  </div>
                   <div class="mb-3">
                     <label class="form-label">Imagen del producto</label>
                     <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)">

@@ -38,7 +38,6 @@ export class AdminProductosComponent implements OnInit {
     descripcion: [''],
     precio: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
-    imagenUrl: ['', [Validators.maxLength(500)]],
     categoriaId: [null as number | null, [Validators.required]],
     tipoProductoId: [null as number | null, [Validators.required]],
   });
@@ -84,7 +83,6 @@ export class AdminProductosComponent implements OnInit {
       descripcion: '',
       precio: 0,
       stock: 0,
-      imagenUrl: '',
       categoriaId: null,
       tipoProductoId: null,
     });
@@ -100,7 +98,6 @@ export class AdminProductosComponent implements OnInit {
       descripcion: product.descripcion ?? '',
       precio: product.precio,
       stock: product.stock,
-      imagenUrl: product.imagenUrl ?? '',
       categoriaId: product.categoria?.id ?? null,
       tipoProductoId: product.tipoProducto?.id ?? null,
     });
@@ -131,18 +128,14 @@ export class AdminProductosComponent implements OnInit {
     this.clearImagePreview();
     this.selectedFile.set(file);
     this.imagePreviewUrl.set(URL.createObjectURL(file));
-    this.form.patchValue({ imagenUrl: '' });
     input.value = '';
   }
 
   removeSelectedImage(): void {
     this.clearImagePreview();
-    this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
-  }
-
-  onImagenUrlChange(): void {
-    if (!this.selectedFile()) {
-      this.imagePreviewUrl.set(this.form.get('imagenUrl')?.value || null);
+    const product = this.editingProduct();
+    if (product?.imagenUrl) {
+      this.imagePreviewUrl.set(product.imagenUrl);
     }
   }
 
@@ -152,18 +145,20 @@ export class AdminProductosComponent implements OnInit {
       return;
     }
     const value = this.form.getRawValue();
+    const editing = this.editingProduct();
+    const imagenUrl =
+      editing && !this.selectedFile() ? (editing.imagenUrl ?? '') : '';
     const data: ProductoReqDTO = {
       sku: value.sku,
       nombre: value.nombre,
       descripcion: value.descripcion || '',
       precio: Number(value.precio),
       stock: Number(value.stock),
-      imagenUrl: value.imagenUrl || '',
+      imagenUrl,
       categoriaId: Number(value.categoriaId),
       tipoProductoId: Number(value.tipoProductoId),
     };
 
-    const editing = this.editingProduct();
     if (editing?.id != null) {
       this.uploadingImage.set(true);
       this.productService
