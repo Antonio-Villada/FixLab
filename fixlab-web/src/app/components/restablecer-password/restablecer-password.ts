@@ -34,7 +34,7 @@ export class RestablecerPasswordComponent implements OnInit {
       nuevaPassword: new FormControl('', [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/),
+        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/),
       ]),
       confirmarPassword: new FormControl('', [Validators.required]),
     },

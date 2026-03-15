@@ -1,9 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { RegistroReqDTO } from '../../models/auth.model';
+import { disposableEmailAsyncValidator } from '../../validators/disposable-email.validator';
 
 function confirmPasswordMatch(group: AbstractControl): ValidationErrors | null {
   const pass = group.get('password')?.value;
@@ -20,7 +21,7 @@ function confirmPasswordMatch(group: AbstractControl): ValidationErrors | null {
   styleUrls: ['./register.css'],
 })
 export class RegisterComponent {
-  private authService = inject(AuthService);
+  protected authService = inject(AuthService);
   private router = inject(Router);
 
   showPassword = false;
@@ -43,11 +44,15 @@ export class RegisterComponent {
         Validators.minLength(2),
         Validators.maxLength(100),
       ]),
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl(
+        '',
+        [Validators.required, Validators.email],
+        [disposableEmailAsyncValidator(this.authService)]
+      ),
       password: new FormControl('', [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/),
+        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/),
       ]),
       confirmPassword: new FormControl('', [Validators.required]),
       telefono: new FormControl('', [
@@ -62,6 +67,11 @@ export class RegisterComponent {
   );
 
   submitting = false;
+  /** Foto de perfil seleccionada (opcional). */
+  selectedFoto: File | null = null;
+  /** URL de vista previa de la foto (para mostrar en el formulario). */
+  fotoPreviewUrl = signal<string | null>(null);
+  @ViewChild('fotoInput') fotoInputRef: ElementRef<HTMLInputElement> | null = null;
   /** Después del registro exitoso se muestra el paso de verificación. */
   emailParaVerificar = signal<string | null>(null);
   codigoVerificacion = new FormControl<string>('', [
@@ -87,11 +97,12 @@ export class RegisterComponent {
     };
 
     this.submitting = true;
-    this.authService.register(datosRegistro).subscribe({
+    this.authService.registerWithPhoto(datosRegistro, this.selectedFoto).subscribe({
       next: (res) => {
         this.submitting = false;
         this.emailParaVerificar.set(datosRegistro.email);
         this.codigoVerificacion.reset('');
+        this.clearFoto();
       },
       error: (err) => {
         this.submitting = false;
@@ -100,6 +111,31 @@ export class RegisterComponent {
         alert('Error: ' + msgError);
       },
     });
+  }
+
+  onFotoChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    this.selectedFoto = file ?? null;
+    if (this.fotoPreviewUrl()) {
+      URL.revokeObjectURL(this.fotoPreviewUrl()!);
+    }
+    if (file) {
+      this.fotoPreviewUrl.set(URL.createObjectURL(file));
+    } else {
+      this.fotoPreviewUrl.set(null);
+    }
+  }
+
+  clearFoto(): void {
+    this.selectedFoto = null;
+    if (this.fotoPreviewUrl()) {
+      URL.revokeObjectURL(this.fotoPreviewUrl()!);
+      this.fotoPreviewUrl.set(null);
+    }
+    if (this.fotoInputRef?.nativeElement) {
+      this.fotoInputRef.nativeElement.value = '';
+    }
   }
 
   onVerificar(): void {

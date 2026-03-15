@@ -6,9 +6,11 @@ import com.software.fixlab.dto.resp.UsuarioRespDTO;
 import com.software.fixlab.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,6 +31,26 @@ public class UsuarioController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UsuarioRespDTO> obtenerMiPerfil(Authentication authentication) {
         return ResponseEntity.ok(usuarioService.obtenerPorEmail(authentication.getName()));
+    }
+
+    @PutMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UsuarioRespDTO> actualizarMiPerfil(
+            Authentication authentication,
+            @RequestBody UsuarioUpdateReqDTO dto) {
+        return ResponseEntity.ok(usuarioService.actualizarMiPerfil(authentication.getName(), dto));
+    }
+
+    @PostMapping(value = "/me/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> subirMiFoto(
+            Authentication authentication,
+            @RequestParam("foto") MultipartFile foto) {
+        try {
+            return ResponseEntity.ok(usuarioService.subirFotoPerfil(authentication.getName(), foto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MensajeRespDTO(e.getMessage() != null ? e.getMessage() : "Error al subir la foto"));
+        }
     }
 
     @GetMapping("/{cedula}")

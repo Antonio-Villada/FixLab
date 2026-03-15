@@ -13,6 +13,7 @@ import {
   CambioRolReqDTO,
   VerificarCorreoReqDTO,
   ResetearPasswordDTO,
+  AdminAsignarPasswordReqDTO,
 } from '../models/auth.model';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart.service';
@@ -51,8 +52,32 @@ export class AuthService {
     return this.http.post<MensajeRespDTO>(`${this.URL}/registro`, registerData);
   }
 
+  /**
+   * Registro con foto de perfil opcional (multipart). Si no hay foto, usa register().
+   */
+  registerWithPhoto(registerData: RegistroReqDTO, foto?: File | null): Observable<MensajeRespDTO> {
+    if (!foto) {
+      return this.register(registerData);
+    }
+    const form = new FormData();
+    form.append('cedula', registerData.cedula);
+    form.append('nombre', registerData.nombre);
+    form.append('apellido', registerData.apellido);
+    form.append('email', registerData.email);
+    form.append('password', registerData.password);
+    form.append('telefono', registerData.telefono);
+    form.append('foto', foto, foto.name);
+    return this.http.post<MensajeRespDTO>(`${this.URL}/registro-con-foto`, form);
+  }
+
   registrarEmpleado(data: RegistroEmpleadoReqDTO): Observable<MensajeRespDTO> {
     return this.http.post<MensajeRespDTO>(`${this.URL}/registro-empleado`, data);
+  }
+
+  /** Comprueba si un correo es temporal/desechable (lista cargada desde GitHub en el backend). */
+  checkDisposable(email: string): Observable<{ disposable: boolean }> {
+    const params = new URLSearchParams({ email: email.trim() });
+    return this.http.get<{ disposable: boolean }>(`${this.URL}/check-disposable?${params}`);
   }
 
   /** Verificar correo con el código de 6 dígitos enviado al email. */
@@ -72,6 +97,19 @@ export class AuthService {
   /** Restablecer contraseña con el token recibido por correo (POST /api/auth/reset-password). */
   resetPassword(data: ResetearPasswordDTO): Observable<MensajeRespDTO> {
     return this.http.post<MensajeRespDTO>(`${this.URL}/reset-password`, data);
+  }
+
+  /** Cambiar contraseña del usuario logueado (contraseña actual + nueva). */
+  cambiarPassword(contraseñaActual: string, nuevaPassword: string): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/cambiar-password`, {
+      contraseñaActual,
+      nuevaPassword,
+    });
+  }
+
+  /** Asignar nueva contraseña a un usuario (solo ADMIN, p. ej. usuario olvidó contraseña). */
+  asignarNuevaPassword(data: AdminAsignarPasswordReqDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/admin/asignar-password`, data);
   }
 
   /**

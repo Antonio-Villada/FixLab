@@ -42,6 +42,8 @@ export interface UsuarioRespDTO {
   telefono?: string | null;
   rol: RolUsuario;
   correoVerificado: boolean;
+  /** URL de foto de perfil (opcional; si no hay, el header muestra iniciales). */
+  fotoUrl?: string | null;
 }
 
 // Actualizar usuario (PUT /api/usuarios/{cedula})
@@ -82,5 +84,17 @@ export interface SolicitarRecuperacionDTO {
 // Restablecer contraseña con token del correo (POST /api/auth/reset-password)
 export interface ResetearPasswordDTO {
   token: string;
+  nuevaPassword: string;
+}
+
+// Cambiar contraseña (usuario logueado, POST /api/auth/cambiar-password)
+export interface CambiarPasswordReqDTO {
+  contraseñaActual: string;
+  nuevaPassword: string;
+}
+
+// Asignar nueva contraseña a un usuario (solo ADMIN, POST /api/auth/admin/asignar-password)
+export interface AdminAsignarPasswordReqDTO {
+  cedula: string;
   nuevaPassword: string;
 }

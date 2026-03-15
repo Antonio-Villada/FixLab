@@ -60,13 +60,13 @@
               <i class="bi bi-person-fill me-2"></i> Iniciar Sesión
             </a>
           } @else {
-            @if (!authService.isAdmin()) {
-              <a routerLink="/dashboard" class="btn btn-success d-flex align-items-center" routerLinkActive="active">
-                <i class="bi bi-speedometer2 me-2"></i> Mi Panel
-              </a>
-            }
-            <button (click)="authService.logout()" class="btn btn-outline-danger" type="button">
-              <i class="bi bi-box-arrow-right"></i>
+            <button type="button" class="header-avatar-btn d-flex align-items-center justify-content-center"
+              (click)="openPanelCuenta()" title="Tu cuenta">
+              @if (usuarioService.currentUser()?.fotoUrl) {
+                <img [src]="usuarioService.currentUser()!.fotoUrl" alt="" class="header-avatar-img" />
+              } @else {
+                <span class="header-avatar-initials">{{ getInitials() }}</span>
+              }
             </button>
           }
         </div>
@@ -74,3 +74,36 @@
     </div>
   </div>
 </nav>
+
+<!-- Panel de cuenta (estilo tipo Google): se abre al hacer clic en el avatar -->
+@if (panelCuentaAbierto()) {
+  <div class="panel-cuenta-backdrop" (click)="closePanelCuenta()" role="button" aria-label="Cerrar panel"></div>
+  <aside class="panel-cuenta" role="dialog" aria-label="Tu cuenta">
+    <div class="panel-cuenta-header">
+      <button type="button" class="panel-cuenta-close btn btn-link" (click)="closePanelCuenta()" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="panel-cuenta-body">
+      <div class="panel-cuenta-foto-wrap">
+        <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-foto-link">
+          @if (usuarioService.currentUser()?.fotoUrl) {
+            <img [src]="usuarioService.currentUser()!.fotoUrl" alt="" class="panel-cuenta-foto" />
+          } @else {
+            <span class="panel-cuenta-iniciales">{{ getInitials() }}</span>
+          }
+        </a>
+      </div>
+      <h2 class="panel-cuenta-saludo">¡Hola, {{ getNombreParaSaludo() || 'Usuario' }}!</h2>
+      <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-admin-btn">
+        Editar perfil
+      </a>
+    </div>
+    <div class="panel-cuenta-footer">
+      <button type="button" class="panel-cuenta-logout" (click)="logoutAndClose()">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+}

@@ -89,10 +89,13 @@
               <div class="mb-2 mt-2">
                 <label class="form-label">Email <span class="text-danger">*</span></label>
                 <input type="email" formControlName="email" class="form-control">
+                @if (formNewEmployee.get('email')?.invalid && formNewEmployee.get('email')?.touched && formNewEmployee.get('email')?.errors?.['disposableEmail']) {
+                  <div class="form-text text-danger">No se permiten correos temporales.</div>
+                }
               </div>
               <div class="mb-2">
                 <label class="form-label">Contraseña <span class="text-danger">*</span></label>
-                <input type="password" formControlName="password" class="form-control" placeholder="Mín. 6 caracteres">
+                <input type="password" formControlName="password" class="form-control" placeholder="Mín. 8 caracteres, letras, números y caracteres especiales">
               </div>
               <div class="mb-2">
                 <label class="form-label">Teléfono</label>
@@ -139,10 +142,20 @@
                 <label class="form-label">Teléfono</label>
                 <input type="text" formControlName="telefono" class="form-control">
               </div>
+              <hr class="my-3">
+              <p class="small text-muted mb-2">Asignar nueva contraseña</p>
+              <div class="mb-2">
+                <label class="form-label">Nueva contraseña</label>
+                <input type="password" formControlName="nuevaPassword" class="form-control" placeholder="Mín. 8 caracteres, letras, números y caracteres especiales">
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Confirmar nueva contraseña</label>
+                <input type="password" formControlName="confirmarPassword" class="form-control" placeholder="Repetir contraseña">
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-              <button type="submit" class="btn btn-primary" [disabled]="formEdit.invalid">Guardar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="formEdit.get('nombre')?.invalid || formEdit.get('apellido')?.invalid">Guardar</button>
             </div>
           </form>
         </div>

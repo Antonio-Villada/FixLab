@@ -49,6 +49,8 @@ public class SecurityConfig {
                 "http://127.0.0.1:4200",
                 "https://*.ngrok-free.app",
                 "https://*.ngrok-free.dev",
+                "https://fixlab.villadastudios.com",
+                "https://*.villadastudios.com",
                 "http://34.75.187.247",
                 "http://34.75.187.247:*",
                 "https://34.75.187.247",

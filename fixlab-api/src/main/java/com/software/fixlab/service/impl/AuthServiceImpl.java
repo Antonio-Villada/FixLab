@@ -8,7 +8,10 @@ import com.software.fixlab.entity.Usuario;
 import com.software.fixlab.mapper.UsuarioMapper;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.AuthService;
+import com.software.fixlab.service.interfaces.CloudinaryService;
+import com.software.fixlab.util.DisposableEmailValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,14 +20,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
+
+    /** Contraseña: mínimo 8 caracteres, al menos una letra, un número y un carácter especial. */
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$");
+    private static final String PASSWORD_FORMATO_MSG = "La contraseña debe tener al menos 8 caracteres, incluyendo letras, números y caracteres especiales.";
+
+    private static void validarFormatoPassword(String password) throws Exception {
+        if (password == null || !PASSWORD_PATTERN.matcher(password).matches()) {
+            throw new Exception(PASSWORD_FORMATO_MSG);
+        }
+    }
 
     /** URL base del frontend (ej. https://tuapp.com). En local puede ser http://localhost:4200 */
     @Value("${fixlab.frontend.url:http://localhost:4200}")
@@ -35,10 +47,15 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final EmailService emailService;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     @Transactional
     public MensajeRespDTO registrarCliente(RegistroReqDTO dto) throws Exception {
+
+        if (DisposableEmailValidator.isDisposable(dto.getEmail())) {
+            throw new Exception("No se permite el registro con correos temporales o desechables. Por favor utiliza un correo electrónico permanente.");
+        }
 
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new Exception("El correo electrónico ya se encuentra registrado.");
@@ -47,6 +64,7 @@ public class AuthServiceImpl implements AuthService {
         if (usuarioRepository.existsById(dto.getCedula())) {
             throw new Exception("La cédula ya se encuentra registrada en el sistema.");
         }
+        validarFormatoPassword(dto.getPassword());
 
         // Generamos un código aleatorio de 6 dígitos
         String codigoGenerado = String.format("%06d", new java.util.Random().nextInt(999999));
@@ -75,11 +93,53 @@ public class AuthServiceImpl implements AuthService {
         return new MensajeRespDTO("Registro exitoso. Hemos enviado un código de 6 dígitos a tu correo para verificar tu cuenta.");
     }
 
-
+    @Override
+    @Transactional
+    public MensajeRespDTO registrarClienteConFoto(RegistroReqDTO dto, MultipartFile foto) throws Exception {
+        if (DisposableEmailValidator.isDisposable(dto.getEmail())) {
+            throw new Exception("No se permite el registro con correos temporales o desechables. Por favor utiliza un correo electrónico permanente.");
+        }
+        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new Exception("El correo electrónico ya se encuentra registrado.");
+        }
+        if (usuarioRepository.existsById(dto.getCedula())) {
+            throw new Exception("La cédula ya se encuentra registrada en el sistema.");
+        }
+        validarFormatoPassword(dto.getPassword());
+        String codigoGenerado = String.format("%06d", new java.util.Random().nextInt(999999));
+        Usuario nuevoUsuario = Usuario.builder()
+                .cedula(dto.getCedula())
+                .nombre(dto.getNombre())
+                .apellido(dto.getApellido())
+                .email(dto.getEmail())
+                .telefono(dto.getTelefono())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .rol(RolUsuario.CLIENTE)
+                .intentosFallidos(0)
+                .correoVerificado(false)
+                .codigoVerificacion(codigoGenerado)
+                .expiracionCodigo(LocalDateTime.now().plusMinutes(15))
+                .build();
+        if (foto != null && !foto.isEmpty()) {
+            try {
+                String urlFoto = cloudinaryService.subirImagen(foto);
+                nuevoUsuario.setFotoUrl(urlFoto);
+            } catch (Exception e) {
+                log.warn("Error al subir foto de perfil en registro: {}", e.getMessage());
+            }
+        }
+        usuarioRepository.save(nuevoUsuario);
+        emailService.enviarCodigoVerificacion(nuevoUsuario.getEmail(), nuevoUsuario.getNombre(), codigoGenerado);
+        return new MensajeRespDTO("Registro exitoso. Hemos enviado un código de 6 dígitos a tu correo para verificar tu cuenta.");
+    }
 
     @Override
     @Transactional
     public MensajeRespDTO registrarEmpleado(RegistroEmpleadoReqDTO dto) throws Exception {
+
+        if (DisposableEmailValidator.isDisposable(dto.getEmail())) {
+            throw new Exception("No se permite el registro con correos temporales o desechables. Por favor utiliza un correo electrónico permanente.");
+        }
 
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new Exception("El correo electrónico ya se encuentra registrado.");
@@ -88,6 +148,7 @@ public class AuthServiceImpl implements AuthService {
         if (usuarioRepository.existsById(dto.getCedula())) {
             throw new Exception("La cédula ya se encuentra registrada en el sistema.");
         }
+        validarFormatoPassword(dto.getPassword());
 
         Usuario nuevoEmpleado = Usuario.builder()
                 .cedula(dto.getCedula())
@@ -218,11 +279,33 @@ public class AuthServiceImpl implements AuthService {
         if (usuario.getExpiracionToken().isBefore(LocalDateTime.now())) {
             throw new Exception("El token ha expirado. Solicita uno nuevo.");
         }
+        validarFormatoPassword(nuevaPassword);
 
         usuario.setPassword(passwordEncoder.encode(nuevaPassword));
         usuario.setTokenRecuperacion(null);
         usuario.setExpiracionToken(null);
 
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void cambiarPassword(String email, String contraseñaActual, String nuevaPassword) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+        if (!passwordEncoder.matches(contraseñaActual, usuario.getPassword())) {
+            throw new Exception("La contraseña actual no es correcta.");
+        }
+        validarFormatoPassword(nuevaPassword);
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void asignarNuevaPasswordPorCedula(String cedula, String nuevaPassword) throws Exception {
+        Usuario usuario = usuarioRepository.findById(cedula)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+        validarFormatoPassword(nuevaPassword);
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
         usuarioRepository.save(usuario);
     }
 }

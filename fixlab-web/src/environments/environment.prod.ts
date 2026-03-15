@@ -1,11 +1,13 @@
 import type { Environment } from './environment.model';
 
 /**
- * Configuración para producción (ng build --configuration=production).
+ * Configuración para producción (ng build usa este archivo por fileReplacements).
+ * Frontend desplegado en https://fixlab.villadastudios.com → API en https://api.villadastudios.com
  */
 export const environment: Environment = {
   production: true,
-  apiBaseUrl: 'http://34.75.187.247:8081',
+  /** API desplegada (mismo dominio o IP del backend en producción). */
+  apiBaseUrl: 'https://api.villadastudios.com',
   useImageUpload: false,
   /** Sustituir por tu clave de sitio reCAPTCHA v2 de producción */
   recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
@@ -13,5 +15,5 @@ export const environment: Environment = {
    * URL donde los usuarios acceden al frontend.
    * Necesaria para que Wompi redirija tras el pago a /pago-exitoso.
    */
-  appBaseUrlForWompi: 'http://34.171.85.92',
+  appBaseUrlForWompi: 'https://fixlab.villadastudios.com',
 };

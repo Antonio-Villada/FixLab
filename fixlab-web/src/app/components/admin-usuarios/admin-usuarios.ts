@@ -10,6 +10,7 @@ import {
   RegistroEmpleadoReqDTO,
   RolUsuario,
 } from '../../models/auth.model';
+import { disposableEmailAsyncValidator } from '../../validators/disposable-email.validator';
 
 @Component({
   selector: 'app-admin-usuarios',
@@ -36,14 +37,20 @@ export class AdminUsuariosComponent implements OnInit {
     nombre: ['', [Validators.required, Validators.maxLength(100)]],
     apellido: ['', [Validators.required, Validators.maxLength(100)]],
     telefono: ['', [Validators.maxLength(20)]],
+    nuevaPassword: ['', [Validators.minLength(8), Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/)]],
+    confirmarPassword: [''],
   });
 
   formNewEmployee: FormGroup = this.fb.group({
     cedula: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
     nombre: ['', [Validators.required, Validators.maxLength(100)]],
     apellido: ['', [Validators.required, Validators.maxLength(100)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    email: [
+      '',
+      [Validators.required, Validators.email],
+      [disposableEmailAsyncValidator(this.authService)],
+    ],
+    password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/)]],
     telefono: ['', [Validators.maxLength(20)]],
     rol: [RolUsuario.TECNICO, [Validators.required]],
   });
@@ -92,6 +99,8 @@ export class AdminUsuariosComponent implements OnInit {
       nombre: u.nombre,
       apellido: u.apellido,
       telefono: u.telefono ?? '',
+      nuevaPassword: '',
+      confirmarPassword: '',
     });
     this.modalVisible.set(true);
   }
@@ -110,17 +119,52 @@ export class AdminUsuariosComponent implements OnInit {
   }
 
   onSubmitEdit(): void {
-    if (this.formEdit.invalid) {
+    const raw = this.formEdit.getRawValue();
+    const nuevaPassword = (raw.nuevaPassword as string)?.trim() || '';
+    const confirmarPassword = (raw.confirmarPassword as string)?.trim() || '';
+    if (nuevaPassword || confirmarPassword) {
+      if (nuevaPassword.length < 8) {
+        this.errorMessage.set('La nueva contraseña debe tener al menos 8 caracteres.');
+        this.formEdit.get('nuevaPassword')?.markAsTouched();
+        return;
+      }
+      if (this.formEdit.get('nuevaPassword')?.invalid) {
+        this.errorMessage.set('La contraseña debe incluir letras, números y caracteres especiales.');
+        this.formEdit.get('nuevaPassword')?.markAsTouched();
+        return;
+      }
+      if (nuevaPassword !== confirmarPassword) {
+        this.errorMessage.set('La contraseña y la confirmación no coinciden.');
+        this.formEdit.get('confirmarPassword')?.markAsTouched();
+        return;
+      }
+    }
+    if (this.formEdit.get('nombre')?.invalid || this.formEdit.get('apellido')?.invalid || this.formEdit.get('telefono')?.invalid) {
       this.formEdit.markAllAsTouched();
       return;
     }
     const u = this.editing();
     if (!u) return;
-    const dto: UsuarioUpdateReqDTO = this.formEdit.getRawValue();
+    const dto: UsuarioUpdateReqDTO = {
+      nombre: raw.nombre,
+      apellido: raw.apellido,
+      telefono: raw.telefono,
+    };
     this.usuarioService.update(u.cedula, dto).subscribe({
       next: () => {
-        this.load();
-        this.closeModal();
+        if (nuevaPassword) {
+          this.authService.asignarNuevaPassword({ cedula: u.cedula, nuevaPassword }).subscribe({
+            next: () => {
+              this.load();
+              this.closeModal();
+              this.errorMessage.set(null);
+            },
+            error: (err) => this.errorMessage.set(err.error?.mensaje || 'Error al asignar contraseña'),
+          });
+        } else {
+          this.load();
+          this.closeModal();
+        }
       },
       error: (err) => this.errorMessage.set(err.error?.mensaje || 'Error al actualizar'),
     });

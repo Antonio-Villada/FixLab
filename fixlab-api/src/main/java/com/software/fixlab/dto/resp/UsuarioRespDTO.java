@@ -12,6 +12,8 @@ public class UsuarioRespDTO {
     private String apellido;
     private String email;
     private String telefono;
+    /** URL de la foto de perfil (ej. Cloudinary). */
+    private String fotoUrl;
     private RolUsuario rol;
     private boolean correoVerificado;
 }

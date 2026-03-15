@@ -44,6 +44,7 @@ public class UsuarioMapper {
                 .apellido(entity.getApellido())
                 .email(entity.getEmail())
                 .telefono(entity.getTelefono())
+                .fotoUrl(entity.getFotoUrl())
                 .rol(entity.getRol())
                 .correoVerificado(entity.isCorreoVerificado())
                 .build();
