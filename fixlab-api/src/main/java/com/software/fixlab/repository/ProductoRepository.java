@@ -9,7 +9,11 @@ import java.util.List;
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
-    // Spring Boot crea la consulta SQL automáticamente solo con leer el nombre del método:
-    // Trae los productos donde stock > 0 y activo = true
     List<Producto> findByStockGreaterThanAndActivoTrue(Integer stock);
+
+    List<Producto> findByIdInOrderByNombre(List<Long> ids);
+
+    List<Producto> findByStockOrderByNombre(Integer stock);
+
+    List<Producto> findByActivoOrderByNombre(Boolean activo);
 }

@@ -46,9 +46,9 @@
               <td><span class="badge bg-secondary">{{ rolLabel(u.rol) }}</span></td>
               <td>{{ u.correoVerificado ? 'Sí' : 'No' }}</td>
               <td>
-                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(u)">Editar</button>
-                <button type="button" class="btn btn-sm btn-outline-info me-1" (click)="openChangeRol(u)">Cambiar rol</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(u)">Eliminar</button>
+                <button type="button" class="btn btn-sm btn-outline-primary btn-admin-action me-1" (click)="openEdit(u)">Editar</button>
+                <button type="button" class="btn btn-sm btn-outline-info btn-admin-action me-1" (click)="openChangeRol(u)">Cambiar rol</button>
+                <button type="button" class="btn btn-sm btn-outline-danger btn-admin-action" (click)="confirmDelete(u)">Eliminar</button>
               </td>
             </tr>
           } @empty {

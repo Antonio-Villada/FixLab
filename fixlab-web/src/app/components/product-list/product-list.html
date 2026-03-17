@@ -92,10 +92,10 @@
             <div class="card-footer bg-transparent border-top-0 pb-3">
               @if (isAdmin()) {
                 <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openEdit(product)">
+                  <button type="button" class="btn btn-sm btn-outline-primary btn-admin-action" (click)="openEdit(product)">
                     <i class="bi bi-pencil me-1"></i> Editar
                   </button>
-                  <button type="button" class="btn btn-outline-danger" (click)="confirmDelete(product)" title="Desactivar">
+                  <button type="button" class="btn btn-sm btn-outline-danger btn-admin-action" (click)="confirmDelete(product)" title="Desactivar">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>

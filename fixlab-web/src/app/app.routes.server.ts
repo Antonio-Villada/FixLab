@@ -18,4 +18,5 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'dashboard', renderMode: RenderMode.Server },
   { path: 'factura/**', renderMode: RenderMode.Server },
   { path: 'admin/**', renderMode: RenderMode.Server },
+  { path: '**', renderMode: RenderMode.Server },
 ];

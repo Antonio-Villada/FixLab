@@ -19,6 +19,9 @@ public class ProductoRespDTO {
     private String imagenUrl;
     private Boolean activo;
 
+    /** Cantidad total vendida (solo presente cuando se listan con filtro mas_vendidos). */
+    private Integer cantidadVendida;
+
     private CategoriaRespDTO categoria;
     private TipoProductoRespDTO tipoProducto;
 }

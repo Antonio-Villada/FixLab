@@ -54,7 +54,12 @@ public class PedidoController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PedidoRespDTO>> obtenerTodos() {
+    public ResponseEntity<List<PedidoRespDTO>> obtenerTodos(
+            @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "categoriaId", required = false) Long categoriaId) {
+        if (estado != null || (categoriaId != null && categoriaId > 0)) {
+            return ResponseEntity.ok(pedidoService.obtenerTodosConFiltros(estado, categoriaId));
+        }
         return ResponseEntity.ok(pedidoService.obtenerTodos());
     }
 

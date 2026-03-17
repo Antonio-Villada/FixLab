@@ -40,7 +40,12 @@ public class ProductoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductoRespDTO>> obtenerProductos() {
+    public ResponseEntity<List<ProductoRespDTO>> obtenerProductos(
+            @RequestParam(value = "filtro", required = false) String filtro,
+            @RequestParam(value = "categoriaId", required = false) Long categoriaId) {
+        if (filtro != null && !filtro.isBlank()) {
+            return ResponseEntity.ok(productoService.obtenerProductosConFiltro(filtro, categoriaId));
+        }
         return ResponseEntity.ok(productoService.obtenerTodosLosProductos());
     }
 

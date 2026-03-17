@@ -2,12 +2,12 @@ import type { Environment } from './environment.model';
 
 /**
  * Configuración para producción (ng build usa este archivo por fileReplacements).
- * Frontend desplegado en https://fixlab.villadastudios.com → API en https://api.villadastudios.com
+ * Backend desplegado en 34.75.187.247 (puerto 8081).
  */
 export const environment: Environment = {
   production: true,
-  /** API desplegada (mismo dominio o IP del backend en producción). */
-  apiBaseUrl: 'https://api.villadastudios.com',
+  /** API desplegada en la IP del servidor. */
+  apiBaseUrl: 'http://34.75.187.247:8081',
   useImageUpload: false,
   /** Sustituir por tu clave de sitio reCAPTCHA v2 de producción */
   recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',

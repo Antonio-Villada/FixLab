@@ -19,6 +19,7 @@ import { RecuperarPasswordComponent } from './components/recuperar-password/recu
 import { RestablecerPasswordComponent } from './components/restablecer-password/restablecer-password';
 
 export const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
   { path: 'recuperar-password', component: RecuperarPasswordComponent },
@@ -35,5 +36,5 @@ export const routes: Routes = [
   { path: 'admin/categorias', component: AdminCategoriasComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/tipos-producto', component: AdminTiposProductoComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [authGuard, adminGuard] },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];

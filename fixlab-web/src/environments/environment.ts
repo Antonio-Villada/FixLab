@@ -9,7 +9,7 @@ import type { Environment } from './environment.model';
  */
 export const environment: Environment = {
   production: false,
-  /** Backend local. Coincide con server.port=8081 del API. */
+  /** Backend: local (localhost:8081) para pruebas. En prod/build usar environment.prod.ts. */
   apiBaseUrl: 'http://localhost:8081',
   useImageUpload: false,
   /** Clave de sitio reCAPTCHA v2. En desarrollo puedes usar la de prueba: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI */

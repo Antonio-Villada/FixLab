@@ -169,7 +169,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public TokenRespDTO login(LoginReqDTO dto) throws Exception {
+    public MensajeRespDTO login(LoginReqDTO dto) throws Exception {
         Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new Exception("Credenciales incorrectas"));
 
@@ -189,9 +189,41 @@ public class AuthServiceImpl implements AuthService {
 
         usuario.setIntentosFallidos(0);
         usuario.setBloqueadoHasta(null);
+
+        // Autenticación en dos pasos: generar código y enviar por correo
+        String codigoGenerado = String.format("%06d", new java.util.Random().nextInt(999999));
+        usuario.setCodigoVerificacion(codigoGenerado);
+        usuario.setExpiracionCodigo(LocalDateTime.now().plusMinutes(5));
         usuarioRepository.save(usuario);
 
-        // Generamos el token real
+        emailService.enviarCodigoLogin(usuario.getEmail(), usuario.getNombre(), codigoGenerado);
+
+        return new MensajeRespDTO("Hemos enviado un código de 6 dígitos a tu correo. Ingresa el código para completar el inicio de sesión.");
+    }
+
+    @Override
+    @Transactional
+    public TokenRespDTO verificarCodigoLogin(VerificarCorreoReqDTO dto) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+
+        if (usuario.getCodigoVerificacion() == null || usuario.getExpiracionCodigo() == null) {
+            throw new Exception("No hay un código de login pendiente. Vuelve a iniciar sesión con tu correo y contraseña.");
+        }
+        if (usuario.getExpiracionCodigo().isBefore(LocalDateTime.now())) {
+            usuario.setCodigoVerificacion(null);
+            usuario.setExpiracionCodigo(null);
+            usuarioRepository.save(usuario);
+            throw new Exception("El código ha expirado. Vuelve a iniciar sesión para recibir uno nuevo.");
+        }
+        if (!usuario.getCodigoVerificacion().equals(dto.getCodigo())) {
+            throw new Exception("El código de verificación es incorrecto.");
+        }
+
+        usuario.setCodigoVerificacion(null);
+        usuario.setExpiracionCodigo(null);
+        usuarioRepository.save(usuario);
+
         String jwtToken = jwtService.generarToken(usuario);
         return new TokenRespDTO(jwtToken, usuario.getRol().name());
     }

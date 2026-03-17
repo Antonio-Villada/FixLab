@@ -80,6 +80,13 @@ nav.navbar .navbar-brand img.fixlab-logo {
   }
 }
 
+/* Botones de acción en tablas del admin: ancho uniforme y espacio entre ellos */
+.btn-admin-action {
+  min-width: 6.5rem;
+  box-sizing: border-box;
+  margin: 0.2rem;
+}
+
 /* Accesibilidad - estilos aplicados por el widget */
 html.a11y-high-contrast {
   filter: contrast(1.1);

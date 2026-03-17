@@ -8,6 +8,10 @@ import java.util.List;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
-    // Nos servirá más adelante para que un cliente vea su historial de compras
+
     List<Pedido> findByCliente_Cedula(String cedula);
+
+    List<Pedido> findByEstadoOrderByFechaCreacionDesc(String estado);
+
+    List<Pedido> findByIdInOrderByFechaCreacionDesc(List<Integer> ids);
 }

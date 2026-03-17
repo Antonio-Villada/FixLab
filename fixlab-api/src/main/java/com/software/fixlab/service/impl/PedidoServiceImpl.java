@@ -142,6 +142,30 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<PedidoRespDTO> obtenerTodosConFiltros(String estado, Long categoriaId) {
+        if (categoriaId != null && categoriaId > 0) {
+            List<Integer> pedidoIds = detallePedidoRepository.findDistinctPedidoIdsByProductoCategoriaId(categoriaId);
+            if (pedidoIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+            List<Pedido> pedidos = pedidoRepository.findByIdInOrderByFechaCreacionDesc(pedidoIds);
+            if (estado != null && !estado.isBlank()) {
+                pedidos = pedidos.stream()
+                        .filter(p -> estado.equalsIgnoreCase(p.getEstado()))
+                        .collect(Collectors.toList());
+            }
+            return pedidos.stream().map(this::mapearADto).collect(Collectors.toList());
+        }
+        if (estado != null && !estado.isBlank()) {
+            return pedidoRepository.findByEstadoOrderByFechaCreacionDesc(estado).stream()
+                    .map(this::mapearADto)
+                    .collect(Collectors.toList());
+        }
+        return obtenerTodos();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<PedidoRespDTO> obtenerMisPedidos(String emailUsuario) {
         Usuario cliente = usuarioRepository.findByEmail(emailUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));

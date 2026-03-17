@@ -9,7 +9,8 @@ public interface AuthService {
     MensajeRespDTO registrarCliente(RegistroReqDTO dto) throws Exception;
     MensajeRespDTO registrarClienteConFoto(RegistroReqDTO dto, org.springframework.web.multipart.MultipartFile foto) throws Exception;
     MensajeRespDTO registrarEmpleado(RegistroEmpleadoReqDTO dto) throws Exception;
-    TokenRespDTO login(LoginReqDTO dto) throws Exception;
+    MensajeRespDTO login(LoginReqDTO dto) throws Exception;
+    TokenRespDTO verificarCodigoLogin(VerificarCorreoReqDTO dto) throws Exception;
     MensajeRespDTO cambiarRol(CambioRolReqDTO dto) throws Exception;
 
     @Transactional

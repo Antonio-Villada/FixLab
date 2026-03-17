@@ -10,8 +10,8 @@ public interface PedidoService {
     WompiCheckoutDTO crearPedido(PedidoReqDTO dto, String emailUsuario);
     String confirmarPago(Integer pedidoId);
 
-    // Nuevos métodos del CRUD
     List<PedidoRespDTO> obtenerTodos();
+    List<PedidoRespDTO> obtenerTodosConFiltros(String estado, Long categoriaId);
     List<PedidoRespDTO> obtenerMisPedidos(String emailUsuario);
     PedidoRespDTO obtenerPorId(Integer id);
     /** Obtiene un pedido por ID solo si pertenece al cliente con el email dado. */

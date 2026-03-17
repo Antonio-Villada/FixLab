@@ -76,10 +76,23 @@ public class AuthController {
         }
     }
     @PostMapping("/login")
-    public ResponseEntity<TokenRespDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) throws Exception {
-        TokenRespDTO respuesta = authService.login(loginReqDTO);
-        // Retornamos 200 OK con el token
-        return ResponseEntity.ok(respuesta);
+    public ResponseEntity<MensajeRespDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) {
+        try {
+            MensajeRespDTO respuesta = authService.login(loginReqDTO);
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login/verificar-codigo")
+    public ResponseEntity<?> verificarCodigoLogin(@RequestBody VerificarCorreoReqDTO dto) {
+        try {
+            TokenRespDTO respuesta = authService.verificarCodigoLogin(dto);
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespDTO(e.getMessage()));
+        }
     }
     @PostMapping("/registro-empleado")
     @PreAuthorize("hasRole('ADMIN')") // <-- ESTE ES EL ESCUDO DE SEGURIDAD

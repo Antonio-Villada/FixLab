@@ -9,6 +9,7 @@ import java.util.List;
 public interface ProductoService {
     ProductoRespDTO crearProducto(ProductoReqDTO dto, MultipartFile imagen);
     List<ProductoRespDTO> obtenerTodosLosProductos();
+    List<ProductoRespDTO> obtenerProductosConFiltro(String filtro, Long categoriaId);
     ProductoRespDTO obtenerPorId(Long id);
     ProductoRespDTO actualizarProducto(Long id, ProductoReqDTO dto, MultipartFile imagen);
     void eliminarProducto(Long id);

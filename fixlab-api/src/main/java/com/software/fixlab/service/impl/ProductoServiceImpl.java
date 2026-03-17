@@ -12,6 +12,7 @@ import com.software.fixlab.exception.NoExisteCategoriaException;
 import com.software.fixlab.exception.NoExisteProductoException;
 import com.software.fixlab.exception.NoExisteTipoProductoException;
 import com.software.fixlab.repository.CategoriaRepository;
+import com.software.fixlab.repository.DetallePedidoRepository;
 import com.software.fixlab.repository.ProductoRepository;
 import com.software.fixlab.repository.TipoProductoRepository;
 import com.software.fixlab.service.interfaces.CloudinaryService;
@@ -21,7 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 public class ProductoServiceImpl implements ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final DetallePedidoRepository detallePedidoRepository;
     private final CategoriaRepository categoriaRepository;
     private final TipoProductoRepository tipoProductoRepository;
     private final CloudinaryService cloudinaryService;
@@ -71,6 +76,71 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional(readOnly = true)
     public List<ProductoRespDTO> obtenerTodosLosProductos() {
         return productoRepository.findAll().stream()
+                .map(this::mapearADto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductoRespDTO> obtenerProductosConFiltro(String filtro, Long categoriaId) {
+        if (filtro == null || filtro.isBlank() || "todos".equalsIgnoreCase(filtro.trim())) {
+            return obtenerTodosLosProductos();
+        }
+        String f = filtro.trim().toLowerCase();
+        switch (f) {
+            case "mas_vendidos":
+                return obtenerMasVendidos(categoriaId);
+            case "pedidos_pendientes":
+                return obtenerEnPedidosPorEstado("PENDIENTE");
+            case "pedidos_pagados":
+                return obtenerEnPedidosPorEstado("PAGADO");
+            case "sin_stock":
+                return productoRepository.findByStockOrderByNombre(0).stream()
+                        .map(this::mapearADto)
+                        .collect(Collectors.toList());
+            case "inactivos":
+                return productoRepository.findByActivoOrderByNombre(false).stream()
+                        .map(this::mapearADto)
+                        .collect(Collectors.toList());
+            default:
+                return obtenerTodosLosProductos();
+        }
+    }
+
+    private List<ProductoRespDTO> obtenerMasVendidos(Long categoriaId) {
+        List<Object[]> resultados = (categoriaId != null && categoriaId > 0)
+                ? detallePedidoRepository.findProductoIdAndTotalCantidadVendidaByCategoriaId(categoriaId)
+                : detallePedidoRepository.findProductoIdAndTotalCantidadVendida();
+        if (resultados.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Long> idsOrdenados = resultados.stream()
+                .map(row -> (Long) row[0])
+                .collect(Collectors.toList());
+        Map<Long, Integer> cantidadPorProducto = new LinkedHashMap<>();
+        for (Object[] row : resultados) {
+            cantidadPorProducto.put((Long) row[0], ((Number) row[1]).intValue());
+        }
+        List<Producto> productos = productoRepository.findAllById(idsOrdenados);
+        Map<Long, Producto> porId = productos.stream().collect(Collectors.toMap(Producto::getId, p -> p));
+        List<ProductoRespDTO> dtos = new ArrayList<>();
+        for (Long id : idsOrdenados) {
+            Producto p = porId.get(id);
+            if (p != null) {
+                ProductoRespDTO dto = mapearADto(p);
+                dto.setCantidadVendida(cantidadPorProducto.getOrDefault(id, 0));
+                dtos.add(dto);
+            }
+        }
+        return dtos;
+    }
+
+    private List<ProductoRespDTO> obtenerEnPedidosPorEstado(String estado) {
+        List<Long> ids = detallePedidoRepository.findDistinctProductoIdsByPedidoEstado(estado);
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return productoRepository.findByIdInOrderByNombre(ids).stream()
                 .map(this::mapearADto)
                 .collect(Collectors.toList());
     }

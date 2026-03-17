@@ -20,6 +20,8 @@ export interface Product {
   stock: number;
   imagenUrl?: string;
   activo?: boolean;
+  /** Presente cuando se listan con filtro "más vendidos". */
+  cantidadVendida?: number;
   categoria?: CategoriaRespDTO;
   tipoProducto?: TipoProductoRespDTO;
 }

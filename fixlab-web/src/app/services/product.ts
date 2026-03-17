@@ -19,7 +19,14 @@ export class ProductService {
   private readonly categoriasUrl = this.apiBase ? `${this.apiBase}/api/categorias` : '/api/categorias';
   private readonly tiposUrl = this.apiBase ? `${this.apiBase}/api/tipos-producto` : '/api/tipos-producto';
 
-  getProducts(): Observable<Product[]> {
+  getProducts(filtro?: string, categoriaId?: number): Observable<Product[]> {
+    if (filtro) {
+      const params: Record<string, string | number> = { filtro };
+      if (categoriaId != null && categoriaId > 0) {
+        params['categoriaId'] = categoriaId;
+      }
+      return this.http.get<Product[]>(this.baseUrl, { params });
+    }
     return this.http.get<Product[]>(this.baseUrl);
   }
 

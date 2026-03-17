@@ -40,9 +40,15 @@ export class CheckoutService {
     return this.http.get<PedidoRespDTO[]>(`${this.baseUrl}/mis-pedidos`);
   }
 
-  /** Todos los pedidos (solo ADMIN). */
-  getTodosPedidos(): Observable<PedidoRespDTO[]> {
-    return this.http.get<PedidoRespDTO[]>(this.baseUrl);
+  /** Todos los pedidos (solo ADMIN), opcionalmente filtrados por estado y/o categoría. */
+  getTodosPedidos(estado?: string, categoriaId?: number): Observable<PedidoRespDTO[]> {
+    const params: Record<string, string | number> = {};
+    if (estado) params['estado'] = estado;
+    if (categoriaId != null && categoriaId > 0) params['categoriaId'] = categoriaId;
+    if (Object.keys(params).length === 0) {
+      return this.http.get<PedidoRespDTO[]>(this.baseUrl);
+    }
+    return this.http.get<PedidoRespDTO[]>(this.baseUrl, { params });
   }
 
   /** Obtener un pedido por ID (cliente: solo los suyos; admin: cualquiera). */

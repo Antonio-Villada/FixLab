@@ -36,8 +36,8 @@
               <td>{{ c.id }}</td>
               <td>{{ c.nombre }}</td>
               <td>
-                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(c)">Editar</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(c)">Eliminar</button>
+                <button type="button" class="btn btn-sm btn-outline-primary btn-admin-action me-1" (click)="openEdit(c)">Editar</button>
+                <button type="button" class="btn btn-sm btn-outline-danger btn-admin-action" (click)="confirmDelete(c)">Eliminar</button>
               </td>
             </tr>
           } @empty {

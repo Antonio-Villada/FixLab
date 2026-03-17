@@ -21,6 +21,10 @@ public class EmailService {
     private boolean logOnly;
 
     public void enviarCodigoVerificacion(String destino, String nombre, String codigo) {
+        if (logOnly) {
+            logCodigoEnConsola("REGISTRO - Código verificación", destino, nombre, codigo, 15);
+            return;
+        }
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setFrom("FixLab Soporte <tu_correo@gmail.com>");
         mensaje.setTo(destino);
@@ -34,6 +38,32 @@ public class EmailService {
         mailSender.send(mensaje);
     }
 
+    /** Código de 6 dígitos para completar el inicio de sesión (2FA). */
+    public void enviarCodigoLogin(String destino, String nombre, String codigo) {
+        if (logOnly) {
+            logCodigoEnConsola("LOGIN - Código 2FA", destino, nombre, codigo, 5);
+            return;
+        }
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setFrom("FixLab Soporte <tu_correo@gmail.com>");
+        mensaje.setTo(destino);
+        mensaje.setSubject("Tu código para iniciar sesión - FixLab");
+        mensaje.setText("Hola " + nombre + ",\n\n"
+                + "Has solicitado iniciar sesión en FixLab. Tu código de verificación es:\n\n"
+                + "👉 " + codigo + " 👈\n\n"
+                + "Este código expirará en 5 minutos.\n"
+                + "Si no fuiste tú, ignora este mensaje y cambia tu contraseña.");
+
+        mailSender.send(mensaje);
+    }
+
+    private void logCodigoEnConsola(String tipo, String destino, String nombre, String codigo, int minutos) {
+        log.warn("=== MODO LOCAL: correo NO enviado (fixlab.mail.log-only=true) ===");
+        System.out.println("\n========== FIXLAB - " + tipo + " (modo desarrollo) ==========");
+        System.out.println("Para: " + destino + " (" + nombre + ")");
+        System.out.println("CÓDIGO: " + codigo + "  (válido " + minutos + " min)");
+        System.out.println("================================================================\n");
+    }
 
     public void enviarFacturaVenta(String destino, String nombre, String numeroPedido, Double total) {
         SimpleMailMessage mensaje = new SimpleMailMessage();

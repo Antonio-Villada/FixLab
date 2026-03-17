@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, timeout, catchError, of } from 'rxjs';
 import { signal } from '@angular/core';
 import {
   LoginReqDTO,
@@ -113,11 +113,26 @@ export class AuthService {
   }
 
   /**
-   * Authenticates a user and stores the JWT token
-   * @param loginData Email and Password
+   * Paso 1 del login: envía credenciales y recibe mensaje de que se envió el código al correo.
+   * Timeout 20s para evitar que quede cargando si el backend no responde.
    */
-  login(loginData: LoginReqDTO): Observable<TokenRespDTO> {
-    return this.http.post<TokenRespDTO>(`${this.URL}/login`, loginData).pipe(
+  login(loginData: LoginReqDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${this.URL}/login`, loginData).pipe(
+      timeout(20000),
+      catchError((err) => {
+        if (err.name === 'TimeoutError' || err.error?.name === 'TimeoutError') {
+          throw { error: { mensaje: 'El servidor no respondió a tiempo. ¿Está el backend en marcha en localhost:8081?' } };
+        }
+        throw err;
+      })
+    );
+  }
+
+  /**
+   * Paso 2 del login: envía email + código de 6 dígitos y recibe el JWT.
+   */
+  verificarCodigoLogin(data: VerificarCorreoReqDTO): Observable<TokenRespDTO> {
+    return this.http.post<TokenRespDTO>(`${this.URL}/login/verificar-codigo`, data).pipe(
       tap(res => {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem(this.TOKEN_KEY, res.token);
