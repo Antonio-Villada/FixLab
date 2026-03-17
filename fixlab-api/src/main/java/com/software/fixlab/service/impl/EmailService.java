@@ -20,13 +20,20 @@ public class EmailService {
     @Value("${fixlab.mail.log-only:false}")
     private boolean logOnly;
 
+    /**
+     * Dirección "from" real. Gmail normalmente exige que coincida con el usuario autenticado.
+     * Puede sobreescribirse con FIXLAB_MAIL_FROM si se necesita.
+     */
+    @Value("${fixlab.mail.from:${spring.mail.username:}}")
+    private String from;
+
     public void enviarCodigoVerificacion(String destino, String nombre, String codigo) {
         if (logOnly) {
             logCodigoEnConsola("REGISTRO - Código verificación", destino, nombre, codigo, 15);
             return;
         }
         SimpleMailMessage mensaje = new SimpleMailMessage();
-        mensaje.setFrom("FixLab Soporte <tu_correo@gmail.com>");
+        if (from != null && !from.isBlank()) mensaje.setFrom(from);
         mensaje.setTo(destino);
         mensaje.setSubject("Tu código de verificación - FixLab");
         mensaje.setText("Hola " + nombre + ",\n\n"
@@ -45,7 +52,7 @@ public class EmailService {
             return;
         }
         SimpleMailMessage mensaje = new SimpleMailMessage();
-        mensaje.setFrom("FixLab Soporte <tu_correo@gmail.com>");
+        if (from != null && !from.isBlank()) mensaje.setFrom(from);
         mensaje.setTo(destino);
         mensaje.setSubject("Tu código para iniciar sesión - FixLab");
         mensaje.setText("Hola " + nombre + ",\n\n"
@@ -66,7 +73,13 @@ public class EmailService {
     }
 
     public void enviarFacturaVenta(String destino, String nombre, String numeroPedido, Double total) {
+        if (logOnly) {
+            log.warn("=== MODO LOCAL: factura NO enviada (fixlab.mail.log-only=true) ===");
+            log.info("Factura pedido #{} para {} ({}), total: {}", numeroPedido, nombre, destino, total);
+            return;
+        }
         SimpleMailMessage mensaje = new SimpleMailMessage();
+        if (from != null && !from.isBlank()) mensaje.setFrom(from);
         mensaje.setTo(destino);
         mensaje.setSubject("Factura de Venta - Pedido #" + numeroPedido + " - FixLab");
         mensaje.setText("Hola " + nombre + ",\n\n"
@@ -104,7 +117,7 @@ public class EmailService {
         mailMessage.setTo(destinatario);
         mailMessage.setSubject(asunto);
         mailMessage.setText(mensaje);
-        mailMessage.setFrom("labfix64@gmail.com");
+        if (from != null && !from.isBlank()) mailMessage.setFrom(from);
         try {
             mailSender.send(mailMessage);
             log.info("Correo enviado correctamente a {} (asunto: {})", destinatario, asunto);

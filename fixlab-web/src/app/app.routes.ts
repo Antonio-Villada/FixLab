@@ -17,6 +17,7 @@ import { PagoExitosoComponent } from './components/pago-exitoso/pago-exitoso';
 import { FacturaComponent } from './components/factura/factura';
 import { RecuperarPasswordComponent } from './components/recuperar-password/recuperar-password';
 import { RestablecerPasswordComponent } from './components/restablecer-password/restablecer-password';
+import { ChatComponent } from './components/chat/chat';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -29,6 +30,7 @@ export const routes: Routes = [
   { path: 'pago-exitoso', component: PagoExitosoComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  { path: 'chat', component: ChatComponent, canActivate: [authGuard] },
   { path: 'factura/:id', component: FacturaComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminRedirectComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/productos', component: AdminProductosComponent, canActivate: [authGuard, adminGuard] },

@@ -1,0 +1,69 @@
+<div class="container py-4">
+  <h1 class="h4 mb-4">
+    <i class="bi bi-chat-dots me-2"></i>Asistente FixLab
+  </h1>
+
+  <div class="chat-card card shadow-sm">
+    <div class="chat-mensajes" #mensajesContainer>
+      @if (mensajes().length === 0) {
+        <div class="chat-bienvenida text-muted text-center py-4">
+          <p class="mb-1">Escribe un mensaje y te ayudo con pedidos, productos o contacto.</p>
+          <p class="small">Ej: "¿Cuál es el estado de mi último pedido?"</p>
+        </div>
+      }
+      @for (msg of mensajes(); track $index) {
+        <div class="chat-fila" [class.chat-fila-usuario]="msg.emisor === 'usuario'" [class.chat-fila-bot]="msg.emisor === 'bot'">
+          <div class="chat-burbuja">
+            <span class="chat-texto">{{ msg.texto }}</span>
+            @if (msg.emisor === 'bot' && msg.tipoAccion === 'ver_pedido' && msg.payload) {
+              <div class="chat-accion mt-2">
+                <a [routerLink]="getRutaVerPedido(msg.payload)" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-receipt me-1"></i>Ver pedido #{{ msg.payload }}
+                </a>
+              </div>
+            }
+            @if (msg.emisor === 'bot' && msg.tipoAccion === 'ver_productos') {
+              <div class="chat-accion mt-2">
+                <a routerLink="/productos" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-bag me-1"></i>Ver productos
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (error()) {
+      <div class="chat-error alert alert-warning mx-3 mt-2 mb-0">
+        {{ error() }}
+      </div>
+    }
+
+    <div class="chat-input-wrap">
+      <input
+        type="text"
+        class="form-control chat-input"
+        [ngModel]="texto()"
+        (ngModelChange)="texto.set($event)"
+        (keydown)="onKeydown($event)"
+        placeholder="Escribe tu mensaje..."
+        [disabled]="enviando()"
+        maxlength="2000"
+      />
+      <button
+        type="button"
+        class="btn btn-primary chat-btn-enviar"
+        (click)="enviar()"
+        [disabled]="enviando() || !texto().trim()"
+        title="Enviar"
+      >
+        @if (enviando()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        } @else {
+          <i class="bi bi-send-fill"></i>
+        }
+      </button>
+    </div>
+  </div>
+</div>

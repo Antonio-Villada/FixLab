@@ -1,0 +1,88 @@
+@if (isLoggedIn) {
+  <div class="chat-widget">
+    <button
+      type="button"
+      class="chat-widget-trigger"
+      (click)="togglePanel()"
+      [attr.aria-expanded]="panelOpen()"
+      aria-label="Abrir chat de asistente"
+      title="Chat FixLab"
+    >
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+    </button>
+
+    @if (panelOpen()) {
+      <div class="chat-widget-panel" role="dialog" aria-label="Chat FixLab">
+        <div class="chat-widget-header">
+          <span class="chat-widget-title"><i class="bi bi-chat-dots me-2"></i>Asistente FixLab</span>
+          <button
+            type="button"
+            class="chat-widget-close"
+            (click)="togglePanel()"
+            aria-label="Cerrar chat"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="chat-widget-mensajes" #mensajesContainer>
+          @if (mensajes().length === 0) {
+            <div class="chat-widget-bienvenida text-muted text-center py-3 small">
+              <p class="mb-1">Escribe un mensaje. Te ayudo con pedidos, productos o contacto.</p>
+            </div>
+          }
+          @for (msg of mensajes(); track $index) {
+            <div class="chat-widget-fila" [class.chat-widget-usuario]="msg.emisor === 'usuario'" [class.chat-widget-bot]="msg.emisor === 'bot'">
+              <div class="chat-widget-burbuja">
+                <span class="chat-widget-texto">{{ msg.texto }}</span>
+                @if (msg.emisor === 'bot' && msg.tipoAccion === 'ver_pedido' && msg.payload) {
+                  <div class="chat-widget-accion mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="cerrarYNavegar(getRutaVerPedido(msg.payload))">
+                      <i class="bi bi-receipt me-1"></i>Ver pedido #{{ msg.payload }}
+                    </button>
+                  </div>
+                }
+                @if (msg.emisor === 'bot' && msg.tipoAccion === 'ver_productos') {
+                  <div class="chat-widget-accion mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="cerrarYNavegar('/productos')">
+                      <i class="bi bi-bag me-1"></i>Ver productos
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        @if (error()) {
+          <div class="chat-widget-error alert alert-warning m-2 mb-0 small">
+            {{ error() }}
+          </div>
+        }
+        <div class="chat-widget-input-wrap">
+          <input
+            type="text"
+            class="form-control form-control-sm chat-widget-input"
+            [ngModel]="texto()"
+            (ngModelChange)="texto.set($event)"
+            (keydown)="onKeydown($event)"
+            placeholder="Escribe tu mensaje..."
+            [disabled]="enviando()"
+            maxlength="2000"
+          />
+          <button
+            type="button"
+            class="btn btn-primary btn-sm chat-widget-btn-enviar"
+            (click)="enviar()"
+            [disabled]="enviando() || !texto().trim()"
+            title="Enviar"
+          >
+            @if (enviando()) {
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            } @else {
+              <i class="bi bi-send-fill"></i>
+            }
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

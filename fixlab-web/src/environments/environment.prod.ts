@@ -7,7 +7,7 @@ import type { Environment } from './environment.model';
 export const environment: Environment = {
   production: true,
   /** API desplegada en la IP del servidor. */
-  apiBaseUrl: 'http://34.75.187.247:8081',
+  apiBaseUrl: 'https://api.villadastudios.com',
   useImageUpload: false,
   /** Sustituir por tu clave de sitio reCAPTCHA v2 de producción */
   recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',

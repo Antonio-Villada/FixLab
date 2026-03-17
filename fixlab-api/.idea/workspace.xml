@@ -5,44 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="303c86b5-b7a2-443c-a345-271f00faead2" name="Changes" comment="registro y login">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/PedidoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/ProductoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/controller/UsuarioController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/UsuarioUpdateReqDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/req/UsuarioUpdateReqDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/ProductoRespDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/ProductoRespDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/UsuarioRespDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/dto/resp/UsuarioRespDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/entity/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/mapper/UsuarioMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/mapper/UsuarioMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/DetallePedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/DetallePedidoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/PedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/PedidoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/ProductoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/repository/ProductoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/AuthServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/EmailService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/PedidoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/ProductoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/ProductoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/impl/UsuarioServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/PedidoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/ProductoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/ProductoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/service/interfaces/UsuarioService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/software/fixlab/util/DisposableEmailValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/software/fixlab/util/DisposableEmailValidator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application-prod.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-prod.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/FixlabApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/FixlabApplication.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/CloudinaryConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/CloudinaryConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/DataInitializer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/DataInitializer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/JwtFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/JwtFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/config/SecurityConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/AuthController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/CategoriaController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/CategoriaController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/PedidoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/PedidoController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/ProductoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/ProductoController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/TestController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/TestController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/TipoProductoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/TipoProductoController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/UsuarioController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/UsuarioController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/WebhookController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/controller/WebhookController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CambioRolReqDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CambioRolReqDTO.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CategoriaReqDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/dto/req/CategoriaReqDTO.class" afterDir="false" />
@@ -121,39 +102,12 @@
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/PedidoService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/PedidoService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/ProductoService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/ProductoService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/TipoProductoService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/TipoProductoService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/UsuarioService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/UsuarioService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/WompiService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/software/fixlab/service/interfaces/WompiService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/software/fixlab/FixlabApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/software/fixlab/FixlabApplicationTests.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fixlab-web/dist.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/dist.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/app.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.server.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/app.routes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-categorias/admin-categorias.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-categorias/admin-categorias.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-pedidos/admin-pedidos.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-pedidos/admin-pedidos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-productos/admin-productos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-tipos-producto/admin-tipos-producto.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-tipos-producto/admin-tipos-producto.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-usuarios/admin-usuarios.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-usuarios/admin-usuarios.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-usuarios/admin-usuarios.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/admin-usuarios/admin-usuarios.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.css" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/dashboard/dashboard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.css" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/header/header.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/login/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/product-list/product-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/product-list/product-list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.css" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/register/register.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/restablecer-password/restablecer-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/restablecer-password/restablecer-password.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/components/restablecer-password/restablecer-password.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/components/restablecer-password/restablecer-password.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/models/auth.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/checkout.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/checkout.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/app/services/usuario.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/app/services/usuario.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fixlab-web/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/environments/environment.prod.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/environments/environment.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fixlab-web/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/../fixlab-web/src/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,34 +154,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.FixlabApplication.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;IvanBanol&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/FixLab/fixlab-api&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.FixlabApplication.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "CristianCastana",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/FixLab/fixlab-api",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "File.Encoding",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="FixlabApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -281,6 +235,7 @@
       <workItem from="1773275645171" duration="1214000" />
       <workItem from="1773600808463" duration="2130000" />
       <workItem from="1773703265437" duration="6638000" />
+      <workItem from="1773770184781" duration="2759000" />
     </task>
     <task id="LOCAL-00001" summary="registro y login">
       <option name="closed" value="true" />

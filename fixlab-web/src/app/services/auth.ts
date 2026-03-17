@@ -155,6 +155,29 @@ export class AuthService {
     return null;
   }
 
+  /** Devuelve el email (subject) desde el JWT, si es decodificable. */
+  getEmailFromToken(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    const payload = this.decodeJwtPayload(token);
+    const sub = (payload?.['sub'] ?? payload?.['email'] ?? payload?.['username']) as unknown;
+    return typeof sub === 'string' && sub.trim() ? sub.trim() : null;
+  }
+
+  private decodeJwtPayload(token: string): Record<string, unknown> | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) return null;
+      const b64Url = parts[1];
+      const b64 = b64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = b64.padEnd(Math.ceil(b64.length / 4) * 4, '=');
+      const json = atob(padded);
+      return JSON.parse(json) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
   /**
    * Checks if the user session is active
    */

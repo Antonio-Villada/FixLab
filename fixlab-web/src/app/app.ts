@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header';
 import { FooterComponent } from './components/footer/footer';
 import { AccessibilityWidgetComponent } from './components/accessibility-widget/accessibility-widget';
+import { ChatWidgetComponent } from './components/chat-widget/chat-widget';
 import { AuthService } from './services/auth';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, AccessibilityWidgetComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, ChatWidgetComponent, AccessibilityWidgetComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

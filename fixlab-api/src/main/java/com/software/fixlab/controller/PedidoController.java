@@ -39,6 +39,7 @@ public class PedidoController {
     }
 
     @PostMapping("/{id}/confirmar-pago")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> confirmarPagoWompi(@PathVariable Integer id) {
         try {
             String resultado = pedidoService.confirmarPago(id);

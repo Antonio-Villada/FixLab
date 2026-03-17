@@ -19,6 +19,8 @@ import com.software.fixlab.repository.ProductoRepository;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.PedidoService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
+
+    private static final Logger log = LoggerFactory.getLogger(PedidoServiceImpl.class);
 
     @Value("${wompi.public-key}")
     private String wompiPublicKey;
@@ -122,12 +126,16 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setEstado("PAGADO");
         pedidoRepository.save(pedido);
 
-        emailService.enviarFacturaVenta(
-                pedido.getCliente().getEmail(),
-                pedido.getCliente().getNombre(),
-                String.valueOf(pedido.getId()),
-                pedido.getTotal()
-        );
+        try {
+            emailService.enviarFacturaVenta(
+                    pedido.getCliente().getEmail(),
+                    pedido.getCliente().getNombre(),
+                    String.valueOf(pedido.getId()),
+                    pedido.getTotal()
+            );
+        } catch (Exception e) {
+            log.warn("Pago del pedido {} confirmado, pero no se pudo enviar la factura por correo: {}", pedidoId, e.getMessage());
+        }
 
         return "Pago confirmado exitosamente. Factura enviada al cliente.";
     }
