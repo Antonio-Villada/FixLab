@@ -1,0 +1,280 @@
+/* Página de registro - fondo blanco */
+
+.register-page {
+  min-height: 100vh;
+  background: #fff;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.register-container {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .register-container {
+    grid-template-columns: 1fr;
+  }
+  .promo-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-panel {
+    padding: 1.25rem 1rem 1.5rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .form-title {
+    font-size: 1.5rem;
+  }
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+/* Panel izquierdo: formulario */
+.form-panel {
+  padding: 2.5rem 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  color: #1a1a1a;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.brand {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sign-in-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.sign-in-link strong {
+  color: #0d6efd;
+  text-decoration: underline;
+}
+
+.sign-in-link:hover {
+  color: #1a1a1a;
+}
+
+.sign-in-link:hover strong {
+  color: #0a58ca;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.75rem 0;
+  letter-spacing: -0.02em;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 520px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+.password-input-wrap input {
+  flex: 1;
+  padding-right: 2.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #1a1a1a;
+}
+.password-input-wrap .password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #555;
+  font-size: 1.1rem;
+}
+.password-input-wrap .password-toggle:hover {
+  color: #1a4d5c;
+}
+
+.form-group input::placeholder {
+  color: #888;
+}
+
+.form-group .error {
+  font-size: 0.8rem;
+  color: #dc3545;
+}
+
+.terms-group {
+  margin-top: 0.25rem;
+}
+
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.terms-label input[type="checkbox"] {
+  margin-top: 0.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #1a4d5c;
+}
+
+.terms-label strong {
+  color: #0d6efd;
+  text-decoration: underline;
+}
+
+.btn-create {
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: #1a4d5c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-create:hover:not(:disabled) {
+  background: #234d5c;
+}
+
+.btn-create:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.footer-copy {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Panel derecho: logo FixLab */
+.promo-panel {
+  padding: 2.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-left: 1px solid #e9ecef;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo-image {
+  max-width: 100%;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.register-foto-preview-wrap {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.register-foto-preview-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.register-foto-preview-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #dee2e6;
+  background: #fff;
+}
+
+.register-foto-preview {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}

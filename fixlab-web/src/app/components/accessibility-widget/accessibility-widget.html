@@ -1,0 +1,83 @@
+<div class="a11y-widget">
+  <button
+    type="button"
+    class="a11y-trigger"
+    (click)="togglePanel()"
+    [attr.aria-expanded]="panelOpen()"
+    aria-label="Opciones de accesibilidad"
+    title="Accesibilidad"
+  >
+    <i class="bi bi-universal-access" aria-hidden="true"></i>
+  </button>
+
+  @if (panelOpen()) {
+    <div class="a11y-panel a11y-panel-icons" role="dialog" aria-label="Panel de accesibilidad">
+      <!-- Alto contraste: icono medio lleno -->
+      <button
+        type="button"
+        class="a11y-icon-btn"
+        [class.a11y-btn-active]="prefs().highContrast"
+        (click)="toggleHighContrast()"
+        [attr.aria-pressed]="prefs().highContrast"
+        [title]="prefs().highContrast ? 'Desactivar alto contraste' : 'Alto contraste'"
+        aria-label="Alto contraste"
+      >
+        <i class="bi bi-circle-half" aria-hidden="true"></i>
+      </button>
+      <!-- Contraste / brillo: sol -->
+      <button
+        type="button"
+        class="a11y-icon-btn"
+        [class.a11y-btn-active]="prefs().reduceMotion"
+        (click)="toggleReduceMotion()"
+        [attr.aria-pressed]="prefs().reduceMotion"
+        title="Reducir animaciones"
+        aria-label="Reducir animaciones"
+      >
+        <i class="bi bi-sun" aria-hidden="true"></i>
+      </button>
+      <!-- Reducir texto A⁻ -->
+      <button
+        type="button"
+        class="a11y-icon-btn a11y-btn-text"
+        (click)="setFontSize(-10)"
+        title="Reducir tamaño del texto"
+        aria-label="Reducir tamaño del texto"
+      >
+        <span aria-hidden="true">A<sup>−</sup></span>
+      </button>
+      <!-- Aumentar texto A⁺ -->
+      <button
+        type="button"
+        class="a11y-icon-btn a11y-btn-text"
+        (click)="setFontSize(10)"
+        title="Aumentar tamaño del texto"
+        aria-label="Aumentar tamaño del texto"
+      >
+        <span aria-hidden="true">A<sup>+</sup></span>
+      </button>
+      <!-- Cursor / accesibilidad -->
+      <button
+        type="button"
+        class="a11y-icon-btn"
+        [class.a11y-btn-active]="prefs().largeCursor"
+        (click)="toggleLargeCursor()"
+        [attr.aria-pressed]="prefs().largeCursor"
+        title="Cursor grande"
+        aria-label="Cursor grande"
+      >
+        <i class="bi bi-cursor" aria-hidden="true"></i>
+      </button>
+      <!-- Restablecer -->
+      <button
+        type="button"
+        class="a11y-icon-btn a11y-icon-reset"
+        (click)="reset()"
+        title="Restablecer opciones"
+        aria-label="Restablecer opciones de accesibilidad"
+      >
+        <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+      </button>
+    </div>
+  }
+</div>

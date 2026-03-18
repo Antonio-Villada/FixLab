@@ -1,0 +1,285 @@
+<div class="container mt-4">
+  @if (isAdmin()) {
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+      <h2 class="h5 mb-0 text-muted">Panel de administración – productos</h2>
+      <button type="button" class="btn btn-primary flex-sm-shrink-0" (click)="openCreate()">
+        <i class="bi bi-plus-lg me-1"></i> Nuevo producto
+      </button>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger alert-dismissible fade show">
+      {{ errorMessage() }}
+      <button type="button" class="btn-close" (click)="errorMessage.set(null)" aria-label="Cerrar"></button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">Cargando productos...</p>
+    </div>
+  } @else {
+    @if (!isAdmin()) {
+      <div class="d-flex flex-wrap align-items-center gap-3 mb-4 p-3 bg-light rounded">
+        <span class="fw-semibold text-muted">Filtrar:</span>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <label class="small text-muted mb-0">Categoría</label>
+          <select class="form-select form-select-sm" style="width: auto; min-width: 160px;"
+            [value]="filterCategoriaId() ?? ''"
+            (change)="filterCategoriaId.set($any($event.target).value === '' ? null : +$any($event.target).value)">
+            <option value="">Todas</option>
+            @for (c of categorias(); track c.id) {
+              <option [value]="c.id">{{ c.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <label class="small text-muted mb-0">Tipo de producto</label>
+          <select class="form-select form-select-sm" style="width: auto; min-width: 160px;"
+            [value]="filterTipoProductoId() ?? ''"
+            (change)="filterTipoProductoId.set($any($event.target).value === '' ? null : +$any($event.target).value)">
+            <option value="">Todos</option>
+            @for (t of tiposProducto(); track t.id) {
+              <option [value]="t.id">{{ t.nombre }}</option>
+            }
+          </select>
+        </div>
+        @if (filterCategoriaId() !== null || filterTipoProductoId() !== null) {
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="filterCategoriaId.set(null); filterTipoProductoId.set(null)">
+            Ver todos
+          </button>
+        }
+      </div>
+    }
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      @for (product of productsToShow(); track product.id ?? product.sku) {
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0">
+            @if (product.imagenUrl) {
+              <img [src]="product.imagenUrl" class="card-img-top" [alt]="product.nombre" style="height: 200px; object-fit: contain; padding: 10px;">
+            } @else {
+              <div class="bg-light text-center py-5">Sin imagen</div>
+            }
+
+            <div class="card-body">
+              <h5 class="card-title fw-bold">{{ product.nombre }}</h5>
+              @if (product.categoria || product.tipoProducto) {
+                <p class="card-text text-muted small mb-1">
+                  @if (product.categoria) {
+                    <span class="me-2">{{ product.categoria.nombre }}</span>
+                  }
+                  @if (product.tipoProducto) {
+                    <span>{{ product.tipoProducto.nombre }}</span>
+                  }
+                </p>
+              }
+              <p class="card-text text-muted small text-truncate">{{ product.descripcion }}</p>
+              <p class="fs-4 fw-bold text-primary mb-0">${{ product.precio | number:'1.2-2' }}</p>
+              <small class="text-muted">Stock: {{ product.stock }}</small>
+              @if (isAdmin()) {
+                <div class="mt-2">
+                  @if (product.activo !== false) {
+                    <span class="badge bg-success">Activo</span>
+                  } @else {
+                    <span class="badge bg-secondary">Inactivo</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="card-footer bg-transparent border-top-0 pb-3">
+              @if (isAdmin()) {
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openEdit(product)">
+                    <i class="bi bi-pencil me-1"></i> Editar
+                  </button>
+                  <button type="button" class="btn btn-outline-danger" (click)="confirmDelete(product)" title="Desactivar">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              } @else {
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openDetail(product)">Ver detalles</button>
+                  <button type="button" class="btn btn-primary" title="Agregar al carrito" (click)="addToCart(product)">
+                    <i class="bi bi-cart-plus fs-5"></i>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="col-12 text-center">
+          <div class="alert alert-info py-5">
+            <i class="bi bi-search fs-1 d-block mb-3"></i>
+            No hay productos disponibles.
+            @if (isAdmin()) {
+              <p class="mb-0 mt-2">Crea uno con <strong>Nuevo producto</strong>.</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Modal Ver detalles (cliente) -->
+  @if (detailModalVisible() && detailProduct(); as product) {
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Detalle del producto</h5>
+            <button type="button" class="btn-close" (click)="closeDetail()" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-5 text-center mb-3 mb-md-0">
+                @if (product.imagenUrl) {
+                  <img [src]="product.imagenUrl" [alt]="product.nombre" class="img-fluid rounded" style="max-height: 280px; object-fit: contain;">
+                } @else {
+                  <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
+                    Sin imagen
+                  </div>
+                }
+              </div>
+              <div class="col-md-7">
+                <h4 class="fw-bold">{{ product.nombre }}</h4>
+                <p class="text-muted mb-2"><code>{{ product.sku }}</code></p>
+                @if (product.categoria || product.tipoProducto) {
+                  <p class="mb-2">
+                    @if (product.categoria) {
+                      <span class="badge bg-secondary me-1">{{ product.categoria.nombre }}</span>
+                    }
+                    @if (product.tipoProducto) {
+                      <span class="badge bg-secondary">{{ product.tipoProducto.nombre }}</span>
+                    }
+                  </p>
+                }
+                @if (product.descripcion) {
+                  <p class="text-muted">{{ product.descripcion }}</p>
+                } @else {
+                  <p class="text-muted fst-italic">Sin descripción.</p>
+                }
+                <p class="fs-3 fw-bold text-primary mb-2">${{ product.precio | number:'1.2-2' }}</p>
+                <p class="text-muted small mb-0">Stock disponible: {{ product.stock }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDetail()">Cerrar</button>
+            <button type="button" class="btn btn-primary" (click)="addToCart(product); closeDetail()">
+              <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Crear/Editar producto (solo admin) -->
+  @if (modalVisible()) {
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ isEditing() ? 'Editar producto' : 'Nuevo producto' }}</h5>
+            <button type="button" class="btn-close" (click)="closeModal()" aria-label="Cerrar"></button>
+          </div>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">SKU <span class="text-danger">*</span></label>
+                    <input type="text" formControlName="sku" class="form-control" placeholder="Ej: LAP-001" [readonly]="isEditing()">
+                    @if (form.get('sku')?.invalid && form.get('sku')?.touched) {
+                      <div class="text-danger small">Requerido, máx. 50 caracteres.</div>
+                    }
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" formControlName="nombre" class="form-control" placeholder="Nombre del producto">
+                    @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+                      <div class="text-danger small">Requerido, máx. 150 caracteres.</div>
+                    }
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                    <select formControlName="categoriaId" class="form-select">
+                      <option [ngValue]="null">Seleccione categoría</option>
+                      @for (c of categorias(); track c.id) {
+                        <option [ngValue]="c.id">{{ c.nombre }}</option>
+                      }
+                    </select>
+                    @if (form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched) {
+                      <div class="text-danger small">Seleccione una categoría.</div>
+                    }
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Tipo de producto <span class="text-danger">*</span></label>
+                    <select formControlName="tipoProductoId" class="form-select">
+                      <option [ngValue]="null">Seleccione tipo</option>
+                      @for (t of tiposProducto(); track t.id) {
+                        <option [ngValue]="t.id">{{ t.nombre }}</option>
+                      }
+                    </select>
+                    @if (form.get('tipoProductoId')?.invalid && form.get('tipoProductoId')?.touched) {
+                      <div class="text-danger small">Seleccione un tipo de producto.</div>
+                    }
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea formControlName="descripcion" class="form-control" rows="2" placeholder="Opcional"></textarea>
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <label class="form-label">Precio <span class="text-danger">*</span></label>
+                      <input type="number" formControlName="precio" class="form-control" min="0" step="0.01">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Stock <span class="text-danger">*</span></label>
+                      <input type="number" formControlName="stock" class="form-control" min="0">
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Imagen del producto</label>
+                    <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)">
+                    @if (isEditing()) {
+                      <small class="text-muted">Opcional al editar: sube otra imagen para reemplazar.</small>
+                    } @else {
+                      <small class="text-warning d-block mt-1">Requerido al crear.</small>
+                    }
+                    @if (selectedFile()) {
+                      <button type="button" class="btn btn-sm btn-outline-secondary mt-2" (click)="removeSelectedImage()">Quitar imagen seleccionada</button>
+                    }
+                  </div>
+                </div>
+                <div class="col-md-6 d-flex flex-column align-items-center justify-content-center">
+                  <label class="form-label w-100 text-center">Vista previa</label>
+                  @if (imagePreviewUrl()) {
+                    <img [src]="imagePreviewUrl()" alt="Vista previa" class="img-fluid rounded border" style="max-height: 280px; object-fit: contain;">
+                  } @else {
+                    <div class="bg-light rounded border d-flex align-items-center justify-content-center text-muted" style="height: 200px; width: 100%; max-width: 280px;">
+                      Sin imagen
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || uploadingImage()">
+                @if (uploadingImage()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                {{ isEditing() ? 'Guardar cambios' : 'Crear producto' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>

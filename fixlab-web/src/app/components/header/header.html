@@ -1,0 +1,109 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm header-navbar">
+  <div class="container flex-nowrap">
+    <a class="navbar-brand d-flex align-items-center py-0" routerLink="/home">
+      <img src="images/Logo.jpeg" 
+           alt="FixLab Logo" 
+           class="fixlab-logo">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/home" routerLinkActive="active">Inicio</a>
+        </li>
+        @if (!authService.isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active">Productos</a>
+          </li>
+        }
+        @if (authService.isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/productos" routerLinkActive="active">Productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/pedidos" routerLinkActive="active">Pedidos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/categorias" routerLinkActive="active">Categorías</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/tipos-producto" routerLinkActive="active">Tipos de producto</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+          </li>
+        }
+      </ul>
+
+      <div class="d-flex align-items-center gap-3">
+        @if (authService.isLoggedInSignal()) {
+          <button type="button" class="btn btn-outline-light position-relative d-flex align-items-center gap-1 px-3"
+            title="Ver productos que vas a comprar" (click)="goToCart()">
+            <i class="bi bi-cart3 fs-4"></i>
+            <span class="d-none d-md-inline">Carrito</span>
+            @if (cartService.totalCount() > 0) {
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ cartService.totalCount() }}
+                <span class="visually-hidden">productos en carrito</span>
+              </span>
+            }
+          </button>
+        }
+
+        <div class="d-flex align-items-center gap-2 border-start ps-3">
+          @if (!authService.isLoggedInSignal()) {
+            <a routerLink="/login" class="btn btn-outline-light d-flex align-items-center">
+              <i class="bi bi-person-fill me-2"></i> Iniciar Sesión
+            </a>
+          } @else {
+            <button type="button" class="header-avatar-btn d-flex align-items-center justify-content-center"
+              (click)="openPanelCuenta()" title="Tu cuenta">
+              @if (usuarioService.currentUser()?.fotoUrl) {
+                <img [src]="usuarioService.currentUser()!.fotoUrl" alt="" class="header-avatar-img" />
+              } @else {
+                <span class="header-avatar-initials">{{ getInitials() }}</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Panel de cuenta (estilo tipo Google): se abre al hacer clic en el avatar -->
+@if (panelCuentaAbierto()) {
+  <div class="panel-cuenta-backdrop" (click)="closePanelCuenta()" role="button" aria-label="Cerrar panel"></div>
+  <aside class="panel-cuenta" role="dialog" aria-label="Tu cuenta">
+    <div class="panel-cuenta-header">
+      <button type="button" class="panel-cuenta-close btn btn-link" (click)="closePanelCuenta()" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="panel-cuenta-body">
+      <div class="panel-cuenta-foto-wrap">
+        <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-foto-link">
+          @if (usuarioService.currentUser()?.fotoUrl) {
+            <img [src]="usuarioService.currentUser()!.fotoUrl" alt="" class="panel-cuenta-foto" />
+          } @else {
+            <span class="panel-cuenta-iniciales">{{ getInitials() }}</span>
+          }
+        </a>
+      </div>
+      <h2 class="panel-cuenta-saludo">¡Hola, {{ getNombreParaSaludo() || 'Usuario' }}!</h2>
+      <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-admin-btn">
+        Editar perfil
+      </a>
+    </div>
+    <div class="panel-cuenta-footer">
+      <button type="button" class="panel-cuenta-logout" (click)="logoutAndClose()">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+}
