@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DecimalPipe, CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { DecimalPipe, CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService } from '../../services/product';
 import { AuthService } from '../../services/auth';
@@ -22,6 +22,7 @@ export class ProductListComponent implements OnInit {
   private productService = inject(ProductService);
   private authService = inject(AuthService);
   private cartService = inject(CartService);
+  private platformId = inject(PLATFORM_ID);
   private fb = inject(FormBuilder);
 
   products = signal<Product[]>([]);
@@ -67,8 +68,11 @@ export class ProductListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadProducts();
-    this.loadCategoriasAndTipos();
+    // Evitar llamadas al backend durante SSR/prerender (SSR no tiene localStorage).
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadProducts();
+      this.loadCategoriasAndTipos();
+    }
   }
 
   loadProducts(): void {

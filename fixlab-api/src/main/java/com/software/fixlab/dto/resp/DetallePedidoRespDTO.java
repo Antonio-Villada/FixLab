@@ -11,4 +11,8 @@ public class DetallePedidoRespDTO {
     private Integer cantidad;
     private Double precioUnitario;
     private Double subtotal;
+    private Integer categoriaId;
+    private String categoriaNombre;
+    private Integer tipoProductoId;
+    private String tipoProductoNombre;
 }

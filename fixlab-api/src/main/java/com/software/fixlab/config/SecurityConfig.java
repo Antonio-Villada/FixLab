@@ -3,6 +3,7 @@ package com.software.fixlab.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,7 +34,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Needed so browsers can complete CORS preflight without authentication.
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/webhooks/**").permitAll() // <-- ¡MOVIDO ARRIBA! Antes del anyRequest
+                        // Catálogo público (necesario para SSR/hidratación sin que exista localStorage).
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/productos/**",
+                                "/api/categorias/**",
+                                "/api/tipos-producto/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -51,6 +59,10 @@ public class SecurityConfig {
                 "https://*.ngrok-free.dev",
                 "https://fixlab.villadastudios.com",
                 "https://*.villadastudios.com",
+                // Spelling variant seen in the browser error:
+                // api.villadasudios.com / fixlab.villadasudios.com
+                "https://fixlab.villadasudios.com",
+                "https://*.villadasudios.com",
                 "http://34.75.187.247",
                 "http://34.75.187.247:*",
                 "https://34.75.187.247",

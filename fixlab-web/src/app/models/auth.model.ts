@@ -28,6 +28,17 @@ export interface TokenRespDTO {
   rol?: string;
 }
 
+/** Primer paso del login: se envió el código al correo. */
+export interface LoginPaso1RespDTO {
+  paso: 'CODIGO_ENVIADO';
+  emailMascarado: string;
+}
+
+export interface LoginVerificarCodigoReqDTO {
+  email: string;
+  codigo: string;
+}
+
 // Respuesta genérica para mensajes (como el de registro exitoso)
 export interface MensajeRespDTO {
   mensaje: string;
@@ -81,7 +92,17 @@ export interface SolicitarRecuperacionDTO {
   email: string;
 }
 
-// Restablecer contraseña con token del correo (POST /api/auth/reset-password)
+// Verificar código de recuperación (POST /api/auth/verificar-codigo-recuperacion)
+export interface VerificarCodigoRecuperacionReqDTO {
+  email: string;
+  codigo: string;
+}
+
+export interface TokenRecuperacionRespDTO {
+  token: string;
+}
+
+// Restablecer contraseña con token (POST /api/auth/reset-password)
 export interface ResetearPasswordDTO {
   token: string;
   nuevaPassword: string;

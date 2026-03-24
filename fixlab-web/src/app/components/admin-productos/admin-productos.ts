@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product';
@@ -20,11 +20,12 @@ import {
 export class AdminProductosComponent implements OnInit {
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
+  private platformId = inject(PLATFORM_ID);
 
   products = signal<Product[]>([]);
   categorias = signal<CategoriaRespDTO[]>([]);
   tiposProducto = signal<TipoProductoRespDTO[]>([]);
-  loading = signal(false);
+  loading = signal(true);
   errorMessage = signal<string | null>(null);
   modalVisible = signal(false);
   editingProduct = signal<Product | null>(null);
@@ -45,8 +46,11 @@ export class AdminProductosComponent implements OnInit {
   isEditing = computed(() => this.editingProduct() !== null);
 
   ngOnInit(): void {
-    this.loadProducts();
-    this.loadCategoriasAndTipos();
+    // Evitar llamadas al backend durante SSR/prerender (SSR no tiene localStorage).
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadProducts();
+      this.loadCategoriasAndTipos();
+    }
   }
 
   loadProducts(): void {

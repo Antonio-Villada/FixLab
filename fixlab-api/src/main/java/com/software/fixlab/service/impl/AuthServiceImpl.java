@@ -1,8 +1,11 @@
 package com.software.fixlab.service.impl;
 
 import com.software.fixlab.dto.req.*;
+import com.software.fixlab.dto.resp.LoginPaso1RespDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
+import com.software.fixlab.dto.resp.TokenRecuperacionRespDTO;
 import com.software.fixlab.dto.resp.TokenRespDTO;
+import com.software.fixlab.util.EmailMaskUtil;
 import com.software.fixlab.entity.RolUsuario;
 import com.software.fixlab.entity.Usuario;
 import com.software.fixlab.mapper.UsuarioMapper;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -167,10 +171,13 @@ public class AuthServiceImpl implements AuthService {
         return new MensajeRespDTO("Empleado registrado exitosamente como " + dto.getRol());
     }
 
+    private static final int LOGIN_2FA_MAX_INTENTOS_CODIGO = 5;
+    private static final int LOGIN_2FA_CODIGO_MINUTOS = 15;
+
     @Override
     @Transactional
-    public TokenRespDTO login(LoginReqDTO dto) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
+    public LoginPaso1RespDTO login(LoginReqDTO dto) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail().trim())
                 .orElseThrow(() -> new Exception("Credenciales incorrectas"));
 
         if (usuario.getBloqueadoHasta() != null && usuario.getBloqueadoHasta().isAfter(LocalDateTime.now())) {
@@ -182,16 +189,74 @@ public class AuthServiceImpl implements AuthService {
             throw new Exception("Credenciales incorrectas");
         }
 
-        // Clientes deben tener el correo verificado para poder iniciar sesión
         if (usuario.getRol() == RolUsuario.CLIENTE && !usuario.isCorreoVerificado()) {
             throw new Exception("Debes verificar tu correo antes de iniciar sesión. Revisa el código de 6 dígitos que enviamos a tu email.");
         }
 
+        LocalDateTime ahora = LocalDateTime.now();
+        boolean codigoAunVigente = usuario.getCodigoLogin2fa() != null
+                && usuario.getExpiracionCodigoLogin2fa() != null
+                && usuario.getExpiracionCodigoLogin2fa().isAfter(ahora);
+        if (codigoAunVigente
+                && usuario.getUltimoEnvioCodigoLogin2fa() != null
+                && ahora.isBefore(usuario.getUltimoEnvioCodigoLogin2fa().plusSeconds(60))) {
+            throw new Exception("Ya se envió un código reciente. Revisa tu correo o espera un minuto para solicitar otro.");
+        }
+
         usuario.setIntentosFallidos(0);
         usuario.setBloqueadoHasta(null);
+
+        String codigo = String.format("%06d", new java.util.Random().nextInt(999999));
+        usuario.setCodigoLogin2fa(codigo);
+        usuario.setExpiracionCodigoLogin2fa(ahora.plusMinutes(LOGIN_2FA_CODIGO_MINUTOS));
+        usuario.setIntentosCodigoLogin2fa(0);
+        usuario.setUltimoEnvioCodigoLogin2fa(ahora);
         usuarioRepository.save(usuario);
 
-        // Generamos el token real
+        emailService.enviarCodigoLogin2fa(usuario.getEmail(), usuario.getNombre(), codigo);
+
+        return new LoginPaso1RespDTO("CODIGO_ENVIADO", EmailMaskUtil.enmascarar(usuario.getEmail()));
+    }
+
+    @Override
+    @Transactional
+    public TokenRespDTO loginVerificarCodigo(LoginVerificarCodigoReqDTO dto) throws Exception {
+        String email = dto.getEmail().trim();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("Solicitud inválida. Vuelve a iniciar sesión desde el principio."));
+
+        if (usuario.getCodigoLogin2fa() == null || usuario.getExpiracionCodigoLogin2fa() == null) {
+            throw new Exception("No hay un código pendiente. Inicia sesión de nuevo con tu correo y contraseña.");
+        }
+        if (usuario.getExpiracionCodigoLogin2fa().isBefore(LocalDateTime.now())) {
+            usuario.setCodigoLogin2fa(null);
+            usuario.setExpiracionCodigoLogin2fa(null);
+            usuario.setUltimoEnvioCodigoLogin2fa(null);
+            usuarioRepository.save(usuario);
+            throw new Exception("El código ha expirado. Inicia sesión de nuevo para recibir uno nuevo.");
+        }
+
+        if (!usuario.getCodigoLogin2fa().equals(dto.getCodigo())) {
+            usuario.setIntentosCodigoLogin2fa(usuario.getIntentosCodigoLogin2fa() + 1);
+            if (usuario.getIntentosCodigoLogin2fa() >= LOGIN_2FA_MAX_INTENTOS_CODIGO) {
+                usuario.setCodigoLogin2fa(null);
+                usuario.setExpiracionCodigoLogin2fa(null);
+                usuario.setUltimoEnvioCodigoLogin2fa(null);
+                usuario.setIntentosCodigoLogin2fa(0);
+            }
+            usuarioRepository.save(usuario);
+            if (usuario.getIntentosCodigoLogin2fa() == 0 && usuario.getCodigoLogin2fa() == null) {
+                throw new Exception("Demasiados intentos fallidos. Inicia sesión de nuevo desde el principio.");
+            }
+            throw new Exception("El código es incorrecto.");
+        }
+
+        usuario.setCodigoLogin2fa(null);
+        usuario.setExpiracionCodigoLogin2fa(null);
+        usuario.setUltimoEnvioCodigoLogin2fa(null);
+        usuario.setIntentosCodigoLogin2fa(0);
+        usuarioRepository.save(usuario);
+
         String jwtToken = jwtService.generarToken(usuario);
         return new TokenRespDTO(jwtToken, usuario.getRol().name());
     }
@@ -252,23 +317,76 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void solicitarRecuperacionPassword(String email) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("No existe un usuario con ese correo"));
+        String raw = email == null ? "" : email.trim();
+        if (raw.isEmpty()) {
+            return;
+        }
+
+        Optional<Usuario> ou = usuarioRepository.findByEmail(raw);
+        if (ou.isEmpty()) {
+            ou = usuarioRepository.findByEmailIgnoreCase(raw);
+        }
+        if (ou.isEmpty()) {
+            ou = usuarioRepository.findByEmailNormalized(raw);
+        }
+        if (ou.isEmpty()) {
+            log.info("Recuperación de contraseña: correo no registrado (respuesta genérica al cliente).");
+            return;
+        }
+
+        Usuario usuario = ou.get();
+        String codigo = String.format("%06d", new java.util.Random().nextInt(999999));
+        usuario.setTokenRecuperacion(codigo);
+        usuario.setExpiracionToken(LocalDateTime.now().plusMinutes(15));
+        usuarioRepository.save(usuario);
+
+        String destino = usuario.getEmail() != null ? usuario.getEmail().trim() : raw;
+        log.info("Recuperación: enviando código de 6 dígitos a [{}]", destino);
+        emailService.enviarCodigoRecuperacionPassword(destino, usuario.getNombre(), codigo);
+    }
+
+    @Override
+    @Transactional
+    public TokenRecuperacionRespDTO verificarCodigoRecuperacion(VerificarCodigoRecuperacionReqDTO dto) throws Exception {
+        String emailRaw = (dto.getEmail() == null) ? "" : dto.getEmail().trim();
+        String codigoRaw = (dto.getCodigo() == null) ? "" : String.valueOf(dto.getCodigo()).trim();
+        log.info("Verificar código recuperación: email=[{}], codigo=[{}]", emailRaw, codigoRaw);
+        if (emailRaw.isEmpty() || codigoRaw.isEmpty()) {
+            throw new Exception("Email y código son obligatorios.");
+        }
+
+        Optional<Usuario> ou = usuarioRepository.findByEmail(emailRaw);
+        if (ou.isEmpty()) {
+            ou = usuarioRepository.findByEmailIgnoreCase(emailRaw);
+        }
+        if (ou.isEmpty()) {
+            ou = usuarioRepository.findByEmailNormalized(emailRaw);
+        }
+        Usuario usuario = ou.orElseThrow(() -> new Exception("Código incorrecto o expirado."));
+
+        if (usuario.getTokenRecuperacion() == null || usuario.getExpiracionToken() == null) {
+            log.warn("Usuario sin código pendiente: {}", usuario.getEmail());
+            throw new Exception("No hay un código pendiente. Solicita uno nuevo.");
+        }
+        if (usuario.getExpiracionToken().isBefore(LocalDateTime.now())) {
+            usuario.setTokenRecuperacion(null);
+            usuario.setExpiracionToken(null);
+            usuarioRepository.save(usuario);
+            throw new Exception("El código ha expirado. Solicita uno nuevo.");
+        }
+        String codigoGuardado = usuario.getTokenRecuperacion().trim();
+        String codigoIngresado = codigoRaw.replaceAll("\\s", "");
+        if (!codigoGuardado.equals(codigoIngresado)) {
+            log.warn("Código no coincide: esperado=[{}], recibido=[{}]", codigoGuardado, codigoIngresado);
+            throw new Exception("El código es incorrecto.");
+        }
 
         String token = UUID.randomUUID().toString();
         usuario.setTokenRecuperacion(token);
-        usuario.setExpiracionToken(LocalDateTime.now().plusMinutes(15));
-
+        usuario.setExpiracionToken(LocalDateTime.now().plusMinutes(10));
         usuarioRepository.save(usuario);
 
-        String enlaceRestablecimiento = frontendBaseUrl.replaceAll("/$", "") + "/reset-password?token=" + token;
-        String mensaje = "Hola " + usuario.getNombre() + ",\n\n" +
-                "Has solicitado restablecer tu contraseña en FixLab.\n" +
-                "Haz clic en el siguiente enlace para crear una nueva (tienes 15 minutos):\n\n" +
-                enlaceRestablecimiento;
-
-        log.info("Enviando correo de recuperación de contraseña a {}", usuario.getEmail());
-        emailService.enviarCorreo(usuario.getEmail(), "Recuperación de Contraseña - FixLab", mensaje);
+        return new TokenRecuperacionRespDTO(token);
     }
 
     @Override

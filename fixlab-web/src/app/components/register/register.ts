@@ -5,6 +5,11 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { RegistroReqDTO } from '../../models/auth.model';
 import { disposableEmailAsyncValidator } from '../../validators/disposable-email.validator';
+import {
+  getPasswordRequirements,
+  getPasswordStrength,
+  getStrengthLabel,
+} from '../../utils/password.utils';
 
 function confirmPasswordMatch(group: AbstractControl): ValidationErrors | null {
   const pass = group.get('password')?.value;
@@ -67,6 +72,11 @@ export class RegisterComponent {
   );
 
   submitting = false;
+
+  /** Utilidades de contraseña para el template */
+  getPasswordRequirements = getPasswordRequirements;
+  getPasswordStrength = getPasswordStrength;
+  getStrengthLabel = getStrengthLabel;
   /** Foto de perfil seleccionada (opcional). */
   selectedFoto: File | null = null;
   /** URL de vista previa de la foto (para mostrar en el formulario). */

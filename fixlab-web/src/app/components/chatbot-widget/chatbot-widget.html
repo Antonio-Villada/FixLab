@@ -1,0 +1,78 @@
+<div class="chatbot-widget">
+  <button
+    type="button"
+    class="chatbot-trigger"
+    (click)="togglePanel()"
+    [attr.aria-expanded]="panelOpen()"
+    aria-label="Abrir asistente FixLab"
+    title="Asistente FixLab"
+  >
+    <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+  </button>
+
+  @if (panelOpen()) {
+    <div class="chatbot-panel" role="dialog" aria-label="Asistente FixLab">
+      <div class="chatbot-header">
+        <div class="chatbot-header-text">
+          <strong>Asistente FixLab</strong>
+          <span class="chatbot-sub">{{ auth.isLoggedIn() ? 'Historial guardado en tu cuenta' : 'Sin guardar (invitado)' }}</span>
+        </div>
+        <div class="chatbot-header-actions">
+          <button
+            type="button"
+            class="chatbot-icon-btn"
+            (click)="newChat()"
+            [title]="auth.isLoggedIn() ? 'Borrar historial en el servidor y empezar de cero' : 'Limpiar mensajes en pantalla'"
+            aria-label="Nuevo chat"
+          >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="chatbot-icon-btn"
+            (click)="closePanel()"
+            title="Cerrar"
+            aria-label="Cerrar asistente"
+          >
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="chatbot-messages" role="log" aria-live="polite">
+        @if (loadingHistorial() && auth.isLoggedIn()) {
+          <p class="chatbot-welcome chatbot-loading">Cargando tu historial…</p>
+        } @else if (messages().length === 0) {
+          <p class="chatbot-welcome">{{ welcomeText() }}</p>
+        }
+        @for (m of messages(); track trackById($index, m)) {
+          <div class="chatbot-bubble" [class.chatbot-bubble-user]="m.role === 'user'" [class.chatbot-bubble-bot]="m.role === 'bot'">
+            @if (m.role === 'user') {
+              <span class="chatbot-role">Tú</span>
+            } @else {
+              <span class="chatbot-role">Asistente</span>
+            }
+            <div class="chatbot-text">{{ m.text }}</div>
+          </div>
+        }
+        <div #scrollAnchor class="chatbot-scroll-anchor"></div>
+      </div>
+
+      <div class="chatbot-input-row">
+        <textarea
+          class="chatbot-input"
+          rows="1"
+          placeholder="Escribe tu mensaje…"
+          [ngModel]="input()"
+          (ngModelChange)="input.set($event)"
+          (keydown)="onKeydown($event)"
+          [disabled]="enviando()"
+          aria-label="Mensaje para el asistente"
+        ></textarea>
+        <button type="button" class="chatbot-send" (click)="send()" [disabled]="enviando()" aria-label="Enviar">
+          <i class="bi bi-send-fill" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>

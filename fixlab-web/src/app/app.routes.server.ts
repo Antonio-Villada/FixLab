@@ -11,6 +11,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'login', renderMode: RenderMode.Prerender },
   { path: 'register', renderMode: RenderMode.Prerender },
   { path: 'recuperar-password', renderMode: RenderMode.Prerender },
+  { path: 'terminos-y-condiciones', renderMode: RenderMode.Prerender },
+  { path: 'politica-de-privacidad', renderMode: RenderMode.Prerender },
   { path: 'reset-password', renderMode: RenderMode.Server },
   { path: 'productos', renderMode: RenderMode.Server },
   { path: 'carrito', renderMode: RenderMode.Server },
@@ -18,4 +20,6 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'dashboard', renderMode: RenderMode.Server },
   { path: 'factura/**', renderMode: RenderMode.Server },
   { path: 'admin/**', renderMode: RenderMode.Server },
+  /** Coincide con el redirect del cliente (rutas desconocidas → home) */
+  { path: '**', renderMode: RenderMode.Server },
 ];

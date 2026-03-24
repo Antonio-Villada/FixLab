@@ -11,6 +11,11 @@ import {
   RolUsuario,
 } from '../../models/auth.model';
 import { disposableEmailAsyncValidator } from '../../validators/disposable-email.validator';
+import {
+  getPasswordRequirements,
+  getPasswordStrength,
+  getStrengthLabel,
+} from '../../utils/password.utils';
 
 @Component({
   selector: 'app-admin-usuarios',
@@ -209,4 +214,9 @@ export class AdminUsuariosComponent implements OnInit {
   rolLabel(rol: RolUsuario): string {
     return rol === RolUsuario.ADMIN ? 'Administrador' : rol === RolUsuario.TECNICO ? 'Técnico' : 'Cliente';
   }
+
+  /** Utilidades de contraseña para el template */
+  getPasswordRequirements = getPasswordRequirements;
+  getPasswordStrength = getPasswordStrength;
+  getStrengthLabel = getStrengthLabel;
 }

@@ -6,43 +6,64 @@
         <p class="text-muted small mb-0 mt-2">Gestión de Soporte y Ventas</p>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="mb-2">
-          <label class="form-label fw-semibold small">Correo Electrónico</label>
-          <div class="input-group">
-            <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
-            <input type="email" formControlName="email" class="form-control" 
-                   [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
-                   placeholder="correo@ejemplo.com">
+      @if (loginStep === 'credenciales') {
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="mb-2">
+            <label class="form-label fw-semibold small">Correo Electrónico</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
+              <input type="email" formControlName="email" class="form-control" 
+                     [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
+                     placeholder="correo@ejemplo.com">
+            </div>
+            <div class="invalid-feedback">Por favor ingrese un correo válido.</div>
           </div>
-          <div class="invalid-feedback">Por favor ingrese un correo válido.</div>
-        </div>
 
-        <div class="mb-2">
-          <label class="form-label fw-semibold small">Contraseña</label>
-          <div class="input-group">
-            <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
-            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control"
-                   [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
-                   placeholder="********">
-            <button type="button" class="btn btn-outline-secondary input-group-text bg-white" (click)="showPassword = !showPassword"
-                    [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'" title="{{ showPassword ? 'Ocultar' : 'Ver contraseña' }}">
-              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
-            </button>
+          <div class="mb-2">
+            <label class="form-label fw-semibold small">Contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
+              <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control"
+                     [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+                     placeholder="********">
+              <button type="button" class="btn btn-outline-secondary input-group-text bg-white" (click)="showPassword = !showPassword"
+                      [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'" title="{{ showPassword ? 'Ocultar' : 'Ver contraseña' }}">
+                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">La contraseña debe ser de al menos 6 caracteres.</div>
           </div>
-          <div class="invalid-feedback">La contraseña debe ser de al menos 6 caracteres.</div>
-        </div>
 
-        @if (recaptchaSiteKey) {
-          <div class="mb-2 d-flex justify-content-center recaptcha-wrap">
-            <div id="recaptcha-container"></div>
+          <button type="submit" [disabled]="loginForm.invalid || iniciandoSesion" class="btn btn-primary w-100 py-2 fw-bold shadow-sm login-submit-btn">
+            @if (iniciandoSesion) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Enviando código…
+            } @else {
+              <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+            }
+          </button>
+        </form>
+      } @else {
+        <p class="text-muted small mb-3">
+          Enviamos un código de 6 dígitos a <strong>{{ emailMascarado }}</strong>. Revísalo e introdúcelo aquí.
+        </p>
+        <form [formGroup]="codigoForm" (ngSubmit)="onSubmitCodigo()">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Código de acceso</label>
+            <input type="text" formControlName="codigo" class="form-control text-center fs-5 tracking-wider"
+                   maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+                   placeholder="000000"
+                   [ngClass]="{'is-invalid': codigoForm.get('codigo')?.invalid && codigoForm.get('codigo')?.touched}">
+            <div class="invalid-feedback">Introduce los 6 dígitos del correo.</div>
           </div>
-        }
-
-        <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
-          <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
-        </button>
-      </form>
+          <button type="submit" [disabled]="codigoForm.invalid" class="btn btn-primary w-100 py-2 fw-bold shadow-sm mb-2">
+            <i class="bi bi-shield-check me-2"></i> Confirmar e iniciar sesión
+          </button>
+          <button type="button" class="btn btn-outline-secondary w-100 py-2" (click)="volverACredenciales()">
+            Volver
+          </button>
+        </form>
+      }
 
       <div class="text-center mt-3 d-flex flex-wrap justify-content-center gap-2 gap-sm-3 small">
         <a routerLink="/register" class="text-primary fw-semibold text-decoration-none">Regístrate aquí</a>

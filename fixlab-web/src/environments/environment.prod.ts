@@ -9,8 +9,6 @@ export const environment: Environment = {
   /** API desplegada (mismo dominio o IP del backend en producción). */
   apiBaseUrl: 'https://api.villadastudios.com',
   useImageUpload: false,
-  /** Sustituir por tu clave de sitio reCAPTCHA v2 de producción */
-  recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
   /**
    * URL donde los usuarios acceden al frontend.
    * Necesaria para que Wompi redirija tras el pago a /pago-exitoso.

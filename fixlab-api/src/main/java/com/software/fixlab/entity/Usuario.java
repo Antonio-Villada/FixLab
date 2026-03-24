@@ -61,4 +61,35 @@ public class Usuario {
 
     @Column(name = "expiracion_token")
     private LocalDateTime expiracionToken;
+
+    /** Código de 6 dígitos para recuperar contraseña (envío por correo). Se reemplaza por token tras verificar. */
+    @JsonIgnore
+    @Column(name = "codigo_recuperacion", length = 6)
+    private String codigoRecuperacion;
+
+    @JsonIgnore
+    @Column(name = "expiracion_codigo_recuperacion")
+    private LocalDateTime expiracionCodigoRecuperacion;
+
+    /**
+     * Código de 6 dígitos enviado por correo en el segundo paso del login (2FA por email).
+     * Null cuando no hay login pendiente de verificación.
+     */
+    @JsonIgnore
+    @Column(name = "codigo_login_2fa", length = 6)
+    private String codigoLogin2fa;
+
+    @JsonIgnore
+    @Column(name = "expiracion_codigo_login_2fa")
+    private LocalDateTime expiracionCodigoLogin2fa;
+
+    /** Intentos fallidos al validar el código de login 2FA (se resetea al éxito o al nuevo código). */
+    @Column(name = "intentos_codigo_login_2fa", nullable = false)
+    @Builder.Default
+    private int intentosCodigoLogin2fa = 0;
+
+    /** Último envío del código de login por correo (anti-spam si el código sigue vigente). */
+    @JsonIgnore
+    @Column(name = "ultimo_envio_codigo_login_2fa")
+    private LocalDateTime ultimoEnvioCodigoLogin2fa;
 }

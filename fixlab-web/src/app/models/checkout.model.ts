@@ -33,6 +33,10 @@ export interface DetallePedidoRespDTO {
   cantidad: number;
   precioUnitario: number;
   subtotal: number;
+  categoriaId?: number;
+  categoriaNombre?: string;
+  tipoProductoId?: number;
+  tipoProductoNombre?: string;
 }
 
 /** Pedido del usuario (GET /api/pedidos/mis-pedidos). */

@@ -16,13 +16,15 @@ import { AdminPedidosComponent } from './components/admin-pedidos/admin-pedidos'
 import { PagoExitosoComponent } from './components/pago-exitoso/pago-exitoso';
 import { FacturaComponent } from './components/factura/factura';
 import { RecuperarPasswordComponent } from './components/recuperar-password/recuperar-password';
-import { RestablecerPasswordComponent } from './components/restablecer-password/restablecer-password';
+import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy';
 
 export const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
   { path: 'recuperar-password', component: RecuperarPasswordComponent },
-  { path: 'reset-password', component: RestablecerPasswordComponent },
+  { path: 'reset-password', redirectTo: 'recuperar-password', pathMatch: 'full' },
   { path: 'productos', component: ProductListComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'pago-exitoso', component: PagoExitosoComponent },
@@ -35,5 +37,7 @@ export const routes: Routes = [
   { path: 'admin/categorias', component: AdminCategoriasComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/tipos-producto', component: AdminTiposProductoComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [authGuard, adminGuard] },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'terminos-y-condiciones', component: TermsAndConditionsComponent },
+  { path: 'politica-de-privacidad', component: PrivacyPolicyComponent },
+  { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];

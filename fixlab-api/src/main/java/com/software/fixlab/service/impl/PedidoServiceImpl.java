@@ -186,13 +186,20 @@ public class PedidoServiceImpl implements PedidoService {
     private PedidoRespDTO mapearADto(Pedido pedido) {
         List<DetallePedido> detalles = detallePedidoRepository.findByPedido(pedido);
 
-        List<DetallePedidoRespDTO> detallesDto = detalles.stream().map(d -> DetallePedidoRespDTO.builder()
-                .productoId(d.getProducto().getId())
-                .nombreProducto(d.getProducto().getNombre())
-                .cantidad(d.getCantidad())
-                .precioUnitario(d.getPrecioUnitario())
-                .subtotal(d.getCantidad() * d.getPrecioUnitario())
-                .build()).collect(Collectors.toList());
+        List<DetallePedidoRespDTO> detallesDto = detalles.stream().map(d -> {
+            var p = d.getProducto();
+            return DetallePedidoRespDTO.builder()
+                    .productoId(p.getId())
+                    .nombreProducto(p.getNombre())
+                    .cantidad(d.getCantidad())
+                    .precioUnitario(d.getPrecioUnitario())
+                    .subtotal(d.getCantidad() * d.getPrecioUnitario())
+                    .categoriaId(p.getCategoria() != null ? p.getCategoria().getId() : null)
+                    .categoriaNombre(p.getCategoria() != null ? p.getCategoria().getNombre() : null)
+                    .tipoProductoId(p.getTipoProducto() != null ? p.getTipoProducto().getId() : null)
+                    .tipoProductoNombre(p.getTipoProducto() != null ? p.getTipoProducto().getNombre() : null)
+                    .build();
+        }).collect(Collectors.toList());
 
         return PedidoRespDTO.builder()
                 .id(pedido.getId())

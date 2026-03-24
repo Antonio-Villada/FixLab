@@ -6,6 +6,8 @@ import { Observable, tap } from 'rxjs';
 import { signal } from '@angular/core';
 import {
   LoginReqDTO,
+  LoginPaso1RespDTO,
+  LoginVerificarCodigoReqDTO,
   TokenRespDTO,
   RegistroReqDTO,
   MensajeRespDTO,
@@ -17,6 +19,7 @@ import {
 } from '../models/auth.model';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart.service';
+import { ChatbotService } from './chatbot.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +29,7 @@ export class AuthService {
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
   private cartService = inject(CartService);
+  private chatbotService = inject(ChatbotService);
 
   /** Estado de sesión reactivo: se actualiza al iniciar (navegador) y al hacer login/logout. Evita verse "no logueado" al volver con Atrás desde Wompi. */
   readonly isLoggedInSignal = signal(false);
@@ -89,12 +93,20 @@ export class AuthService {
     return this.http.put<MensajeRespDTO>(`${this.URL}/cambiar-rol`, data);
   }
 
-  /** Solicitar envío de correo para recuperar contraseña (POST /api/auth/recuperar-password). */
+  /** Solicitar envío de código por correo para recuperar contraseña (POST /api/auth/recuperar-password). */
   solicitarRecuperacionPassword(email: string): Observable<MensajeRespDTO> {
     return this.http.post<MensajeRespDTO>(`${this.URL}/recuperar-password`, { email });
   }
 
-  /** Restablecer contraseña con el token recibido por correo (POST /api/auth/reset-password). */
+  /** Verificar código de 6 dígitos y obtener token para restablecer (POST /api/auth/verificar-codigo-recuperacion). */
+  verificarCodigoRecuperacion(data: { email: string; codigo: string }): Observable<{ token: string }> {
+    const body = { email: data.email?.trim() ?? '', codigo: String(data.codigo ?? '').trim() };
+    return this.http.post<{ token: string }>(`${this.URL}/verificar-codigo-recuperacion`, body, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  /** Restablecer contraseña con el token (POST /api/auth/reset-password). */
   resetPassword(data: ResetearPasswordDTO): Observable<MensajeRespDTO> {
     return this.http.post<MensajeRespDTO>(`${this.URL}/reset-password`, data);
   }
@@ -112,19 +124,22 @@ export class AuthService {
     return this.http.post<MensajeRespDTO>(`${this.URL}/admin/asignar-password`, data);
   }
 
-  /**
-   * Authenticates a user and stores the JWT token
-   * @param loginData Email and Password
-   */
-  login(loginData: LoginReqDTO): Observable<TokenRespDTO> {
-    return this.http.post<TokenRespDTO>(`${this.URL}/login`, loginData).pipe(
-      tap(res => {
-        if (isPlatformBrowser(this.platformId)) {
+  /** Paso 1: credenciales → envía código al correo. */
+  loginIniciar(loginData: LoginReqDTO): Observable<LoginPaso1RespDTO> {
+    return this.http.post<LoginPaso1RespDTO>(`${this.URL}/login`, loginData);
+  }
+
+  /** Paso 2: código del correo → JWT y sesión. */
+  loginVerificarCodigo(body: LoginVerificarCodigoReqDTO): Observable<TokenRespDTO> {
+    return this.http.post<TokenRespDTO>(`${this.URL}/login-verificar-codigo`, body).pipe(
+      tap((res) => {
+        if (isPlatformBrowser(this.platformId) && res.token) {
           localStorage.setItem(this.TOKEN_KEY, res.token);
           if (res.rol) {
             localStorage.setItem(this.ROL_KEY, res.rol);
           }
           this.isLoggedInSignal.set(true);
+          this.chatbotService.loadHistorial();
         }
       })
     );
@@ -170,6 +185,7 @@ export class AuthService {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.ROL_KEY);
       this.cartService.clear();
+      this.chatbotService.resetConversation();
       this.isLoggedInSignal.set(false);
     }
     this.router.navigate(['/login']);

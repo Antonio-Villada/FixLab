@@ -32,7 +32,7 @@
             <th>Teléfono</th>
             <th>Rol</th>
             <th>Verificado</th>
-            <th style="width: 200px;">Acciones</th>
+            <th style="width: 140px;">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -46,9 +46,11 @@
               <td><span class="badge bg-secondary">{{ rolLabel(u.rol) }}</span></td>
               <td>{{ u.correoVerificado ? 'Sí' : 'No' }}</td>
               <td>
-                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(u)">Editar</button>
-                <button type="button" class="btn btn-sm btn-outline-info me-1" (click)="openChangeRol(u)">Cambiar rol</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(u)">Eliminar</button>
+                <div class="admin-action-btns">
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="openEdit(u)">Editar</button>
+                  <button type="button" class="btn btn-sm btn-outline-info" (click)="openChangeRol(u)">Cambiar rol</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(u)">Eliminar</button>
+                </div>
               </td>
             </tr>
           } @empty {
@@ -96,6 +98,23 @@
               <div class="mb-2">
                 <label class="form-label">Contraseña <span class="text-danger">*</span></label>
                 <input type="password" formControlName="password" class="form-control" placeholder="Mín. 8 caracteres, letras, números y caracteres especiales">
+                @if (formNewEmployee.get('password')?.value) {
+                  @let pwd = formNewEmployee.get('password')?.value ?? '';
+                  @let req = getPasswordRequirements(pwd);
+                  @let strength = getPasswordStrength(pwd);
+                  <div class="password-hints mt-2">
+                    <ul class="password-checklist mb-1">
+                      <li [class.valid]="req.hasLetter"><i class="bi" [ngClass]="req.hasLetter ? 'bi-check-circle-fill' : 'bi-circle'"></i> Al menos una letra</li>
+                      <li [class.valid]="req.hasNumber"><i class="bi" [ngClass]="req.hasNumber ? 'bi-check-circle-fill' : 'bi-circle'"></i> Al menos un número</li>
+                      <li [class.valid]="req.hasSpecial"><i class="bi" [ngClass]="req.hasSpecial ? 'bi-check-circle-fill' : 'bi-circle'"></i> Al menos un carácter especial</li>
+                      <li [class.valid]="req.hasMinLength"><i class="bi" [ngClass]="req.hasMinLength ? 'bi-check-circle-fill' : 'bi-circle'"></i> Mínimo 8 caracteres</li>
+                    </ul>
+                    <div class="password-strength" [attr.data-strength]="strength">
+                      <span class="strength-label">Fortaleza: {{ getStrengthLabel(strength) }}</span>
+                      <div class="strength-bar"><div class="strength-fill"></div></div>
+                    </div>
+                  </div>
+                }
               </div>
               <div class="mb-2">
                 <label class="form-label">Teléfono</label>
@@ -147,6 +166,23 @@
               <div class="mb-2">
                 <label class="form-label">Nueva contraseña</label>
                 <input type="password" formControlName="nuevaPassword" class="form-control" placeholder="Mín. 8 caracteres, letras, números y caracteres especiales">
+                @if (formEdit.get('nuevaPassword')?.value) {
+                  @let pwd = formEdit.get('nuevaPassword')?.value ?? '';
+                  @let req = getPasswordRequirements(pwd);
+                  @let strength = getPasswordStrength(pwd);
+                  <div class="password-hints mt-2">
+                    <ul class="password-checklist mb-1">
+                      <li [class.valid]="req.hasLetter"><i class="bi" [ngClass]="req.hasLetter ? 'bi-check-circle-fill' : 'bi-circle'"></i> Al menos una letra</li>
+                      <li [class.valid]="req.hasNumber"><i class="bi" [ngClass]="req.hasNumber ? 'bi-check-circle-fill' : 'bi-circle'"></i> Al menos un número</li>
+                      <li [class.valid]="req.hasSpecial"><i class="bi" [ngClass]="req.hasSpecial ? 'bi-check-circle-fill' : 'bi-circle'"></i> Al menos un carácter especial</li>
+                      <li [class.valid]="req.hasMinLength"><i class="bi" [ngClass]="req.hasMinLength ? 'bi-check-circle-fill' : 'bi-circle'"></i> Mínimo 8 caracteres</li>
+                    </ul>
+                    <div class="password-strength" [attr.data-strength]="strength">
+                      <span class="strength-label">Fortaleza: {{ getStrengthLabel(strength) }}</span>
+                      <div class="strength-bar"><div class="strength-fill"></div></div>
+                    </div>
+                  </div>
+                }
               </div>
               <div class="mb-2">
                 <label class="form-label">Confirmar nueva contraseña</label>

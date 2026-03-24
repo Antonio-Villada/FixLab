@@ -1,1 +1,5 @@
 /* Estilos del footer */
+
+footer a:hover {
+  color: #fff !important;
+}

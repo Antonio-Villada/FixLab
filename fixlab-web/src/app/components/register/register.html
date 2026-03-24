@@ -84,6 +84,37 @@
                 <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
               </button>
             </div>
+            @if (registroForm.get('password')?.value) {
+              @let pwd = registroForm.get('password')?.value ?? '';
+              @let req = getPasswordRequirements(pwd);
+              @let strength = getPasswordStrength(pwd);
+              <div class="password-hints">
+                <ul class="password-checklist">
+                  <li [class.valid]="req.hasLetter">
+                    <i class="bi" [ngClass]="req.hasLetter ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+                    Al menos una letra
+                  </li>
+                  <li [class.valid]="req.hasNumber">
+                    <i class="bi" [ngClass]="req.hasNumber ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+                    Al menos un número
+                  </li>
+                  <li [class.valid]="req.hasSpecial">
+                    <i class="bi" [ngClass]="req.hasSpecial ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+                    Al menos un carácter especial (&#64;#$%...)
+                  </li>
+                  <li [class.valid]="req.hasMinLength">
+                    <i class="bi" [ngClass]="req.hasMinLength ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+                    Mínimo 8 caracteres
+                  </li>
+                </ul>
+                <div class="password-strength" [attr.data-strength]="strength">
+                  <span class="strength-label">Fortaleza: {{ getStrengthLabel(strength) }}</span>
+                  <div class="strength-bar">
+                    <div class="strength-fill"></div>
+                  </div>
+                </div>
+              </div>
+            }
             @if (registroForm.get('password')?.invalid && registroForm.get('password')?.touched) {
               <span class="error">Mín. 8 caracteres, letras, números y caracteres especiales.</span>
             }
@@ -108,7 +139,7 @@
         <div class="form-group terms-group">
           <label class="terms-label">
             <input type="checkbox" formControlName="acceptTerms" />
-            <span>Al crear tu cuenta aceptas los <strong>Términos y Condiciones.</strong> <span class="text-danger">*</span></span>
+            <span>Al crear tu cuenta aceptas los <a routerLink="/terminos-y-condiciones" target="_blank" class="terms-link" (click)="$event.stopPropagation()"><strong>Términos y Condiciones</strong></a>. <span class="text-danger">*</span></span>
           </label>
           @if (registroForm.get('acceptTerms')?.invalid && registroForm.get('acceptTerms')?.touched) {
             <span class="error">Debes aceptar los términos.</span>

@@ -3,6 +3,8 @@ package com.software.fixlab.controller;
 import com.software.fixlab.dto.req.*;
 import com.software.fixlab.dto.resp.CheckDisposableResp;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
+import com.software.fixlab.dto.resp.LoginPaso1RespDTO;
+import com.software.fixlab.dto.resp.TokenRecuperacionRespDTO;
 import com.software.fixlab.dto.resp.TokenRespDTO;
 import com.software.fixlab.service.interfaces.AuthService;
 import com.software.fixlab.util.DisposableEmailValidator;
@@ -76,10 +78,13 @@ public class AuthController {
         }
     }
     @PostMapping("/login")
-    public ResponseEntity<TokenRespDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) throws Exception {
-        TokenRespDTO respuesta = authService.login(loginReqDTO);
-        // Retornamos 200 OK con el token
-        return ResponseEntity.ok(respuesta);
+    public ResponseEntity<LoginPaso1RespDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) throws Exception {
+        return ResponseEntity.ok(authService.login(loginReqDTO));
+    }
+
+    @PostMapping("/login-verificar-codigo")
+    public ResponseEntity<TokenRespDTO> loginVerificarCodigo(@Valid @RequestBody LoginVerificarCodigoReqDTO dto) throws Exception {
+        return ResponseEntity.ok(authService.loginVerificarCodigo(dto));
     }
     @PostMapping("/registro-empleado")
     @PreAuthorize("hasRole('ADMIN')") // <-- ESTE ES EL ESCUDO DE SEGURIDAD
@@ -95,9 +100,25 @@ public class AuthController {
     @PostMapping("/recuperar-password")
     public ResponseEntity<?> solicitarRecuperacion(@RequestBody SolicitarRecuperacionDTO dto) {
         try {
-            authService.solicitarRecuperacionPassword(dto.getEmail());
-            // Siempre respondemos OK por seguridad, incluso si el correo no existe, para evitar filtración de datos (Enumeration Attack)
-            return ResponseEntity.ok(new MensajeRespDTO("Si el correo existe, se han enviado las instrucciones."));
+            String email = dto != null ? dto.getEmail() : null;
+            if (email == null || email.isBlank()) {
+                return ResponseEntity.badRequest().body(new MensajeRespDTO("El correo electrónico es obligatorio."));
+            }
+            authService.solicitarRecuperacionPassword(email.trim());
+            return ResponseEntity.ok(new MensajeRespDTO("Si el correo existe, te hemos enviado un código de 6 dígitos."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MensajeRespDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/verificar-codigo-recuperacion")
+    public ResponseEntity<?> verificarCodigoRecuperacion(@RequestBody(required = false) VerificarCodigoRecuperacionReqDTO dto) {
+        try {
+            if (dto == null) {
+                return ResponseEntity.badRequest().body(new MensajeRespDTO("Datos incompletos. Envía email y código."));
+            }
+            TokenRecuperacionRespDTO resp = authService.verificarCodigoRecuperacion(dto);
+            return ResponseEntity.ok(resp);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MensajeRespDTO(e.getMessage()));
         }

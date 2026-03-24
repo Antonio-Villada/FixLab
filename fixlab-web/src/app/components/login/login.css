@@ -19,12 +19,6 @@
   object-fit: contain;
 }
 
-/* reCAPTCHA un poco más compacto en móvil */
-.recaptcha-wrap {
-  transform: scale(0.95);
-  transform-origin: center;
-}
-
-#recaptcha-container {
-  min-height: 65px;
+.login-submit-btn {
+  margin-top: 1.5rem;
 }

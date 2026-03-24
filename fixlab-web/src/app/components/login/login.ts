@@ -1,23 +1,10 @@
-import { Component, OnInit, AfterViewInit, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { LoginReqDTO } from '../../models/auth.model';
-import { environment } from '../../../environments/environment';
-
-declare global {
-  interface Window {
-    grecaptcha?: {
-      render: (container: string | HTMLElement, options: { sitekey: string }) => number;
-      getResponse: (widgetId?: number) => string;
-      reset: (widgetId?: number) => void;
-      execute: () => void;
-    };
-    onRecaptchaLoad?: () => void;
-  }
-}
 
 @Component({
   selector: 'app-login',
@@ -26,84 +13,79 @@ declare global {
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
-export class Login implements OnInit, AfterViewInit {
+export class Login implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private platformId = inject(PLATFORM_ID);
+  private cdr = inject(ChangeDetectorRef);
 
   loginForm!: FormGroup;
-  recaptchaSiteKey = environment.recaptchaSiteKey ?? '';
-  captchaWidgetId: number | null = null;
-  captchaReady = false;
+  codigoForm!: FormGroup;
+  loginStep: 'credenciales' | 'codigo' = 'credenciales';
+  emailMascarado = '';
   showPassword = false;
+  /** Evita doble envío y asegura un solo clic efectivo mientras responde el API. */
+  iniciandoSesion = false;
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     });
-  }
-
-  ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId) || !this.recaptchaSiteKey) return;
-    this.loadRecaptchaScript();
-  }
-
-  private loadRecaptchaScript(): void {
-    if (typeof document === 'undefined') return;
-    if (document.querySelector('script[src*="google.com/recaptcha"]')) {
-      this.renderCaptcha();
-      return;
-    }
-    if (typeof window !== 'undefined') window.onRecaptchaLoad = () => this.renderCaptcha();
-    const script = document.createElement('script');
-    script.src = `https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-
-  private renderCaptcha(): void {
-    if (typeof document === 'undefined' || typeof window === 'undefined') return;
-    if (!window.grecaptcha || !this.recaptchaSiteKey) return;
-    const container = document.getElementById('recaptcha-container');
-    if (!container || container.hasChildNodes()) return;
-    try {
-      this.captchaWidgetId = window.grecaptcha.render(container, {
-        sitekey: this.recaptchaSiteKey,
-      });
-      this.captchaReady = true;
-    } catch (e) {
-      console.warn('reCAPTCHA render error', e);
-    }
-  }
-
-  private getCaptchaResponse(): string {
-    if (typeof window === 'undefined' || !window.grecaptcha) return '';
-    return window.grecaptcha.getResponse(this.captchaWidgetId ?? undefined);
-  }
-
-  private resetCaptcha(): void {
-    if (typeof window !== 'undefined' && window.grecaptcha && this.captchaWidgetId != null) {
-      window.grecaptcha.reset(this.captchaWidgetId);
-    }
+    this.codigoForm = new FormGroup({
+      codigo: new FormControl('', [Validators.required, Validators.pattern(/^\d{6}$/)]),
+    });
   }
 
   onSubmit(): void {
-    if (this.recaptchaSiteKey && !this.getCaptchaResponse()) {
-      alert('Por favor, completa el captcha para continuar.');
-      return;
-    }
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
+    if (this.iniciandoSesion || this.loginForm.invalid) {
+      if (this.loginForm.invalid) {
+        this.loginForm.markAllAsTouched();
+      }
       return;
     }
 
-    const credentials: LoginReqDTO = this.loginForm.getRawValue();
+    const raw = this.loginForm.getRawValue();
+    const credentials: LoginReqDTO = {
+      email: (raw.email ?? '').trim(),
+      password: raw.password,
+    };
 
-    this.authService.login(credentials).subscribe({
-      next: (response) => {
-        const rol = response.rol ?? this.authService.getRol();
+    this.iniciandoSesion = true;
+    this.authService
+      .loginIniciar(credentials)
+      .pipe(finalize(() => (this.iniciandoSesion = false)))
+      .subscribe({
+        next: (response) => {
+          const paso = response?.paso;
+          if (paso === 'CODIGO_ENVIADO' || paso === 'codigo_enviado') {
+            this.emailMascarado = response.emailMascarado ?? '';
+            this.loginStep = 'codigo';
+            this.cdr.detectChanges();
+          }
+        },
+        error: (err) => {
+          console.error('Error en el login', err);
+          const errorMsg = err.error?.mensaje || 'Credenciales incorrectas. Intente de nuevo.';
+          alert(errorMsg);
+        },
+      });
+  }
+
+  volverACredenciales(): void {
+    this.loginStep = 'credenciales';
+    this.codigoForm.reset();
+  }
+
+  onSubmitCodigo(): void {
+    if (this.codigoForm.invalid) {
+      this.codigoForm.markAllAsTouched();
+      return;
+    }
+    const email = this.loginForm.get('email')?.value?.trim();
+    const codigo = this.codigoForm.get('codigo')?.value?.trim();
+    this.authService.loginVerificarCodigo({ email, codigo }).subscribe({
+      next: () => {
+        const rol = this.authService.getRol();
         if (rol === 'ADMIN') {
           this.router.navigate(['/home']);
         } else if (rol === 'TECNICO') {
@@ -113,9 +95,7 @@ export class Login implements OnInit, AfterViewInit {
         }
       },
       error: (err) => {
-        console.error('Error en el login', err);
-        this.resetCaptcha();
-        const errorMsg = err.error?.mensaje || 'Credenciales incorrectas. Intente de nuevo.';
+        const errorMsg = err.error?.mensaje || 'Código incorrecto o expirado.';
         alert(errorMsg);
       },
     });

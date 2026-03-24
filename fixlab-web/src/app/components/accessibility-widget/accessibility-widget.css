@@ -1,8 +1,16 @@
+/* Encima del botón de chat (misma columna a la derecha) */
 .a11y-widget {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: calc(1.5rem + 56px + 12px);
   right: 1.5rem;
   z-index: 9999;
+}
+
+@media (max-width: 576px) {
+  .a11y-widget {
+    bottom: calc(0.75rem + 56px + 12px);
+    right: 0.75rem;
+  }
 }
 
 .a11y-trigger {

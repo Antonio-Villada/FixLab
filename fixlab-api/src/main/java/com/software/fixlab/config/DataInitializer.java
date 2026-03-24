@@ -21,7 +21,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void inicializarAdmin() {
-        String correoAdmin = "admin@fixlab.com";
+        String correoAdmin = "ivanramiro654@gmail.com";
         if (usuarioRepository.findByEmail(correoAdmin).isEmpty()) {
             Usuario admin = Usuario.builder()
                     .cedula("0000000000")
