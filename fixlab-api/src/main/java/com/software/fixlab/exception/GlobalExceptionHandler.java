@@ -14,7 +14,28 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Atrapa los errores de lógica de negocio (ej. "El correo ya existe", "Cuenta bloqueada")
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<MensajeRespDTO> manejarBadRequest(BadRequestException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MensajeRespDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler({
+            ResourceNotFoundException.class,
+            NoExistePedidoException.class,
+            NoExisteProductoException.class,
+            NoExisteCategoriaException.class,
+            NoExisteTipoProductoException.class,
+            NoExisteReparacionException.class,
+            NoExisteEquipoException.class,
+            NoExisteTallerException.class
+    })
+    public ResponseEntity<MensajeRespDTO> manejarNoEncontrado(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new MensajeRespDTO(e.getMessage()));
+    }
+
+    // Atrapa el resto de errores de lógica de negocio
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MensajeRespDTO> manejarExcepcionesGenerales(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

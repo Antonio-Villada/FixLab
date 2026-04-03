@@ -74,6 +74,75 @@ public class EmailService {
                 "Hola " + nombre + ", Tu código para iniciar sesión es: " + codigo + ". Este código expira en 15 minutos.");
     }
 
+    /**
+     * Notifica al cliente dueño del equipo que el ticket de taller cambió de estado.
+     * Si falla el envío, se puede relanzar según la política del llamador; aquí no se lanza desde métodos internos del helper HTML.
+     */
+    public void enviarNotificacionCambioEstadoReparacion(
+            String destino,
+            String nombreCliente,
+            String numeroTicket,
+            String estadoAnteriorLegible,
+            String estadoNuevoLegible,
+            String lineaExtra) {
+        String nombre = nombreCliente != null && !nombreCliente.isBlank() ? nombreCliente.trim() : "cliente";
+        String seguimientoUrl = construirUrlSeguimientoReparaciones();
+        String logo = getLogoUrl();
+        String logoBlock = (logo != null && !logo.isBlank())
+                ? "<p style=\"margin:0 0 16px 0;\"><img src=\"" + logo + "\" alt=\"FixLab\" width=\"40\" height=\"40\" style=\"display:block;border:0;\" /></p>"
+                : "";
+        String extraBlock = (lineaExtra != null && !lineaExtra.isBlank())
+                ? "<p style=\"color:#555;font-size:14px;margin:12px 0;\">" + escaparHtmlSimple(lineaExtra) + "</p>"
+                : "";
+        String html = "<!DOCTYPE html><html><body style=\"font-family:Segoe UI,Arial,sans-serif;background:#f6f7f9;margin:0;padding:24px;\">"
+                + "<table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td align=\"center\">"
+                + "<div style=\"max-width:520px;background:#fff;border-radius:8px;padding:28px;text-align:left;border:1px solid #e5e7eb;\">"
+                + logoBlock
+                + "<h1 style=\"font-size:18px;color:#111827;margin:0 0 8px;\">Actualización de tu orden de servicio</h1>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 16px;\">Hola <strong>" + escaparHtmlSimple(nombre) + "</strong>,</p>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 12px;\">El estado del ticket <strong style=\"font-family:monospace;\">"
+                + escaparHtmlSimple(numeroTicket) + "</strong> ha cambiado:</p>"
+                + "<table style=\"width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;\">"
+                + "<tr><td style=\"padding:10px 12px;background:#f3f4f6;color:#6b7280;\">Estado anterior</td>"
+                + "<td style=\"padding:10px 12px;background:#f9fafb;\">" + escaparHtmlSimple(estadoAnteriorLegible) + "</td></tr>"
+                + "<tr><td style=\"padding:10px 12px;background:#ecfdf5;color:#065f46;font-weight:600;\">Estado actual</td>"
+                + "<td style=\"padding:10px 12px;background:#ecfdf5;font-weight:600;\">" + escaparHtmlSimple(estadoNuevoLegible) + "</td></tr>"
+                + "</table>"
+                + extraBlock
+                + "<p style=\"margin:20px 0 0;\"><a href=\"" + escaparAttr(seguimientoUrl) + "\" style=\"display:inline-block;background:#198754;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px;font-size:14px;\">Ver seguimiento</a></p>"
+                + "<p style=\"color:#9ca3af;font-size:12px;margin:24px 0 0;\">FixLab — Servicio técnico</p>"
+                + "</div></td></tr></table></body></html>";
+
+        String textoPlano = String.format(
+                "Hola %s, el ticket %s pasó de «%s» a «%s». Seguimiento: %s",
+                nombre, numeroTicket, estadoAnteriorLegible, estadoNuevoLegible, seguimientoUrl);
+        enviarCorreoHtml(destino,
+                "Actualización de tu orden " + numeroTicket + " - FixLab",
+                html,
+                textoPlano);
+    }
+
+    private String construirUrlSeguimientoReparaciones() {
+        String base = (frontendBaseUrl != null) ? frontendBaseUrl.trim() : "";
+        if (base.isEmpty()) return "/reparaciones";
+        return base.endsWith("/") ? base + "reparaciones" : base + "/reparaciones";
+    }
+
+    private static String escaparHtmlSimple(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;");
+    }
+
+    private static String escaparAttr(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("\"", "&quot;")
+                .replace("<", "&lt;");
+    }
+
     public void enviarFacturaVenta(String destino, String nombre, String numeroPedido, Double total) {
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setTo(destino);
@@ -117,7 +186,7 @@ public class EmailService {
             helper.setFrom("FixLab Soporte <" + mailFrom + ">");
             helper.setTo(destinatario);
             helper.setSubject(asunto);
-            helper.setText(textoPlano, htmlBody);
+            helper.setText(htmlBody, true);
             mailSender.send(mimeMessage);
             log.info("Correo HTML enviado correctamente a {} (asunto: {})", destinatario, asunto);
         } catch (MessagingException e) {

@@ -1,0 +1,320 @@
+<div class="container py-4 py-md-5">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-10 text-center">
+      <h1 class="h3 fw-bold text-success">
+        <i class="bi bi-wrench-adjustable-circle me-2"></i>Seguimiento de reparaciones
+      </h1>
+      <p class="text-muted mb-0">
+        Consulta el estado de tu equipo con el número de ticket que te entregamos en recepción.
+      </p>
+    </div>
+  </div>
+
+  @if (!authService.isLoggedInSignal()) {
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="alert alert-light border shadow-sm">
+          <p class="mb-2">
+            <strong>¿Ya tienes una orden en taller?</strong> Inicia sesión para ver tus reparaciones y buscar por número de ticket.
+          </p>
+          <a routerLink="/login" class="btn btn-success me-2">Iniciar sesión</a>
+          <a routerLink="/register" class="btn btn-outline-secondary">Crear cuenta</a>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="row justify-content-center g-4">
+      @if (!authService.isTallerStaff()) {
+        <div class="col-lg-10">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+              <h2 class="h6 mb-0"><i class="bi bi-device-ssd me-2"></i>Mis equipos</h2>
+            </div>
+            <div class="card-body">
+              @if (loadingEquipos()) {
+                <div class="text-center py-3">
+                  <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                </div>
+              } @else if (errorEquipos()) {
+                <div class="alert alert-warning mb-0 small">{{ errorEquipos() }}</div>
+              } @else if (equiposCliente().length === 0) {
+                <p class="text-muted small mb-0">Aún no tienes equipos registrados. El taller puede registrarlos al recibir un ingreso.</p>
+              } @else {
+                <div class="table-responsive">
+                  <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Tipo</th>
+                        <th>Marca / Modelo</th>
+                        <th>Serie</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (eq of equiposCliente(); track eq.id) {
+                        <tr>
+                          <td>{{ eq.tipoEquipoNombre }}</td>
+                          <td class="small">{{ eq.marca || '—' }} {{ eq.modelo || '' }}</td>
+                          <td class="small text-muted">{{ eq.numeroSerie || '—' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-success text-white">
+            <h2 class="h6 mb-0"><i class="bi bi-search me-2"></i>Buscar por ticket</h2>
+          </div>
+          <div class="card-body">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ej. FL-2026-00001"
+                [(ngModel)]="numeroTicket"
+                (keyup.enter)="buscarPorTicket()"
+              />
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="buscarPorTicket()"
+                [disabled]="loadingBusqueda()"
+              >
+                @if (loadingBusqueda()) {
+                  <span class="spinner-border spinner-border-sm" role="status"></span>
+                } @else {
+                  Buscar
+                }
+              </button>
+            </div>
+            @if (errorBusqueda()) {
+              <div class="alert alert-warning mt-3 mb-0 small">{{ errorBusqueda() }}</div>
+            }
+          </div>
+        </div>
+
+        @if (detalleActivo(); as r) {
+          <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body">
+              <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                <div>
+                  <span class="text-muted small">Ticket</span>
+                  <h3 class="h5 mb-0 font-monospace">{{ r.numeroTicket }}</h3>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge fs-6" [ngClass]="badgeClass(r.estado)">{{ r.estado }}</span>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cerrarDetalle()">Cerrar</button>
+                </div>
+              </div>
+
+              <app-reparacion-progreso-estado class="d-block mb-4" [estado]="r.estado" />
+
+              @if (accionMsg()) {
+                <div class="alert alert-success py-2 small mb-3">{{ accionMsg() }}</div>
+              }
+              @if (accionErr()) {
+                <div class="alert alert-danger py-2 small mb-3">{{ accionErr() }}</div>
+              }
+
+              <p class="small text-muted mb-1">Equipo</p>
+              <p class="mb-2">
+                {{ r.equipo.tipoEquipoNombre }} — {{ r.equipo.marca || '—' }} {{ r.equipo.modelo || '' }}
+              </p>
+              <p class="small text-muted mb-1">Taller</p>
+              <p class="mb-2">{{ r.tallerNombre }}</p>
+              <p class="small text-muted mb-1">Falla reportada</p>
+              <p class="mb-2">{{ r.descripcionFalla }}</p>
+              @if (r.diagnostico) {
+                <hr />
+                <p class="small text-muted mb-1">Diagnóstico</p>
+                <p class="mb-2">{{ r.diagnostico }}</p>
+              }
+              @if (r.cotizacionTotal != null) {
+                <p class="mb-2">
+                  <strong>Cotización:</strong> ${{ r.cotizacionTotal | number: '1.2-2' }}
+                </p>
+              }
+
+              @if (puedeAprobarCotizacion(r)) {
+                <hr />
+                <p class="small fw-semibold mb-2">Tu cotización está lista</p>
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  (click)="aprobarCotizacion()"
+                  [disabled]="loadingAprobar()"
+                >
+                  @if (loadingAprobar()) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  }
+                  Aceptar cotización y autorizar reparación
+                </button>
+              }
+
+              @if (authService.isTallerStaff()) {
+                <hr />
+                <p class="small text-muted mb-2">Añadir evidencia (foto enlace)</p>
+                <div class="row g-2 align-items-end">
+                  <div class="col-md-6">
+                    <label class="form-label small">URL</label>
+                    <input type="url" class="form-control form-control-sm" [(ngModel)]="evidenciaUrl" placeholder="https://…" />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small">Tipo</label>
+                    <select class="form-select form-select-sm" [(ngModel)]="evidenciaTipo">
+                      @for (te of tiposEvidencia; track te) {
+                        <option [value]="te">{{ te }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label small">Orden</label>
+                    <input type="number" class="form-control form-control-sm" [(ngModel)]="evidenciaOrden" />
+                  </div>
+                  <div class="col-md-1">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-success w-100"
+                      (click)="enviarEvidencia()"
+                      [disabled]="loadingEvidencia()"
+                      title="Guardar"
+                    >
+                      @if (loadingEvidencia()) {
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                      } @else {
+                        <i class="bi bi-plus-lg"></i>
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @if (r.historialEstados && r.historialEstados.length > 0) {
+                <hr />
+                <p class="small text-muted mb-2">Historial</p>
+                <ul class="list-unstyled small mb-0">
+                  @for (h of r.historialEstados; track h.id) {
+                    <li class="mb-2 border-start border-2 ps-2">
+                      <strong>{{ h.estadoNuevo }}</strong>
+                      @if (h.fechaCambio) {
+                        <span class="text-muted"> — {{ h.fechaCambio | date: 'short' }}</span>
+                      }
+                      @if (h.comentario) {
+                        <div class="text-muted">{{ h.comentario }}</div>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+              @if (r.lineasProducto && r.lineasProducto.length > 0) {
+                <hr />
+                <p class="small text-muted mb-2">Repuestos / ítems</p>
+                <ul class="small mb-0">
+                  @for (ln of r.lineasProducto; track ln.id) {
+                    <li>{{ ln.nombreProducto }} × {{ ln.cantidad }} — ${{ ln.subtotal | number: '1.2-2' }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          </div>
+        }
+        @if (errorDetalle()) {
+          <div class="alert alert-warning mt-3">{{ errorDetalle() }}</div>
+        }
+        @if (loadingDetalle()) {
+          <div class="text-center mt-3">
+            <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+            <span class="ms-2 small text-muted">Cargando detalle…</span>
+          </div>
+        }
+      </div>
+
+      <div class="col-lg-10">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-dark text-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="h6 mb-0">
+              <i class="bi bi-list-ul me-2"></i>
+              @if (authService.isTallerStaff()) {
+                Órdenes del taller
+              } @else {
+                Mis reparaciones
+              }
+            </h2>
+            <button type="button" class="btn btn-sm btn-outline-light" (click)="cargarLista()" [disabled]="loadingLista()">
+              Actualizar
+            </button>
+          </div>
+          <div class="card-body">
+            @if (loadingLista()) {
+              <div class="text-center py-4">
+                <div class="spinner-border text-success" role="status"></div>
+              </div>
+            } @else if (errorLista()) {
+              <div class="alert alert-warning mb-0">{{ errorLista() }}</div>
+            } @else if (lista().length === 0) {
+              <p class="text-muted text-center mb-0">No hay reparaciones para mostrar.</p>
+            } @else {
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Ticket</th>
+                      <th>Estado</th>
+                      <th>Equipo</th>
+                      <th>Fecha</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of lista(); track item.id) {
+                      <tr>
+                        <td class="font-monospace fw-semibold">{{ item.numeroTicket }}</td>
+                        <td>
+                          <span class="badge" [ngClass]="badgeClass(item.estado)">{{ item.estado }}</span>
+                        </td>
+                        <td style="min-width: 7rem">
+                          <app-reparacion-progreso-estado [estado]="item.estado" [compact]="true" />
+                        </td>
+                        <td class="small">
+                          {{ item.equipo.tipoEquipoNombre }}
+                          @if (item.equipo.marca) {
+                            · {{ item.equipo.marca }}
+                          }
+                        </td>
+                        <td class="small text-muted">{{ item.fechaCreacion | date: 'short' }}</td>
+                        <td class="text-end">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-success"
+                            (click)="verDetalleDesdeLista(item)"
+                            [disabled]="loadingDetalle()"
+                          >
+                            Ver detalle
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      @if (authService.isTallerRepairStaff()) {
+        <div class="col-12 text-center">
+          <a routerLink="/admin/taller/gestion" class="btn btn-outline-dark">
+            <i class="bi bi-gear me-1"></i> Panel de gestión del taller
+          </a>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -67,20 +67,31 @@ public class PedidoServiceImpl implements PedidoService {
             Producto producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new NoExisteProductoException("Producto con ID " + item.getProductoId() + " no encontrado"));
 
-            if (producto.getStock() < item.getCantidad()) {
-                throw new BadRequestException("Stock insuficiente para: " + producto.getNombre());
+            if (!Boolean.TRUE.equals(producto.getActivo())) {
+                throw new BadRequestException("Producto no disponible: " + producto.getNombre());
+            }
+            int cant = item.getCantidad() == null ? 0 : item.getCantidad();
+            if (cant <= 0) {
+                throw new BadRequestException("Cantidad inválida para el producto: " + producto.getNombre());
+            }
+            int stock = producto.getStock() == null ? 0 : producto.getStock();
+            if (stock < cant) {
+                String msg = stock <= 0
+                        ? "Sin stock para: " + producto.getNombre()
+                        : "Stock insuficiente para: " + producto.getNombre() + " (disponible: " + stock + ")";
+                throw new BadRequestException(msg);
             }
 
-            producto.setStock(producto.getStock() - item.getCantidad());
+            producto.setStock(stock - cant);
             productoRepository.save(producto);
 
-            double subtotal = item.getCantidad() * producto.getPrecio();
+            double subtotal = cant * producto.getPrecio();
             totalPedido += subtotal;
 
             DetallePedido detalle = DetallePedido.builder()
                     .pedido(nuevoPedido)
                     .producto(producto)
-                    .cantidad(item.getCantidad())
+                    .cantidad(cant)
                     .precioUnitario(producto.getPrecio())
                     .build();
             detallesParaGuardar.add(detalle);

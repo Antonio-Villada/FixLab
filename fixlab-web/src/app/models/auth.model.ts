@@ -1,8 +1,9 @@
 // Definimos el Enum para que coincida exactamente con @Enumerated(EnumType.STRING)
 export enum RolUsuario {
   CLIENTE = 'CLIENTE',
+  RECEPCIONISTA = 'RECEPCIONISTA',
+  TECNICO = 'TECNICO',
   ADMIN = 'ADMIN',
-  TECNICO = 'TECNICO'
 }
 
 // DTO para el inicio de sesión
@@ -24,7 +25,7 @@ export interface RegistroReqDTO {
 // Respuesta que contiene el JWT (y opcionalmente el rol para redirigir por tipo de usuario)
 export interface TokenRespDTO {
   token: string;
-  /** Rol del usuario: CLIENTE | ADMIN | TECNICO. Si el backend no lo envía, se puede decodificar del JWT. */
+  /** Rol del usuario: CLIENTE | RECEPCIONISTA | TECNICO | ADMIN. */
   rol?: string;
 }
 
@@ -55,6 +56,21 @@ export interface UsuarioRespDTO {
   correoVerificado: boolean;
   /** URL de foto de perfil (opcional; si no hay, el header muestra iniciales). */
   fotoUrl?: string | null;
+}
+
+/** Sugerencias de autocompletado en recepción (solo clientes). */
+export interface ClienteSugerenciaRespDTO {
+  cedula: string;
+  nombre: string;
+  apellido: string;
+}
+
+/** Personal que puede asignarse como técnico de una orden (técnico o administrador). */
+export interface StaffTallerAsignableRespDTO {
+  cedula: string;
+  nombre: string;
+  apellido: string;
+  rol: RolUsuario;
 }
 
 // Actualizar usuario (PUT /api/usuarios/{cedula})

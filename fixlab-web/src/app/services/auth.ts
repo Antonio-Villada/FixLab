@@ -163,7 +163,7 @@ export class AuthService {
   }
 
   /**
-   * Obtiene el rol del usuario (CLIENTE | ADMIN | TECNICO). Requiere que el backend lo envíe en el login.
+   * Obtiene el rol del usuario (CLIENTE | RECEPCIONISTA | TECNICO | ADMIN). Requiere que el backend lo envíe en el login.
    */
   getRol(): string | null {
     if (isPlatformBrowser(this.platformId)) {
@@ -175,6 +175,34 @@ export class AuthService {
   /** Indica si el usuario actual es administrador */
   isAdmin(): boolean {
     return this.getRol() === 'ADMIN';
+  }
+
+  /** Indica si el usuario actual es técnico de taller */
+  isTecnico(): boolean {
+    return this.getRol() === 'TECNICO';
+  }
+
+  /** Recepcionista (alta de equipos y órdenes en mostrador). */
+  isRecepcionista(): boolean {
+    return this.getRol() === 'RECEPCIONISTA';
+  }
+
+  /** Compras en tienda / pedidos propios (solo rol cliente). */
+  isCliente(): boolean {
+    return this.getRol() === 'CLIENTE';
+  }
+
+  /** Administrador o técnico — gestión de reparaciones (diagnóstico, estados, repuestos). */
+  isTallerRepairStaff(): boolean {
+    return this.isAdmin() || this.isTecnico();
+  }
+
+  /**
+   * Personal de taller con vista operativa amplia en seguimiento (admin, técnico o recepcionista).
+   * No usar para rutas de gestión de taller; ahí solo {@link isTallerRepairStaff}.
+   */
+  isTallerStaff(): boolean {
+    return this.isTallerRepairStaff() || this.isRecepcionista();
   }
 
   /**

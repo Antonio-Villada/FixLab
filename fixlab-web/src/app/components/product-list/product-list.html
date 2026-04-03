@@ -77,7 +77,12 @@
               }
               <p class="card-text text-muted small text-truncate">{{ product.descripcion }}</p>
               <p class="fs-4 fw-bold text-primary mb-0">${{ product.precio | number:'1.2-2' }}</p>
-              <small class="text-muted">Stock: {{ product.stock }}</small>
+              <small class="text-muted d-block">
+                Stock: {{ product.stock }}
+                @if (!isAdmin() && product.stock <= 0) {
+                  <span class="badge bg-secondary ms-1">Agotado</span>
+                }
+              </small>
               @if (isAdmin()) {
                 <div class="mt-2">
                   @if (product.activo !== false) {
@@ -102,7 +107,13 @@
               } @else {
                 <div class="d-flex gap-2">
                   <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openDetail(product)">Ver detalles</button>
-                  <button type="button" class="btn btn-primary" title="Agregar al carrito" (click)="addToCart(product)">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="!puedeAgregarAlCarrito(product)"
+                    [title]="puedeAgregarAlCarrito(product) ? 'Agregar al carrito' : 'Sin stock disponible'"
+                    (click)="addToCart(product)"
+                  >
                     <i class="bi bi-cart-plus fs-5"></i>
                   </button>
                 </div>
@@ -169,8 +180,14 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="closeDetail()">Cerrar</button>
-            <button type="button" class="btn btn-primary" (click)="addToCart(product); closeDetail()">
-              <i class="bi bi-cart-plus me-1"></i> Agregar al carrito
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!puedeAgregarAlCarrito(product)"
+              (click)="addToCart(product); closeDetail()"
+            >
+              <i class="bi bi-cart-plus me-1"></i>
+              {{ puedeAgregarAlCarrito(product) ? 'Agregar al carrito' : 'Sin stock' }}
             </button>
           </div>
         </div>

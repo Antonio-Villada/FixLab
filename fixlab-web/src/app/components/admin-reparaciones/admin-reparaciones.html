@@ -1,0 +1,344 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <h1 class="h4 mb-0">
+      <i class="bi bi-wrench-adjustable me-2"></i>Reparaciones
+    </h1>
+    @if (enShellTallerAdmin()) {
+      <div class="w-100 ms-md-auto" style="max-width: 26rem">
+        <label class="form-label small mb-1 text-muted">Buscar ticket</label>
+        <div class="input-group input-group-sm">
+          <input
+            type="search"
+            class="form-control font-monospace"
+            [(ngModel)]="ticketBuscar"
+            (keydown.enter)="buscarTicketPorNumero()"
+            [disabled]="buscandoTicket()"
+            placeholder="Ej. FL-2026-00001"
+            autocomplete="off"
+            aria-label="Número de ticket"
+          />
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="buscarTicketPorNumero()"
+            [disabled]="buscandoTicket()"
+          >
+            @if (buscandoTicket()) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            } @else {
+              <i class="bi bi-search"></i>
+            }
+          </button>
+        </div>
+        @if (busquedaTicketErr()) {
+          <div class="text-danger small mt-1">{{ busquedaTicketErr() }}</div>
+        }
+      </div>
+    } @else {
+      <div class="d-flex gap-2">
+        <a routerLink="/admin/recepcion" class="btn btn-primary btn-sm">Nueva recepción</a>
+        <a routerLink="/reparaciones" class="btn btn-outline-secondary btn-sm">Vista seguimiento</a>
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="cargarLista()" [disabled]="loadingLista()">
+          Actualizar lista
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-warning">{{ error() }}</div>
+  }
+
+  @if (!enShellTallerAdmin()) {
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card shadow-sm">
+          <div class="card-header bg-dark text-white">
+            <span class="h6 mb-0">Listado</span>
+          </div>
+          <div class="card-body p-0">
+            @if (loadingLista()) {
+              <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+              </div>
+            } @else if (lista().length === 0) {
+              <p class="text-muted p-4 mb-0">No hay tickets registrados.</p>
+            } @else {
+              <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Ticket</th>
+                      <th>Cliente</th>
+                      <th>Estado</th>
+                      <th>Avance</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (r of lista(); track r.id) {
+                      <tr>
+                        <td class="font-monospace small fw-semibold">{{ r.numeroTicket }}</td>
+                        <td class="small">{{ r.clienteNombre }} {{ r.clienteApellido }}</td>
+                        <td>
+                          <span class="badge" [ngClass]="badgeClass(r.estado)">{{ r.estado }}</span>
+                        </td>
+                        <td style="min-width: 6.5rem">
+                          <app-reparacion-progreso-estado [estado]="r.estado" [compact]="true" />
+                        </td>
+                        <td class="text-end">
+                          <button type="button" class="btn btn-sm btn-outline-primary" (click)="verDetalle(r)">
+                            Detalle
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <ng-container *ngTemplateOutlet="panelDetalle"></ng-container>
+      </div>
+    </div>
+  } @else {
+    <div class="row g-4">
+      <div class="col-12">
+        <ng-container *ngTemplateOutlet="panelDetalle"></ng-container>
+      </div>
+    </div>
+  }
+
+  <ng-template #panelDetalle>
+    @if (loadingDetalle()) {
+      <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+          <div class="spinner-border text-secondary" role="status"></div>
+        </div>
+      </div>
+    } @else if (seleccion(); as s) {
+      <div class="card shadow-sm border-primary border-opacity-25">
+        <div class="card-header d-flex justify-content-between align-items-center bg-white">
+          <span class="fw-semibold font-monospace">{{ s.numeroTicket }}</span>
+          <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrarDetalle()"></button>
+        </div>
+        <div class="card-body">
+          <p class="small text-muted mb-1">Estado</p>
+          <p class="mb-2"><span class="badge" [ngClass]="badgeClass(s.estado)">{{ s.estado }}</span></p>
+          <app-reparacion-progreso-estado class="d-block mb-3" [estado]="s.estado" />
+          <p class="small text-muted mb-1">Cliente</p>
+          <p class="mb-3">{{ s.clienteNombre }} {{ s.clienteApellido }} · {{ s.clienteCedula }}</p>
+          <p class="small text-muted mb-1">Equipo</p>
+          <p class="mb-3">{{ s.equipo.tipoEquipoNombre }} — {{ s.equipo.marca || '—' }} {{ s.equipo.modelo || '' }}</p>
+          <p class="small text-muted mb-1">Falla</p>
+          <p class="mb-3">{{ s.descripcionFalla }}</p>
+          @if (s.diagnostico) {
+            <p class="small text-muted mb-1">Diagnóstico</p>
+            <p class="mb-3">{{ s.diagnostico }}</p>
+          }
+          <p class="small text-muted mb-1">Técnico asignado</p>
+          @if (s.tecnicoCedula) {
+            <p class="mb-3">{{ s.tecnicoNombre }} {{ s.tecnicoApellido }} <span class="text-muted">· {{ s.tecnicoCedula }}</span></p>
+          } @else {
+            <p class="mb-3 text-muted small">Sin asignar (defínase en recepción al crear el ticket).</p>
+          }
+
+          <hr class="mt-4" />
+          <p class="fw-semibold mb-3">Acciones de taller</p>
+          @if (accionMsg()) { <div class="alert alert-success py-2 small">{{ accionMsg() }}</div> }
+          @if (accionErr()) { <div class="alert alert-danger py-2 small">{{ accionErr() }}</div> }
+
+          <div class="staff-action card bg-light border-0 mb-3">
+            <div class="card-body py-3">
+              <label class="form-label small mb-1">Estado de trabajo</label>
+              <select class="form-select form-select-sm" [(ngModel)]="estadoTrabajo" (ngModelChange)="onEstadoTrabajoChange()" [disabled]="busy()">
+                @for (op of estadosTrabajoOpcionesFiltradas(); track op.value) { <option [value]="op.value">{{ op.label }}</option> }
+              </select>
+              <div class="form-text">
+                @if (enShellTallerAdmin()) {
+                  Elige el estado y pulsa <strong>Aplicar estado</strong> (igual que en diagnóstico–cotización). Admin y técnico pueden avanzar la orden en taller desde aquí.
+                } @else {
+                  Los campos de abajo se habilitan según el estado seleccionado.
+                }
+              </div>
+            </div>
+          </div>
+
+          @if (esEstadoDiagnosticoCotizacion()) {
+            <div class="staff-action card bg-light border-0 mb-3">
+              <div class="card-body py-3">
+                <label class="form-label small mb-1">Diagnóstico</label>
+                <textarea class="form-control form-control-sm mb-2" rows="2" [(ngModel)]="diagText" [disabled]="busy() || !habilitarDiagnostico()"></textarea>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="small text-muted">Agregar repuestos desde catálogo</span>
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="irAProductos()" [disabled]="busy()">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+                <div class="border rounded p-2 mb-2 bg-white">
+                  <p class="small text-muted mb-1">Repuestos seleccionados</p>
+                  @if (s.lineasProducto && s.lineasProducto.length > 0) {
+                    <div class="table-responsive">
+                      <table class="table table-sm align-middle mb-2">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Producto</th>
+                            <th class="text-end">Cantidad</th>
+                            <th class="text-end">Valor</th>
+                            <th class="text-end">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (ln of s.lineasProducto; track ln.id) {
+                            <tr>
+                              <td>{{ ln.nombreProducto }}</td>
+                              <td class="text-end">{{ ln.cantidad }}</td>
+                              <td class="text-end">{{ ln.precioUnitarioSnapshot | number: '1.2-2' }}</td>
+                              <td class="text-end">{{ ln.subtotal | number: '1.2-2' }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  } @else {
+                    <p class="small text-muted mb-2">Aún no hay repuestos agregados.</p>
+                  }
+                  <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                      <tbody>
+                        <tr>
+                          <th scope="row">Total repuestos</th>
+                          <td class="text-end fw-semibold">{{ repuestosTotalActual() | number: '1.2-2' }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="table-responsive mb-2">
+                  <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Mano de obra</th>
+                        <th class="text-end">Valor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Servicio técnico</td>
+                        <td class="text-end" style="max-width: 180px;">
+                          <input
+                            type="text"
+                            class="form-control form-control-sm text-end"
+                            [(ngModel)]="manoObraStr"
+                            placeholder="Ej. 50.00"
+                            [disabled]="busy()"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="table-responsive mb-2">
+                  <table class="table table-sm mb-0">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Total repuestos</th>
+                        <td class="text-end">{{ repuestosTotalActual() | number: '1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Mano de obra</th>
+                        <td class="text-end">{{ manoObraValor() | number: '1.2-2' }}</td>
+                      </tr>
+                      <tr class="table-light">
+                        <th scope="row">Total cotización</th>
+                        <td class="text-end fw-bold">{{ cotizacionCalculada() | number: '1.2-2' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="registrarDiagnostico()" [disabled]="busy() || !habilitarDiagnostico()">
+                  Aplicar estado
+                </button>
+              </div>
+            </div>
+          } @else if (enShellTallerAdmin() && habilitarCambioEstado()) {
+            <div class="staff-action card bg-light border-0 mb-3">
+              <div class="card-body py-3">
+                <p class="small text-muted mb-2">
+                  Estado a aplicar: <strong class="text-body">{{ estadoNuevo }}</strong>
+                </p>
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="cambiarEstado()" [disabled]="busy() || !hayCambioEstadoAplicable()">
+                  Aplicar estado
+                </button>
+              </div>
+            </div>
+          } @else if (!enShellTallerAdmin()) {
+            <div class="staff-action card bg-light border-0 mb-3">
+              <div class="card-body py-3">
+                <label class="form-label small mb-1">Diagnóstico</label>
+                <textarea class="form-control form-control-sm mb-2" rows="2" [(ngModel)]="diagText" [disabled]="busy() || !habilitarDiagnostico()"></textarea>
+                <label class="form-label small mb-1">Cotización total (opcional)</label>
+                <input type="text" class="form-control form-control-sm mb-2" [(ngModel)]="cotizacionStr" placeholder="Ej. 150.50" [disabled]="busy() || !habilitarDiagnostico()" />
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="registrarDiagnostico()" [disabled]="busy() || !habilitarDiagnostico()">Registrar diagnóstico</button>
+                <div class="form-text">Disponible cuando el estado de trabajo es <code>DIAGNOSTICO - COTIZACION</code>.</div>
+              </div>
+            </div>
+          }
+
+          @if (!enShellTallerAdmin()) {
+            <div class="staff-action card bg-light border-0 mb-3">
+              <div class="card-body py-3">
+                <label class="form-label small mb-1">Cambiar estado</label>
+                <select class="form-select form-select-sm mb-2" [(ngModel)]="estadoNuevo" [disabled]="busy() || !habilitarCambioEstado()">
+                  @for (e of estadosDisponibles; track e) { <option [value]="e">{{ e }}</option> }
+                </select>
+                <label class="form-label small mb-1">Comentario (opcional)</label>
+                <input type="text" class="form-control form-control-sm mb-2" [(ngModel)]="comentarioEstado" [disabled]="busy() || !habilitarCambioEstado()" />
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cambiarEstado()" [disabled]="busy() || !habilitarCambioEstado()">Aplicar estado</button>
+              </div>
+            </div>
+
+            <div class="staff-action card bg-light border-0 mb-3">
+              <div class="card-body py-3">
+                <label class="form-label small mb-1">Agregar repuesto (ID producto + cantidad)</label>
+                <div class="row g-2 align-items-end">
+                  <div class="col-5"><input type="text" inputmode="numeric" class="form-control form-control-sm" [(ngModel)]="productoIdStr" placeholder="ID" [disabled]="busy() || !habilitarRepuestos()" /></div>
+                  <div class="col-4"><input type="text" inputmode="numeric" class="form-control form-control-sm" [(ngModel)]="productoCantStr" [disabled]="busy() || !habilitarRepuestos()" /></div>
+                  <div class="col-3"><button type="button" class="btn btn-sm btn-outline-primary w-100" (click)="agregarProducto()" [disabled]="busy() || !habilitarRepuestos()">Añadir</button></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="staff-action card bg-light border-0">
+              <div class="card-body py-3">
+                <label class="form-label small mb-1">Nueva evidencia (URL)</label>
+                <input type="url" class="form-control form-control-sm mb-2" [(ngModel)]="evUrl" placeholder="https://..." [disabled]="busy() || !habilitarEvidencia()" />
+                <label class="form-label small mb-1">Tipo</label>
+                <select class="form-select form-select-sm mb-2" [(ngModel)]="evTipo" [disabled]="busy() || !habilitarEvidencia()">
+                  @for (t of tiposEvidencia; track t) { <option [value]="t">{{ t }}</option> }
+                </select>
+                <label class="form-label small mb-1">Orden (opcional)</label>
+                <input type="number" class="form-control form-control-sm mb-2" [(ngModel)]="evOrden" [disabled]="busy() || !habilitarEvidencia()" />
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="agregarEvidencia()" [disabled]="busy() || !habilitarEvidencia()">Subir referencia</button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="card shadow-sm bg-light border-0">
+        <div class="card-body text-muted text-center py-5">
+          @if (enShellTallerAdmin()) {
+            Busca un ticket arriba o ábrelo desde <strong>Lista taller</strong>.
+          } @else {
+            Selecciona una orden y pulsa <strong>Detalle</strong> para ver historial y datos completos.
+          }
+        </div>
+      </div>
+    }
+  </ng-template>
+</div>

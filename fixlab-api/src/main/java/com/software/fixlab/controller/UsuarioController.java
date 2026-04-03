@@ -1,7 +1,9 @@
 package com.software.fixlab.controller;
 
 import com.software.fixlab.dto.req.UsuarioUpdateReqDTO;
+import com.software.fixlab.dto.resp.ClienteSugerenciaRespDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
+import com.software.fixlab.dto.resp.StaffTallerAsignableRespDTO;
 import com.software.fixlab.dto.resp.UsuarioRespDTO;
 import com.software.fixlab.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +55,20 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/sugerencias-clientes")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO','RECEPCIONISTA')")
+    public ResponseEntity<List<ClienteSugerenciaRespDTO>> sugerenciasClientes(@RequestParam("q") String q) {
+        return ResponseEntity.ok(usuarioService.buscarSugerenciasClientesPorCedula(q));
+    }
+
+    @GetMapping("/catalogo/staff-asignable-taller")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO','RECEPCIONISTA')")
+    public ResponseEntity<List<StaffTallerAsignableRespDTO>> catalogoStaffAsignableTaller() {
+        return ResponseEntity.ok(usuarioService.listarStaffAsignableComoTecnico());
+    }
+
     @GetMapping("/{cedula}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TECNICO')")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO','RECEPCIONISTA')")
     public ResponseEntity<UsuarioRespDTO> obtenerPorCedula(@PathVariable String cedula) {
         return ResponseEntity.ok(usuarioService.obtenerPorCedula(cedula));
     }

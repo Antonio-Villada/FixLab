@@ -11,5 +11,5 @@ public class RegistroEmpleadoReqDTO {
     private String email;
     private String password;
     private String telefono;
-    private RolUsuario rol; // Aquí el Admin dirá si es ADMIN o TECNICO
+    private RolUsuario rol; // ADMIN, TECNICO o RECEPCIONISTA
 }

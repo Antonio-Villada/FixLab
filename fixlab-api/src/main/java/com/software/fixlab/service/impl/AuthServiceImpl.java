@@ -154,6 +154,11 @@ public class AuthServiceImpl implements AuthService {
         }
         validarFormatoPassword(dto.getPassword());
 
+        RolUsuario rolEmp = dto.getRol();
+        if (rolEmp != RolUsuario.ADMIN && rolEmp != RolUsuario.TECNICO && rolEmp != RolUsuario.RECEPCIONISTA) {
+            throw new Exception("El rol de empleado debe ser ADMIN, TECNICO o RECEPCIONISTA");
+        }
+
         Usuario nuevoEmpleado = Usuario.builder()
                 .cedula(dto.getCedula())
                 .nombre(dto.getNombre())
@@ -161,7 +166,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .telefono(dto.getTelefono())
-                .rol(dto.getRol()) // <-- Aquí le asignamos el rol que eligió el Administrador
+                .rol(dto.getRol()) // ADMIN, TECNICO o RECEPCIONISTA
                 .intentosFallidos(0)
                 .correoVerificado(true) // El técnico nace con la cuenta activa
                 .build();

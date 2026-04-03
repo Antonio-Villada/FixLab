@@ -1,0 +1,2 @@
+# Netlify / Cloudflare Pages (static): cualquier ruta sin archivo → index.html (SPA)
+/*    /index.html   200

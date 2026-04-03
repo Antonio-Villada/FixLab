@@ -1,0 +1,169 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="h4 mb-0">
+      <i class="bi bi-box-seam me-2"></i>Recepción en taller
+    </h1>
+    @if (!enShellTallerAdmin()) {
+      <div class="d-flex gap-2">
+        @if (authService.isAdmin()) {
+          <a routerLink="/admin/taller/gestion" class="btn btn-outline-secondary btn-sm">Gestión taller</a>
+        } @else if (authService.isTecnico()) {
+          <a routerLink="/admin/taller/gestion" class="btn btn-outline-secondary btn-sm">Gestión taller</a>
+        }
+        <a routerLink="/reparaciones" class="btn btn-outline-success btn-sm">Seguimiento</a>
+      </div>
+    }
+  </div>
+
+  <p class="text-muted small mb-4">
+    Registra el equipo del cliente y abre el ticket de servicio en un solo paso.
+  
+  </p>
+
+  @if (cargandoCatalogo()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted small mb-0">Cargando catálogos…</p>
+    </div>
+  } @else {
+    @if (errorCatalogo()) {
+      <div class="alert alert-warning">{{ errorCatalogo() }}</div>
+    }
+
+    @if (exito(); as rep) {
+      <div class="alert alert-success">
+        <strong>Ticket creado:</strong>
+        <span class="font-monospace ms-1">{{ rep.numeroTicket }}</span>
+        <p class="mb-0 mt-2 small">
+          El cliente puede consultarlo en <strong>Seguimiento</strong> con ese número. El técnico indicado quedó asignado a la orden.
+        </p>
+      </div>
+    }
+
+    @if (errorEnvio()) {
+      <div class="alert alert-danger">{{ errorEnvio() }}</div>
+    }
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <span class="h6 mb-0">Datos de ingreso</span>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="enviar()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Cédula del cliente <span class="text-danger">*</span></label>
+              <div class="recepcion-cedula-wrap position-relative">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="propietarioCedula"
+                  autocomplete="off"
+                  (focus)="onCedulaFocus()"
+                  (blur)="onCedulaBlur()"
+                />
+                @if (panelSugerenciasAbierto() && sugerenciasClientes().length > 0) {
+                  <ul class="list-group recepcion-sugerencias shadow-sm" role="listbox">
+                    @for (s of sugerenciasClientes(); track s.cedula) {
+                      <li class="list-group-item list-group-item-action recepcion-sugerencia-item py-2">
+                        <button
+                          type="button"
+                          class="btn btn-link text-start text-decoration-none p-0 w-100 text-dark"
+                          (mousedown)="$event.preventDefault()"
+                          (click)="seleccionarSugerencia(s)"
+                        >
+                          <span class="font-monospace fw-semibold">{{ s.cedula }}</span>
+                          <span class="text-muted"> — {{ s.nombre }} {{ s.apellido }}</span>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+              @if (form.controls.propietarioCedula.invalid && form.controls.propietarioCedula.touched) {
+                <div class="invalid-feedback d-block">Indica la cédula del dueño del equipo.</div>
+              }
+              <div class="form-text">Escribe al menos 2 dígitos para ver coincidencias.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Cliente</label>
+              <div
+                class="form-control recepcion-cliente-nombre d-flex align-items-center"
+                [class.text-muted]="!nombreClienteMostrar()"
+              >
+                {{ nombreClienteMostrar() || 'Selecciona una cédula de la lista o completa y valida al salir del campo.' }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Marca</label>
+              <input type="text" class="form-control" formControlName="marca" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Tipo de equipo <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="tipoEquipoId">
+                <option [ngValue]="null">Seleccione…</option>
+                @for (t of tiposEquipo(); track t.id) {
+                  <option [ngValue]="t.id">{{ t.nombre }}</option>
+                }
+              </select>
+              @if (form.controls.tipoEquipoId.invalid && form.controls.tipoEquipoId.touched) {
+                <div class="invalid-feedback d-block">Selecciona un tipo.</div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">N.º de serie</label>
+              <input type="text" class="form-control" formControlName="numeroSerie" />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Observaciones del equipo</label>
+              <textarea class="form-control" rows="2" formControlName="observaciones"></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Taller <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="tallerId">
+                <option [ngValue]="null">Seleccione…</option>
+                @for (tal of talleres(); track tal.id) {
+                  <option [ngValue]="tal.id">{{ tal.nombre }} ({{ tal.tipoTallerNombre }})</option>
+                }
+              </select>
+              @if (form.controls.tallerId.invalid && form.controls.tallerId.touched) {
+                <div class="invalid-feedback d-block">Selecciona el taller.</div>
+              }
+            </div>
+            <div class="col-12">
+              <label class="form-label">Reporte de falla (cliente) <span class="text-danger">*</span></label>
+              <textarea class="form-control" rows="4" formControlName="descripcionFalla"></textarea>
+              @if (form.controls.descripcionFalla.invalid && form.controls.descripcionFalla.touched) {
+                <div class="invalid-feedback d-block">Describe la falla o el síntoma.</div>
+              }
+            </div>
+            <div class="col-12">
+              <label class="form-label">Técnico asignado <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="tecnicoCedula">
+                <option [ngValue]="null">Seleccione…</option>
+                @for (tech of tecnicosAsignables(); track tech.cedula) {
+                  <option [ngValue]="tech.cedula">{{ etiquetaTecnicoOpcion(tech) }}</option>
+                }
+              </select>
+              @if (form.controls.tecnicoCedula.invalid && form.controls.tecnicoCedula.touched) {
+                <div class="invalid-feedback d-block">Selecciona el técnico responsable.</div>
+              }
+              <div class="form-text">Se asigna al crear el ticket (personal con rol Técnico o Administrador).</div>
+            </div>
+          </div>
+          <div class="mt-4 d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-primary" [disabled]="guardando() || !!errorCatalogo()">
+              @if (guardando()) {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              }
+              Registrar equipo y crear ticket
+            </button>
+            <button type="button" class="btn btn-outline-secondary" [disabled]="guardando()" (click)="limpiarManual()">
+              Limpiar formulario
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

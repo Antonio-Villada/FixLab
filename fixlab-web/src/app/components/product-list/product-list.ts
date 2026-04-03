@@ -101,7 +101,15 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  /** Cliente: solo si hay stock y el producto sigue activo. */
+  puedeAgregarAlCarrito(product: Product): boolean {
+    return product.stock > 0 && product.activo !== false;
+  }
+
   addToCart(product: Product): void {
+    if (!this.puedeAgregarAlCarrito(product)) {
+      return;
+    }
     this.cartService.addItem(product);
   }
 

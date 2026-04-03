@@ -1,8 +1,13 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { UsuarioRespDTO, UsuarioUpdateReqDTO } from '../models/auth.model';
+import {
+  ClienteSugerenciaRespDTO,
+  StaffTallerAsignableRespDTO,
+  UsuarioRespDTO,
+  UsuarioUpdateReqDTO,
+} from '../models/auth.model';
 
 const base = environment.apiBaseUrl?.replace(/\/$/, '') ?? '';
 const url = base ? `${base}/api/usuarios` : '/api/usuarios';
@@ -19,7 +24,19 @@ export class UsuarioService {
   }
 
   getByCedula(cedula: string): Observable<UsuarioRespDTO> {
-    return this.http.get<UsuarioRespDTO>(`${url}/${cedula}`);
+    const c = encodeURIComponent(cedula.trim());
+    return this.http.get<UsuarioRespDTO>(`${url}/${c}`);
+  }
+
+  /** Búsqueda por fragmento de cédula (mín. 2 caracteres en backend). */
+  buscarSugerenciasClientes(q: string): Observable<ClienteSugerenciaRespDTO[]> {
+    const params = new HttpParams().set('q', q.trim());
+    return this.http.get<ClienteSugerenciaRespDTO[]>(`${url}/sugerencias-clientes`, { params });
+  }
+
+  /** Técnicos y admins para mostrador / gestión taller. */
+  listarStaffAsignableTaller(): Observable<StaffTallerAsignableRespDTO[]> {
+    return this.http.get<StaffTallerAsignableRespDTO[]>(`${url}/catalogo/staff-asignable-taller`);
   }
 
   /** Perfil del usuario actual (requiere estar autenticado). */

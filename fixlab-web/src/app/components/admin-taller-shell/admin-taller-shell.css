@@ -1,0 +1,18 @@
+.admin-taller-shell-bar {
+  background-color: #495057 !important; /* gris pizarra para diferenciar del header */
+}
+
+.admin-taller-shell-bar .btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.admin-taller-shell-bar .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-taller-shell-bar .btn-outline-light.active {
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}

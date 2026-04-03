@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 "/api/productos/**",
                                 "/api/categorias/**",
                                 "/api/tipos-producto/**").permitAll()
+                        // Taller (P3): /api/equipos/** y /api/reparaciones/** requieren JWT (anyRequest authenticated).
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,11 +1,29 @@
 <div class="container py-4">
   <h1 class="h4 mb-4">
-    <i class="bi bi-speedometer2 me-2"></i>Mi Panel
+    <i class="bi bi-speedometer2 me-2"></i>Mi Perfil
   </h1>
+
+  @if (isCliente()) {
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm border-success border-opacity-25">
+          <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <h2 class="h6 mb-1 text-success">
+                <i class="bi bi-tools me-2"></i>Servicio técnico
+              </h2>
+              <p class="text-muted small mb-0">Consulta el estado de tus equipos con el número de ticket.</p>
+            </div>
+            <a routerLink="/reparaciones" class="btn btn-success flex-shrink-0">Ver reparaciones</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 
   <div class="row g-4">
     <!-- Perfil -->
-    <div class="col-12 col-lg-5">
+    <div class="col-12" [class.col-lg-5]="isCliente()">
       <div class="card h-100 shadow-sm">
         <div class="card-header bg-primary text-white">
           <h2 class="h6 mb-0">
@@ -110,75 +128,77 @@
       </div>
     </div>
 
-    <!-- Mis compras -->
-    <div class="col-12 col-lg-7">
-      <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
-          <h2 class="h6 mb-0">
-            <i class="bi bi-bag-check me-2"></i>Mis compras
-          </h2>
-        </div>
-        <div class="card-body">
-          @if (loadingPedidos()) {
-            <div class="text-center py-4">
-              <div class="spinner-border text-primary" role="status"></div>
-              <p class="mt-2 text-muted small">Cargando compras...</p>
-            </div>
-          } @else if (errorPedidos()) {
-            <div class="alert alert-warning mb-0">{{ errorPedidos() }}</div>
-          } @else if (pedidos().length === 0) {
-            <div class="text-center py-4 text-muted">
-              <i class="bi bi-cart-x fs-1 d-block mb-2"></i>
-              <p class="mb-0">Aún no tienes compras.</p>
-              <a routerLink="/productos" class="btn btn-outline-primary btn-sm mt-2">Ver productos</a>
-            </div>
-          } @else {
-            <div class="table-responsive">
-              <table class="table table-hover table-sm align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Pedido</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th class="text-center">Factura</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (ped of pedidos(); track ped.id) {
+    @if (isCliente()) {
+      <!-- Mis compras (solo clientes de tienda) -->
+      <div class="col-12 col-lg-7">
+        <div class="card shadow-sm">
+          <div class="card-header bg-dark text-white">
+            <h2 class="h6 mb-0">
+              <i class="bi bi-bag-check me-2"></i>Mis compras
+            </h2>
+          </div>
+          <div class="card-body">
+            @if (loadingPedidos()) {
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted small">Cargando compras...</p>
+              </div>
+            } @else if (errorPedidos()) {
+              <div class="alert alert-warning mb-0">{{ errorPedidos() }}</div>
+            } @else if (pedidos().length === 0) {
+              <div class="text-center py-4 text-muted">
+                <i class="bi bi-cart-x fs-1 d-block mb-2"></i>
+                <p class="mb-0">Aún no tienes compras.</p>
+                <a routerLink="/productos" class="btn btn-outline-primary btn-sm mt-2">Ver productos</a>
+              </div>
+            } @else {
+              <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                  <thead class="table-light">
                     <tr>
-                      <td><strong>#{{ ped.id }}</strong></td>
-                      <td>{{ formatFecha(ped.fechaCreacion) }}</td>
-                      <td>${{ ped.total | number:'1.2-2' }}</td>
-                      <td>
-                        <span class="badge" [ngClass]="estadoBadgeClass(ped.estado)">
-                          {{ ped.estado || 'Pendiente' }}
-                        </span>
-                      </td>
-                      <td class="text-center">
-                        <a [routerLink]="['/factura', ped.id]" class="btn btn-sm btn-outline-primary" title="Ver / Descargar factura">
-                          <i class="bi bi-file-earmark-pdf"></i>
-                        </a>
-                      </td>
+                      <th>Pedido</th>
+                      <th>Fecha</th>
+                      <th>Total</th>
+                      <th>Estado</th>
+                      <th class="text-center">Factura</th>
                     </tr>
-                    @if (ped.detalles && ped.detalles.length > 0) {
-                      <tr class="table-light">
-                        <td colspan="5" class="pt-0 pb-2">
-                          <small class="text-muted">
-                            @for (d of ped.detalles; track d.productoId) {
-                              {{ d.nombreProducto }} ({{ d.cantidad }}) — ${{ d.subtotal | number:'1.2-2' }}@if (!$last) { · }
-                            }
-                          </small>
+                  </thead>
+                  <tbody>
+                    @for (ped of pedidos(); track ped.id) {
+                      <tr>
+                        <td><strong>#{{ ped.id }}</strong></td>
+                        <td>{{ formatFecha(ped.fechaCreacion) }}</td>
+                        <td>${{ ped.total | number:'1.2-2' }}</td>
+                        <td>
+                          <span class="badge" [ngClass]="estadoBadgeClass(ped.estado)">
+                            {{ ped.estado || 'Pendiente' }}
+                          </span>
+                        </td>
+                        <td class="text-center">
+                          <a [routerLink]="['/factura', ped.id]" class="btn btn-sm btn-outline-primary" title="Ver / Descargar factura">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                          </a>
                         </td>
                       </tr>
+                      @if (ped.detalles && ped.detalles.length > 0) {
+                        <tr class="table-light">
+                          <td colspan="5" class="pt-0 pb-2">
+                            <small class="text-muted">
+                              @for (d of ped.detalles; track d.productoId) {
+                                {{ d.nombreProducto }} ({{ d.cantidad }}) — ${{ d.subtotal | number:'1.2-2' }}@if (!$last) { · }
+                              }
+                            </small>
+                          </td>
+                        </tr>
+                      }
                     }
-                  }
-                </tbody>
-              </table>
-            </div>
-          }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>

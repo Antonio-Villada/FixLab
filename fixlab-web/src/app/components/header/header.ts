@@ -39,6 +39,12 @@ export class HeaderComponent {
     this.router.navigate(['/carrito']);
   }
 
+  /** Pestaña Taller (admin): rutas bajo /admin/taller. */
+  tallerNavActivo(): boolean {
+    const path = (this.router.url.split('?')[0] ?? '').trim();
+    return path.startsWith('/admin/taller');
+  }
+
   /** Iniciales para el avatar (nombre + apellido). */
   getInitials(): string {
     const p = this.usuarioService.currentUser();

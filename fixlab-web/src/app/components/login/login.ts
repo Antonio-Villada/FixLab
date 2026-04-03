@@ -90,6 +90,8 @@ export class Login implements OnInit {
           this.router.navigate(['/home']);
         } else if (rol === 'TECNICO') {
           this.router.navigate(['/dashboard']);
+        } else if (rol === 'RECEPCIONISTA') {
+          this.router.navigate(['/home']);
         } else {
           this.router.navigate(['/home']);
         }

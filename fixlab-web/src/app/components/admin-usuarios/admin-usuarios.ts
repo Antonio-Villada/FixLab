@@ -29,7 +29,10 @@ export class AdminUsuariosComponent implements OnInit {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
-  readonly ROLES = [RolUsuario.ADMIN, RolUsuario.TECNICO, RolUsuario.CLIENTE];
+  readonly ROLES = [RolUsuario.ADMIN, RolUsuario.TECNICO, RolUsuario.RECEPCIONISTA, RolUsuario.CLIENTE];
+
+  /** Roles permitidos al registrar empleado (sin cliente). */
+  readonly ROLES_EMPLEADO = [RolUsuario.ADMIN, RolUsuario.TECNICO, RolUsuario.RECEPCIONISTA];
 
   list = signal<UsuarioRespDTO[]>([]);
   loading = signal(false);
@@ -212,7 +215,10 @@ export class AdminUsuariosComponent implements OnInit {
   }
 
   rolLabel(rol: RolUsuario): string {
-    return rol === RolUsuario.ADMIN ? 'Administrador' : rol === RolUsuario.TECNICO ? 'Técnico' : 'Cliente';
+    if (rol === RolUsuario.ADMIN) return 'Administrador';
+    if (rol === RolUsuario.TECNICO) return 'Técnico';
+    if (rol === RolUsuario.RECEPCIONISTA) return 'Recepcionista';
+    return 'Cliente';
   }
 
   /** Utilidades de contraseña para el template */

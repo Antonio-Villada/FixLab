@@ -70,16 +70,24 @@ export class Dashboard implements OnInit {
       });
     }
 
-    this.checkoutService.getMisPedidos().subscribe({
-      next: (data) => {
-        this.pedidos.set(data || []);
-        this.loadingPedidos.set(false);
-      },
-      error: (err) => {
-        this.errorPedidos.set(err.error?.mensaje || 'Error al cargar tus compras');
-        this.loadingPedidos.set(false);
-      },
-    });
+    if (this.authService.isCliente()) {
+      this.checkoutService.getMisPedidos().subscribe({
+        next: (data) => {
+          this.pedidos.set(data || []);
+          this.loadingPedidos.set(false);
+        },
+        error: (err) => {
+          this.errorPedidos.set(err.error?.mensaje || 'Error al cargar tus compras');
+          this.loadingPedidos.set(false);
+        },
+      });
+    } else {
+      this.loadingPedidos.set(false);
+    }
+  }
+
+  isCliente(): boolean {
+    return this.authService.isCliente();
   }
 
   formatFecha(fecha: string): string {

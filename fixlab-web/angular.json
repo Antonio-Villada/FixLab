@@ -23,6 +23,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": ".htaccess",
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [
@@ -53,12 +58,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "700kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.1mb",
+                  "maximumError": "1.25mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
+                  "maximumWarning": "6kB",
                   "maximumError": "8kB"
                 }
               ],

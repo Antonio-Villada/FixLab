@@ -1,0 +1,53 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h4 mb-0"><i class="bi bi-list-ul me-2"></i>Lista taller</h1>
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="cargar()" [disabled]="loading()">Actualizar</button>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-warning">{{ error() }}</div>
+  }
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      @if (loading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+      } @else if (lista().length === 0) {
+        <p class="text-muted p-4 mb-0">No hay tickets registrados.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Ticket</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Avance</th>
+                <th>Equipo</th>
+                <th class="text-end"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of lista(); track r.id) {
+                <tr>
+                  <td class="font-monospace small fw-semibold">{{ r.numeroTicket }}</td>
+                  <td class="small">{{ r.clienteNombre }} {{ r.clienteApellido }}</td>
+                  <td><span class="badge" [ngClass]="badgeClass(r.estado)">{{ r.estado }}</span></td>
+                  <td style="min-width: 7rem">
+                    <app-reparacion-progreso-estado [estado]="r.estado" [compact]="true" />
+                  </td>
+                  <td class="small">{{ r.equipo.tipoEquipoNombre }}</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="abrirEnGestion(r.id)">Gestionar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

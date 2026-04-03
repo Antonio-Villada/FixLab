@@ -1,7 +1,10 @@
 package com.software.fixlab.service.impl;
 
 import com.software.fixlab.dto.req.UsuarioUpdateReqDTO;
+import com.software.fixlab.dto.resp.ClienteSugerenciaRespDTO;
+import com.software.fixlab.dto.resp.StaffTallerAsignableRespDTO;
 import com.software.fixlab.dto.resp.UsuarioRespDTO;
+import com.software.fixlab.entity.RolUsuario;
 import com.software.fixlab.entity.Usuario;
 import com.software.fixlab.exception.ResourceNotFoundException;
 import com.software.fixlab.mapper.UsuarioMapper;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +33,42 @@ public class UsuarioServiceImpl implements UsuarioService {
     public List<UsuarioRespDTO> obtenerTodos() {
         return usuarioRepository.findAll().stream()
                 .map(usuarioMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClienteSugerenciaRespDTO> buscarSugerenciasClientesPorCedula(String fragmento) {
+        if (fragmento == null) {
+            return List.of();
+        }
+        String q = fragmento.trim();
+        if (q.length() < 2) {
+            return List.of();
+        }
+        return usuarioRepository
+                .findTop20ByRolAndCedulaContainingIgnoreCaseOrderByCedulaAsc(RolUsuario.CLIENTE, q)
+                .stream()
+                .map(u -> ClienteSugerenciaRespDTO.builder()
+                        .cedula(u.getCedula())
+                        .nombre(u.getNombre())
+                        .apellido(u.getApellido())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StaffTallerAsignableRespDTO> listarStaffAsignableComoTecnico() {
+        return usuarioRepository
+                .findByRolInOrderByApellidoAscNombreAsc(EnumSet.of(RolUsuario.TECNICO, RolUsuario.ADMIN))
+                .stream()
+                .map(u -> StaffTallerAsignableRespDTO.builder()
+                        .cedula(u.getCedula())
+                        .nombre(u.getNombre())
+                        .apellido(u.getApellido())
+                        .rol(u.getRol())
+                        .build())
                 .collect(Collectors.toList());
     }
 

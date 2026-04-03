@@ -1,0 +1,42 @@
+<div class="reparacion-progreso" [class.reparacion-progreso--compact]="compact()">
+  @if (progreso().cancelado) {
+    <div class="reparacion-progreso__cancelado alert alert-secondary py-2 px-3 mb-0 small border-0">
+      <i class="bi bi-x-octagon me-1"></i>
+      Esta orden está <strong>cancelada</strong>; el flujo de servicio no continúa.
+    </div>
+  } @else {
+    @if (!compact()) {
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="small text-muted mb-0">Avance del servicio</span>
+        <span class="small fw-semibold text-success">{{ progreso().porcentaje }}%</span>
+      </div>
+    }
+    <div
+      class="progress reparacion-progreso__bar shadow-none"
+      role="progressbar"
+      [attr.aria-valuenow]="progreso().porcentaje"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-label]="'Progreso del servicio: ' + progreso().porcentaje + ' por ciento'"
+    >
+      <div class="progress-bar bg-success" [style.width.%]="progreso().porcentaje"></div>
+    </div>
+    @if (compact()) {
+      <span class="reparacion-progreso__pct-compact small text-muted">{{ progreso().porcentaje }}%</span>
+    }
+    @if (!compact()) {
+      <div class="reparacion-progreso__pasos d-flex flex-wrap gap-2 gap-lg-3 justify-content-between mt-2 pt-2 border-top border-light-subtle">
+        @for (p of progreso().pasos; track p.estado; let i = $index) {
+          <span
+            class="reparacion-progreso__paso small text-center text-nowrap"
+            [class.reparacion-progreso__paso--hecho]="i <= progreso().indice"
+            [class.reparacion-progreso__paso--futuro]="i > progreso().indice"
+          >
+            <span class="reparacion-progreso__paso-num">{{ i + 1 }}</span>
+            {{ p.label }}
+          </span>
+        }
+      </div>
+    }
+  }
+</div>

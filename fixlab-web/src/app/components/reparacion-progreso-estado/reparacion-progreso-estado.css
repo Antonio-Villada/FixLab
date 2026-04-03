@@ -1,0 +1,56 @@
+.reparacion-progreso__bar {
+  height: 0.65rem;
+  background-color: rgba(25, 135, 84, 0.12);
+}
+
+.reparacion-progreso--compact .reparacion-progreso__bar {
+  height: 0.4rem;
+  flex: 1;
+  min-width: 4rem;
+}
+
+.reparacion-progreso--compact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reparacion-progreso__pct-compact {
+  min-width: 2.25rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.reparacion-progreso__paso {
+  flex: 1 1 auto;
+  min-width: 4.5rem;
+}
+
+.reparacion-progreso__paso--hecho {
+  color: var(--bs-success);
+  font-weight: 600;
+}
+
+.reparacion-progreso__paso--futuro {
+  color: var(--bs-secondary-color);
+  opacity: 0.75;
+}
+
+.reparacion-progreso__paso-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.25rem;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(25, 135, 84, 0.15);
+  color: var(--bs-success);
+}
+
+.reparacion-progreso__paso--futuro .reparacion-progreso__paso-num {
+  background: rgba(var(--bs-secondary-rgb), 0.15);
+  color: var(--bs-secondary-color);
+}

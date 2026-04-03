@@ -15,15 +15,31 @@
         <li class="nav-item">
           <a class="nav-link px-3" routerLink="/home" routerLinkActive="active">Inicio</a>
         </li>
-        @if (!authService.isAdmin()) {
-          <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active">Productos</a>
-          </li>
-        }
         @if (authService.isAdmin()) {
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/productos" routerLinkActive="active">Productos</a>
           </li>
+        } @else {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active">Productos</a>
+          </li>
+        }
+        @if (!authService.isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/reparaciones" routerLinkActive="active">Seguimiento</a>
+          </li>
+        }
+        @if (authService.isTecnico() && !authService.isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/taller/lista" [class.active]="tallerNavActivo()">Taller</a>
+          </li>
+        }
+        @if (authService.isRecepcionista() && !authService.isAdmin()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/recepcion" routerLinkActive="active">Recepción</a>
+          </li>
+        }
+        @if (authService.isAdmin()) {
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/pedidos" routerLinkActive="active">Pedidos</a>
           </li>
@@ -32,6 +48,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/tipos-producto" routerLinkActive="active">Tipos de producto</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/taller/recepcion" [class.active]="tallerNavActivo()">Taller</a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>

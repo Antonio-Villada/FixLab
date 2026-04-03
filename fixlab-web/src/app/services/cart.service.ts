@@ -42,12 +42,15 @@ export class CartService {
     return p.id != null ? String(p.id) : p.sku;
   }
 
-  /** Añade una unidad del producto al carrito (o incrementa si ya está). Respeta stock. */
+  /** Añade una unidad del producto al carrito (o incrementa si ya está). Respeta stock y producto activo. */
   addItem(product: Product, quantity: number = 1): void {
+    const maxQty = product.stock ?? 0;
+    if (product.activo === false || maxQty <= 0) {
+      return;
+    }
     const key = this.productKey(product);
     const current = this.items();
     const idx = current.findIndex(i => this.productKey(i.product) === key);
-    const maxQty = product.stock ?? 999;
 
     let next: CartItem[];
     if (idx >= 0) {
@@ -62,6 +65,9 @@ export class CartService {
       }
     } else {
       const qty = Math.min(Math.max(1, quantity), maxQty);
+      if (qty <= 0) {
+        return;
+      }
       next = [...current, { product, quantity: qty }];
     }
 
@@ -76,7 +82,12 @@ export class CartService {
     if (quantity <= 0) {
       this.items.set(current.filter(i => this.productKey(i.product) !== key));
     } else {
-      const maxQty = product.stock ?? 999;
+      const maxQty = Math.max(0, product.stock ?? 0);
+      if (product.activo === false || maxQty <= 0) {
+        this.items.set(current.filter(i => this.productKey(i.product) !== key));
+        this.saveToStorage();
+        return;
+      }
       const qty = Math.min(quantity, maxQty);
       const idx = current.findIndex(i => this.productKey(i.product) === key);
       if (idx >= 0) {

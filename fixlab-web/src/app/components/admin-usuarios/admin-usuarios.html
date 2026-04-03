@@ -69,7 +69,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Nuevo empleado (ADMIN o TÉCNICO)</h5>
+            <h5 class="modal-title">Nuevo empleado</h5>
             <button type="button" class="btn-close" (click)="closeModal()"></button>
           </div>
           <form [formGroup]="formNewEmployee" (ngSubmit)="onSubmitNewEmployee()">
@@ -123,8 +123,9 @@
               <div class="mb-2">
                 <label class="form-label">Rol <span class="text-danger">*</span></label>
                 <select formControlName="rol" class="form-select">
-                  <option [ngValue]="ROLES[0]">Administrador</option>
-                  <option [ngValue]="ROLES[1]">Técnico</option>
+                  @for (r of ROLES_EMPLEADO; track r) {
+                    <option [ngValue]="r">{{ rolLabel(r) }}</option>
+                  }
                 </select>
               </div>
             </div>

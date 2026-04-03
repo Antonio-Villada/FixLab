@@ -1,0 +1,41 @@
+<div class="admin-taller-shell-bar border-bottom bg-dark border-secondary">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start" role="group" aria-label="Secciones del taller">
+      @if (authService.isAdmin()) {
+        <a
+          routerLink="/admin/taller/recepcion"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="btn btn-outline-light btn-sm px-3"
+        >
+          Recepción
+        </a>
+      }
+      <a
+        routerLink="/admin/taller/lista"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="btn btn-outline-light btn-sm px-3"
+      >
+        Lista taller
+      </a>
+      <a
+        routerLink="/admin/taller/gestion"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="btn btn-outline-light btn-sm px-3"
+      >
+        Gestión taller
+      </a>
+      <a
+        routerLink="/admin/taller/seguimiento"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="btn btn-outline-light btn-sm px-3"
+      >
+        Seguimiento
+      </a>
+    </div>
+  </div>
+</div>
+<router-outlet />
