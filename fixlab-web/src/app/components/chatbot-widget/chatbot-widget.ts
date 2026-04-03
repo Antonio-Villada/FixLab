@@ -1,20 +1,23 @@
-import { Component, inject, signal, viewChild, ElementRef, effect, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, inject, signal, viewChild, ElementRef, effect, PLATFORM_ID, OnDestroy } from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ChatbotService, ChatMessage } from '../../services/chatbot.service';
 import { AuthService } from '../../services/auth';
+import { ChatRichPart, parseChatRichText } from './chat-rich-text';
 
 @Component({
   selector: 'app-chatbot-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './chatbot-widget.html',
   styleUrl: './chatbot-widget.css',
 })
-export class ChatbotWidgetComponent {
+export class ChatbotWidgetComponent implements OnDestroy {
   private chatbot = inject(ChatbotService);
   protected auth = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
+  private document = inject(DOCUMENT);
 
   panelOpen = signal(false);
   input = signal('');
@@ -27,12 +30,24 @@ export class ChatbotWidgetComponent {
 
   constructor() {
     effect(() => {
+      const open = this.panelOpen();
+      if (isPlatformBrowser(this.platformId)) {
+        this.document.body.classList.toggle('fixlab-chat-open', open);
+      }
+    });
+    effect(() => {
       if (!this.panelOpen()) return;
       this.messages();
       if (isPlatformBrowser(this.platformId)) {
         requestAnimationFrame(() => this.scrollToBottom());
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.document.body.classList.remove('fixlab-chat-open');
+    }
   }
 
   togglePanel(): void {
@@ -67,6 +82,11 @@ export class ChatbotWidgetComponent {
 
   trackById(_: number, m: ChatMessage): string {
     return m.id;
+  }
+
+  /** Texto con [enlaces](/ruta) y **negrita** → trozos para la plantilla. */
+  chatRichParts(raw: string): ChatRichPart[] {
+    return parseChatRichText(raw);
   }
 
   private scrollToBottom(): void {

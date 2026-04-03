@@ -10,6 +10,8 @@ export interface ChatMessage {
   role: ChatRole;
   text: string;
   at: number;
+  /** Solo mensajes del asistente tras guardar en servidor; invitado no lo tiene. */
+  replySource?: 'IA' | 'FAQ';
 }
 
 interface ChatApiMensajeDTO {
@@ -22,6 +24,7 @@ interface ChatApiMensajeDTO {
 interface ChatEnviarRespDTO {
   userMessage: ChatApiMensajeDTO;
   botMessage: ChatApiMensajeDTO;
+  respuestaFuente?: string;
 }
 
 /** Misma clave que AuthService para saber si hay sesión sin dependencia circular */
@@ -87,7 +90,7 @@ export class ChatbotService {
 
   getWelcomeMessage(isLoggedIn: boolean): string {
     if (isLoggedIn) {
-      return '¡Hola! Soy el asistente de FixLab. Aquí ves tu historial de consultas guardado en tu cuenta. Usa + para empezar un chat nuevo.';
+      return '¡Hola! Soy el asistente de FixLab. Aquí ves tu historial guardado en tu cuenta. Cada respuesta nueva indica si vino con IA o con ayuda rápida. Usa + para empezar un chat nuevo.';
     }
     return '¡Hola! Inicia sesión para guardar tu historial de consultas. Como invitado, el chat no se guarda al cerrar la página.';
   }
@@ -100,10 +103,12 @@ export class ChatbotService {
       this.enviando.set(true);
       this.http.post<ChatEnviarRespDTO>(`${this.baseUrl}/mensaje`, { texto: trimmed }).subscribe({
         next: (res) => {
+          const botFuente =
+            res.respuestaFuente === 'IA' || res.respuestaFuente === 'FAQ' ? res.respuestaFuente : undefined;
           this.messages.update((list) => [
             ...list,
             this.mapApiToMessage(res.userMessage),
-            this.mapApiToMessage(res.botMessage),
+            this.mapApiToMessage(res.botMessage, botFuente),
           ]);
           this.enviando.set(false);
         },
@@ -118,12 +123,14 @@ export class ChatbotService {
     this.pushLocalUserAndBot(trimmed);
   }
 
-  private mapApiToMessage(d: ChatApiMensajeDTO): ChatMessage {
+  private mapApiToMessage(d: ChatApiMensajeDTO, botReplySource?: 'IA' | 'FAQ'): ChatMessage {
+    const isUser = d.role === 'USER';
     return {
       id: `srv-${d.id}`,
-      role: d.role === 'USER' ? 'user' : 'bot',
+      role: isUser ? 'user' : 'bot',
       text: d.text,
       at: new Date(d.createdAt).getTime(),
+      replySource: !isUser ? botReplySource : undefined,
     };
   }
 
@@ -153,30 +160,30 @@ export class ChatbotService {
     const n = this.normalize(userText);
 
     if (/\b(hola|buenas|hey|hi)\b/.test(n)) {
-      return '¡Hola! Pregúntame por pedidos, pagos (Wompi), envíos, productos o cuenta y contraseña.';
+      return '¡Hola! Pregúntame por pedidos, pagos (Wompi), envíos, productos o cuenta. Enlaces: [Productos](/productos), [Login](/login).';
     }
     if (/\b(gracias|thank)\b/.test(n)) {
       return '¡Con gusto! Si necesitas algo más, aquí estaré.';
     }
 
     if (/(pedido|orden|compra realizada|estado del pedido|mis compras)/.test(n)) {
-      return 'Para ver tus pedidos, inicia sesión y entra al panel (dashboard). Los administradores pueden gestionar pedidos desde Admin → Pedidos.';
+      return 'Inicia sesión y revisa tu actividad en [Tu panel](/dashboard). Para comprar: [Productos](/productos).';
     }
 
     if (/(pago|pagar|wompi|tarjeta|checkout|transaccion)/.test(n)) {
-      return 'Los pagos se procesan con Wompi. Añade productos al carrito, revisa el total y completa el pago en la pasarela. Si algo falla, revisa el correo o intenta de nuevo.';
+      return 'Los pagos se procesan con Wompi. Usa el [carrito](/carrito) y completa el pago en la pasarela.';
     }
 
     if (/(envio|envío|domicilio|entrega|recibir)/.test(n)) {
-      return 'Los tiempos y costos de envío dependen de tu zona y del pedido. Tras pagar, podrás ver el estado del pedido en tu cuenta.';
+      return 'Tiempos y costos según zona y pedido. Luego del pago, el estado lo ves en [Tu panel](/dashboard).';
     }
 
     if (/(producto|catalogo|catálogo|comprar|tienda)/.test(n)) {
-      return 'Explora el catálogo en Productos desde el menú. Ahí puedes filtrar y añadir al carrito.';
+      return 'Aquí está el catálogo: [Ver productos](/productos). Puedes añadir al [carrito](/carrito).';
     }
 
     if (/(cuenta|registro|registrarme|contraseña|password|clave|correo verificado)/.test(n)) {
-      return 'Puedes registrarte o iniciar sesión desde el menú. Si olvidaste la contraseña, usa Recuperar contraseña. El inicio de sesión puede pedirte un código por correo.';
+      return 'Cuenta: [Login](/login), [Registro](/register), [Recuperar contraseña](/recuperar-password). Con sesión: [Panel](/dashboard).';
     }
 
     if (/(devolucion|devolución|reembolso)/.test(n)) {
@@ -188,8 +195,7 @@ export class ChatbotService {
     }
 
     return (
-      'No tengo una respuesta exacta para eso. Prueba con palabras como pedido, pago, envío, productos o contraseña. ' +
-      'También puedes usar el menú para navegar la tienda.'
+      'No tengo una respuesta exacta. Prueba: pedido, pago, envío, productos. O abre [Productos](/productos) o [Inicio](/home).'
     );
   }
 }

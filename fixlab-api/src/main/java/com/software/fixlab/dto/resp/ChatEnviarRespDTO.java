@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class ChatEnviarRespDTO {
     private ChatMensajeRespDTO userMessage;
     private ChatMensajeRespDTO botMessage;
+    /** "IA" si respondió Gemini, "FAQ" si fue respuesta por reglas locales. */
+    private String respuestaFuente;
 }

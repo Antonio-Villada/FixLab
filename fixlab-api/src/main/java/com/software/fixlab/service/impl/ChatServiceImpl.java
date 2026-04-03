@@ -24,11 +24,12 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatMensajeRepository chatMensajeRepository;
     private final UsuarioRepository usuarioRepository;
+    private final GeminiChatClient geminiChatClient;
 
     @Override
     @Transactional(readOnly = true)
     public List<ChatMensajeRespDTO> historial(String usuarioEmail) {
-        String email = emailCanonico(usuarioEmail);
+        String email = resolveUsuario(usuarioEmail).getEmail();
         return chatMensajeRepository.findByUsuarioEmailOrderByCreadoEnAsc(email).stream()
                 .map(this::toDto)
                 .toList();
@@ -37,7 +38,8 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional
     public ChatEnviarRespDTO enviar(String usuarioEmail, ChatEnviarReqDTO body) {
-        String email = emailCanonico(usuarioEmail);
+        Usuario usuario = resolveUsuario(usuarioEmail);
+        String email = usuario.getEmail();
         String t = body.getTexto().trim();
         if (t.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El mensaje no puede estar vacío");
@@ -50,7 +52,10 @@ public class ChatServiceImpl implements ChatService {
                 .build();
         user = chatMensajeRepository.save(user);
 
-        String replyText = ChatHybridResponder.reply(t);
+        List<ChatMensaje> historialAsc = chatMensajeRepository.findByUsuarioEmailOrderByCreadoEnAsc(email);
+        var iaReply = geminiChatClient.generateReply(historialAsc, usuario.getRol()).filter(s -> !s.isBlank());
+        String replyText = iaReply.orElseGet(() -> ChatHybridResponder.reply(t, usuario.getRol()));
+        String respuestaFuente = iaReply.isPresent() ? "IA" : "FAQ";
         ChatMensaje bot = ChatMensaje.builder()
                 .usuarioEmail(email)
                 .texto(replyText)
@@ -61,19 +66,19 @@ public class ChatServiceImpl implements ChatService {
         return ChatEnviarRespDTO.builder()
                 .userMessage(toDto(user))
                 .botMessage(toDto(bot))
+                .respuestaFuente(respuestaFuente)
                 .build();
     }
 
     @Override
     @Transactional
     public void limpiarHistorial(String usuarioEmail) {
-        String email = emailCanonico(usuarioEmail);
+        String email = resolveUsuario(usuarioEmail).getEmail();
         chatMensajeRepository.deleteByUsuarioEmail(email);
     }
 
-    private String emailCanonico(String emailJwt) {
+    private Usuario resolveUsuario(String emailJwt) {
         return usuarioRepository.findByEmailIgnoreCase(emailJwt.trim())
-                .map(Usuario::getEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario no encontrado"));
     }
 

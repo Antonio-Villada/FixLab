@@ -1,4 +1,4 @@
-/* Alineado a la derecha, debajo del botón de accesibilidad (ver .a11y-widget) */
+/* Debajo del botón de accesibilidad cuando el panel está cerrado; por encima (y a11y oculto) con .chatbot-open */
 .chatbot-widget {
   position: fixed;
   right: 1.5rem;
@@ -6,6 +6,10 @@
   bottom: 1.5rem;
   z-index: 9998;
   font-family: system-ui, sans-serif;
+}
+
+.chatbot-widget.chatbot-open {
+  z-index: 10050;
 }
 
 .chatbot-trigger {
@@ -155,11 +159,62 @@
   margin-bottom: 0.25rem;
 }
 
+.chatbot-role-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.chatbot-role-row .chatbot-role {
+  margin-bottom: 0;
+}
+
+.chatbot-source {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.chatbot-source-ia {
+  background: #e7f1ff;
+  color: #0d6efd;
+}
+
+.chatbot-source-faq {
+  background: #e9ecef;
+  color: #495057;
+}
+
 .chatbot-text {
   font-size: 0.9rem;
   line-height: 1.45;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.chatbot-inline-link {
+  color: #146c43;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.chatbot-inline-link:hover {
+  color: #0f5132;
+}
+
+.chatbot-md-strong {
+  font-weight: 700;
+}
+
+.chatbot-md-plain {
+  white-space: pre-wrap;
 }
 
 .chatbot-scroll-anchor {

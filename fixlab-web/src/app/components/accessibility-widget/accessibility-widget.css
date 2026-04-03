@@ -1,9 +1,16 @@
-/* Encima del botón de chat (misma columna a la derecha) */
+/* Encima del botón de chat cuando el asistente está cerrado. Con el panel abierto se oculta vía body.fixlab-chat-open */
 .a11y-widget {
   position: fixed;
   bottom: calc(1.5rem + 56px + 12px);
   right: 1.5rem;
   z-index: 9999;
+}
+
+body.fixlab-chat-open .a11y-widget {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }
 
 @media (max-width: 576px) {
