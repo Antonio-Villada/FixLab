@@ -42,6 +42,8 @@ Thumbs.db
 # SECRETOS Y CREDENCIALES
 # ==========================================
 src/main/resources/application.properties
+fixlab-api/src/main/resources/application.properties
+fixlab-web/dist.zip
 
 # Documentación local (no incluida en el repo)
 fixlab-api/WEBHOOK_LOCAL.md

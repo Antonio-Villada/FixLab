@@ -18,6 +18,7 @@ import org.springframework.web.client.RestClientResponseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -162,11 +163,18 @@ public class GeminiChatClient {
             String snippet = errorBody != null && errorBody.length() > 800
                     ? errorBody.substring(0, 800) + "…"
                     : errorBody;
-            log.warn(
-                    "Gemini API rechazó la petición: status={} — {}. Revisa clave, modelo ({}) y cuota en Google AI Studio.",
-                    e.getStatusCode().value(),
-                    snippet != null ? snippet : e.getMessage(),
-                    model);
+            if (snippet != null && snippet.toLowerCase(Locale.ROOT).contains("leaked")) {
+                log.warn(
+                        "Gemini: Google invalidó la API key (reportada como filtrada). Crea una NUEVA en "
+                                + "https://aistudio.google.com/apikey , revoca la antigua y actualiza gemini.api-key "
+                                + "o GEMINI_API_KEY. No compartas la clave en chats, capturas ni repositorios.");
+            } else {
+                log.warn(
+                        "Gemini API rechazó la petición: status={} — {}. Revisa clave, modelo ({}) y cuota en Google AI Studio.",
+                        e.getStatusCode().value(),
+                        snippet != null ? snippet : e.getMessage(),
+                        model);
+            }
             return Optional.empty();
         } catch (RestClientException e) {
             log.warn("Gemini error de red/cliente: {}", e.getMessage());
