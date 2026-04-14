@@ -6,6 +6,7 @@ import { UsuarioService } from '../../services/usuario.service';
 import { CheckoutService } from '../../services/checkout.service';
 import { AuthService } from '../../services/auth';
 import { PedidoRespDTO } from '../../models/checkout.model';
+import { environment } from '../../../environments/environment';
 
 function confirmNewPasswordMatch(group: AbstractControl): ValidationErrors | null {
   const nueva = group.get('nuevaPassword')?.value;
@@ -26,6 +27,8 @@ export class Dashboard implements OnInit {
   private checkoutService = inject(CheckoutService);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+
+  readonly enablePostventaModule = environment.enablePostventaModule;
 
   pedidos = signal<PedidoRespDTO[]>([]);
   loadingPerfil = signal(true);

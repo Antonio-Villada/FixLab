@@ -44,8 +44,7 @@ public class EmailService {
                 "Gracias por registrarte. Tu código de verificación es:",
                 getLogoUrl()
         );
-        enviarCorreoHtml(destino, "Tu código de verificación - FixLab", html,
-                "Hola " + nombre + ", Gracias por registrarte en FixLab. Tu código de verificación es: " + codigo + ". Este código expirará en 15 minutos.");
+        enviarCorreoHtml(destino, "Tu código de verificación - FixLab", html);
     }
 
     /** Código de 6 dígitos para restablecer contraseña. */
@@ -57,8 +56,7 @@ public class EmailService {
                 "Has solicitado restablecer tu contraseña en FixLab. Tu código es:",
                 getLogoUrl()
         );
-        enviarCorreoHtml(destino, "Código para restablecer contraseña - FixLab", html,
-                "Hola " + nombre + ", Has solicitado restablecer tu contraseña. Tu código es: " + codigo + ". Este código expira en 15 minutos.");
+        enviarCorreoHtml(destino, "Código para restablecer contraseña - FixLab", html);
     }
 
     /** Código de 6 dígitos para completar el inicio de sesión (2FA por correo). */
@@ -70,8 +68,7 @@ public class EmailService {
                 "Tu código para iniciar sesión es:",
                 getLogoUrl()
         );
-        enviarCorreoHtml(destino, "Código de acceso - FixLab", html,
-                "Hola " + nombre + ", Tu código para iniciar sesión es: " + codigo + ". Este código expira en 15 minutos.");
+        enviarCorreoHtml(destino, "Código de acceso - FixLab", html);
     }
 
     /**
@@ -113,13 +110,60 @@ public class EmailService {
                 + "<p style=\"color:#9ca3af;font-size:12px;margin:24px 0 0;\">FixLab — Servicio técnico</p>"
                 + "</div></td></tr></table></body></html>";
 
-        String textoPlano = String.format(
-                "Hola %s, el ticket %s pasó de «%s» a «%s». Seguimiento: %s",
-                nombre, numeroTicket, estadoAnteriorLegible, estadoNuevoLegible, seguimientoUrl);
         enviarCorreoHtml(destino,
                 "Actualización de tu orden " + numeroTicket + " - FixLab",
-                html,
-                textoPlano);
+                html);
+    }
+
+    /**
+     * Notifica al cliente cambios en su PQRS / garantía. Incluye aviso breve de tratamiento de datos (Ley 1581/2012).
+     */
+    public void enviarNotificacionCambioEstadoPqr(
+            String destino,
+            String nombreCliente,
+            String radicado,
+            String estadoAnteriorLegible,
+            String estadoNuevoLegible,
+            String tipoLegible,
+            String lineaExtra) {
+        String nombre = nombreCliente != null && !nombreCliente.isBlank() ? nombreCliente.trim() : "cliente";
+        String seguimientoUrl = construirUrlMisPqrs();
+        String logo = getLogoUrl();
+        String logoBlock = (logo != null && !logo.isBlank())
+                ? "<p style=\"margin:0 0 16px 0;\"><img src=\"" + logo + "\" alt=\"FixLab\" width=\"40\" height=\"40\" style=\"display:block;border:0;\" /></p>"
+                : "";
+        String extraBlock = (lineaExtra != null && !lineaExtra.isBlank())
+                ? "<p style=\"color:#555;font-size:14px;margin:12px 0;\">" + escaparHtmlSimple(lineaExtra) + "</p>"
+                : "";
+        String html = "<!DOCTYPE html><html><body style=\"font-family:Segoe UI,Arial,sans-serif;background:#f6f7f9;margin:0;padding:24px;\">"
+                + "<table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td align=\"center\">"
+                + "<div style=\"max-width:520px;background:#fff;border-radius:8px;padding:28px;text-align:left;border:1px solid #e5e7eb;\">"
+                + logoBlock
+                + "<h1 style=\"font-size:18px;color:#111827;margin:0 0 8px;\">Actualización de tu solicitud (PQRS)</h1>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 16px;\">Hola <strong>" + escaparHtmlSimple(nombre) + "</strong>,</p>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 8px;\">Tipo: <strong>" + escaparHtmlSimple(tipoLegible) + "</strong></p>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 12px;\">Radicado <strong style=\"font-family:monospace;\">"
+                + escaparHtmlSimple(radicado) + "</strong></p>"
+                + "<table style=\"width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;\">"
+                + "<tr><td style=\"padding:10px 12px;background:#f3f4f6;color:#6b7280;\">Estado anterior</td>"
+                + "<td style=\"padding:10px 12px;background:#f9fafb;\">" + escaparHtmlSimple(estadoAnteriorLegible) + "</td></tr>"
+                + "<tr><td style=\"padding:10px 12px;background:#ecfdf5;color:#065f46;font-weight:600;\">Estado actual</td>"
+                + "<td style=\"padding:10px 12px;background:#ecfdf5;font-weight:600;\">" + escaparHtmlSimple(estadoNuevoLegible) + "</td></tr>"
+                + "</table>"
+                + extraBlock
+                + "<p style=\"margin:20px 0 0;\"><a href=\"" + escaparAttr(seguimientoUrl) + "\" style=\"display:inline-block;background:#0d6efd;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px;font-size:14px;\">Ver mis solicitudes</a></p>"
+                + "<p style=\"color:#9ca3af;font-size:11px;margin:24px 0 0;line-height:1.4;\">Tratamos tus datos conforme a nuestra política de privacidad y la normativa colombiana (Ley 1581 de 2012). "
+                + "Puedes ejercer tus derechos ARCO contactándonos por los canales oficiales de FixLab.</p>"
+                + "<p style=\"color:#9ca3af;font-size:12px;margin:12px 0 0;\">FixLab — Postventa</p>"
+                + "</div></td></tr></table></body></html>";
+
+        enviarCorreoHtml(destino, "Actualización PQRS " + radicado + " - FixLab", html);
+    }
+
+    private String construirUrlMisPqrs() {
+        String base = (frontendBaseUrl != null) ? frontendBaseUrl.trim() : "";
+        if (base.isEmpty()) return "/mis-pqrs";
+        return base.endsWith("/") ? base + "mis-pqrs" : base + "/mis-pqrs";
     }
 
     private String construirUrlSeguimientoReparaciones() {
@@ -143,6 +187,12 @@ public class EmailService {
                 .replace("<", "&lt;");
     }
 
+    /** Vista mínima para consola cuando log-only (no se envía correo). */
+    private static String vistaPlanaParaLog(String html) {
+        if (html == null || html.isBlank()) return "";
+        return html.replaceAll("<[^>]+>", " ").replaceAll("\\s+", " ").trim();
+    }
+
     public void enviarFacturaVenta(String destino, String nombre, String numeroPedido, Double total) {
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setTo(destino);
@@ -162,27 +212,28 @@ public class EmailService {
     }
 
     /**
-     * Envía un correo HTML con fallback a texto plano.
+     * Envía un correo solo en HTML (text/html).
      * Respeta fixlab.mail.log-only.
      */
-    private void enviarCorreoHtml(String destinatario, String asunto, String htmlBody, String textoPlano) {
+    private void enviarCorreoHtml(String destinatario, String asunto, String htmlBody) {
         if (logOnly) {
+            String preview = vistaPlanaParaLog(htmlBody);
             log.warn("=== MODO DESARROLLO: correo NO enviado (fixlab.mail.log-only=true) ===");
             log.info("Para: {}", destinatario);
             log.info("Asunto: {}", asunto);
-            log.info("Cuerpo (texto): {}", textoPlano);
-            log.warn("=== Modo desarrollo: copia el código de arriba ===");
-            System.out.println("\n========== FIXLAB - CORREO (modo desarrollo) ==========");
+            log.info("Vista previa (solo log): {}", preview);
+            log.warn("=== Modo desarrollo: revisa consola / vista previa ===");
+            System.out.println("\n========== FIXLAB - CORREO HTML (modo desarrollo, no enviado) ==========");
             System.out.println("Para: " + destinatario);
             System.out.println("Asunto: " + asunto);
-            System.out.println("--- Código en el correo ---");
-            System.out.println(textoPlano);
-            System.out.println("========================================================\n");
+            System.out.println("--- Vista sin etiquetas (solo para leer en consola) ---");
+            System.out.println(preview);
+            System.out.println("========================================================================\n");
             return;
         }
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             helper.setFrom("FixLab Soporte <" + mailFrom + ">");
             helper.setTo(destinatario);
             helper.setSubject(asunto);

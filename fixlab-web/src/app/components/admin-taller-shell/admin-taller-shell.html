@@ -35,6 +35,26 @@
       >
         Seguimiento
       </a>
+      @if (enablePostventaModule) {
+        <a
+          routerLink="/admin/taller/postventa"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="btn btn-outline-light btn-sm px-3"
+        >
+          Postventa
+        </a>
+      }
+      @if (authService.isAdmin()) {
+        <a
+          routerLink="/admin/taller/tipos-equipo"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="btn btn-outline-light btn-sm px-3"
+        >
+          Tipo de equipo
+        </a>
+      }
     </div>
   </div>
 </div>

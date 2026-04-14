@@ -30,6 +30,19 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
     }
 
+    @Override
+    public String subirEvidencia(MultipartFile archivo) throws Exception {
+        try {
+            File archivoTemporal = convertirAFile(archivo);
+            Map uploadResult = cloudinary.uploader().upload(archivoTemporal,
+                    ObjectUtils.asMap("resource_type", "auto"));
+            archivoTemporal.delete();
+            return uploadResult.get("url").toString();
+        } catch (Exception e) {
+            throw new Exception("Error al subir la evidencia: " + e.getMessage());
+        }
+    }
+
     private File convertirAFile(MultipartFile archivo) throws IOException {
         File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + archivo.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);

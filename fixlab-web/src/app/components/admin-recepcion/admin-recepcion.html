@@ -16,7 +16,7 @@
   </div>
 
   <p class="text-muted small mb-4">
-    Registra el equipo del cliente y abre el ticket de servicio en un solo paso.
+    Registra el equipo del cliente y opten el ticket de servicio.
   
   </p>
 
@@ -83,7 +83,6 @@
               @if (form.controls.propietarioCedula.invalid && form.controls.propietarioCedula.touched) {
                 <div class="invalid-feedback d-block">Indica la cédula del dueño del equipo.</div>
               }
-              <div class="form-text">Escribe al menos 2 dígitos para ver coincidencias.</div>
             </div>
             <div class="col-md-6">
               <label class="form-label">Cliente</label>
@@ -119,16 +118,13 @@
               <textarea class="form-control" rows="2" formControlName="observaciones"></textarea>
             </div>
             <div class="col-12">
-              <label class="form-label">Taller <span class="text-danger">*</span></label>
-              <select class="form-select" formControlName="tallerId">
-                <option [ngValue]="null">Seleccione…</option>
-                @for (tal of talleres(); track tal.id) {
-                  <option [ngValue]="tal.id">{{ tal.nombre }} ({{ tal.tipoTallerNombre }})</option>
-                }
-              </select>
-              @if (form.controls.tallerId.invalid && form.controls.tallerId.touched) {
-                <div class="invalid-feedback d-block">Selecciona el taller.</div>
-              }
+              <label class="form-label">Taller</label>
+              <div
+                class="form-control d-flex align-items-center bg-light"
+                [class.text-muted]="!tallerRecepcionEtiqueta()"
+              >
+                {{ tallerRecepcionEtiqueta() || 'Sin taller configurado en el sistema.' }}
+              </div>
             </div>
             <div class="col-12">
               <label class="form-label">Reporte de falla (cliente) <span class="text-danger">*</span></label>

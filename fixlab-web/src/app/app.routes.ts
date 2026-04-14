@@ -23,10 +23,14 @@ import { AdminReparacionesComponent } from './components/admin-reparaciones/admi
 import { AdminRecepcionComponent } from './components/admin-recepcion/admin-recepcion';
 import { AdminTallerShellComponent } from './components/admin-taller-shell/admin-taller-shell';
 import { AdminTallerListaComponent } from './components/admin-taller-lista/admin-taller-lista';
+import { AdminTipoEquipoComponent } from './components/admin-tipo-equipo/admin-tipo-equipo';
 import { recepcionGuard } from './guards/recepcion-guard';
 import { tallerShellGuard } from './guards/taller-shell-guard';
 import { tallerRecepcionShellGuard } from './guards/taller-recepcion-shell-guard';
 import { TallerDefaultRedirectComponent } from './components/taller-default-redirect/taller-default-redirect';
+import { MisPqrsComponent } from './components/mis-pqrs/mis-pqrs';
+import { AdminPostventaComponent } from './components/admin-postventa/admin-postventa';
+import { postventaFeatureGuard } from './guards/postventa-feature-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -40,6 +44,11 @@ export const routes: Routes = [
   { path: 'pago-exitoso', component: PagoExitosoComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  {
+    path: 'mis-pqrs',
+    component: MisPqrsComponent,
+    canActivate: [authGuard, postventaFeatureGuard],
+  },
   { path: 'factura/:id', component: FacturaComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminRedirectComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/productos', component: AdminProductosComponent, canActivate: [authGuard, adminGuard] },
@@ -55,16 +64,32 @@ export const routes: Routes = [
         component: AdminRecepcionComponent,
         canActivate: [tallerRecepcionShellGuard],
       },
+      {
+        path: 'tipos-equipo',
+        component: AdminTipoEquipoComponent,
+        canActivate: [tallerRecepcionShellGuard],
+      },
       { path: 'lista', component: AdminTallerListaComponent },
       { path: 'gestion', component: AdminReparacionesComponent },
       { path: 'seguimiento', component: ReparacionesPageComponent },
+      { path: 'postventa', component: AdminPostventaComponent, canActivate: [postventaFeatureGuard] },
     ],
   },
   { path: 'admin/reparaciones', redirectTo: '/admin/taller/lista', pathMatch: 'full' },
   { path: 'admin/recepcion', component: AdminRecepcionComponent, canActivate: [authGuard, recepcionGuard] },
+  {
+    path: 'admin/recepcion/postventa',
+    component: AdminPostventaComponent,
+    canActivate: [authGuard, recepcionGuard, postventaFeatureGuard],
+  },
   { path: 'admin/categorias', component: AdminCategoriasComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/tipos-producto', component: AdminTiposProductoComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [authGuard, adminGuard] },
+  {
+    path: 'admin/postventa',
+    component: AdminPostventaComponent,
+    canActivate: [authGuard, adminGuard, postventaFeatureGuard],
+  },
   { path: 'terminos-y-condiciones', component: TermsAndConditionsComponent },
   { path: 'politica-de-privacidad', component: PrivacyPolicyComponent },
   { path: '**', redirectTo: '/home', pathMatch: 'full' },

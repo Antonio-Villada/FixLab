@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment';
 
 /** Contenedor del módulo Taller (admin y técnico): barra de secciones + vista hija. */
 @Component({
@@ -13,4 +14,5 @@ import { AuthService } from '../../services/auth';
 })
 export class AdminTallerShellComponent {
   protected authService = inject(AuthService);
+  readonly enablePostventaModule = environment.enablePostventaModule;
 }

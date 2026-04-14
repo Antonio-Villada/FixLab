@@ -1,0 +1,12 @@
+/* Admin tipos de equipo — botones de acción con ancho uniforme */
+.admin-action-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 100px;
+}
+
+.admin-action-btns .btn {
+  min-width: 100px;
+  width: 100%;
+}

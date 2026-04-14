@@ -29,6 +29,11 @@
             <a class="nav-link px-3" routerLink="/reparaciones" routerLinkActive="active">Seguimiento</a>
           </li>
         }
+        @if (enablePostventaModule && authService.isCliente()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/mis-pqrs" routerLinkActive="active">Postventa</a>
+          </li>
+        }
         @if (authService.isTecnico() && !authService.isAdmin()) {
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/taller/lista" [class.active]="tallerNavActivo()">Taller</a>
@@ -38,6 +43,11 @@
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/recepcion" routerLinkActive="active">Recepción</a>
           </li>
+          @if (enablePostventaModule) {
+            <li class="nav-item">
+              <a class="nav-link px-3" routerLink="/admin/recepcion/postventa" routerLinkActive="active">Postventa</a>
+            </li>
+          }
         }
         @if (authService.isAdmin()) {
           <li class="nav-item">
@@ -55,6 +65,11 @@
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
           </li>
+          @if (enablePostventaModule) {
+            <li class="nav-item">
+              <a class="nav-link px-3" routerLink="/admin/postventa" routerLinkActive="active">Postventa</a>
+            </li>
+          }
         }
       </ul>
 

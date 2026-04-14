@@ -12,4 +12,9 @@ export interface Environment {
    * Úsala cuando pruebes pagos en local: abre la app por esta URL para evitar 403 de Wompi.
    */
   appBaseUrlForWompi?: string;
+  /**
+   * Proceso 4 (PQRS / postventa). En producción puedes dejarlo en false hasta el lanzamiento;
+   * el API puede seguir activo; solo se ocultan rutas y navegación del front.
+   */
+  enablePostventaModule: boolean;
 }

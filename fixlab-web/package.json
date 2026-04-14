@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:gcp": "ng build --configuration production-static",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:fixlab-web": "node dist/fixlab-web/server/server.mjs"

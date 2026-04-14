@@ -1,0 +1,5 @@
+.admin-postventa-table pre {
+  font-size: 0.7rem;
+  max-height: 8rem;
+  overflow: auto;
+}

@@ -20,4 +20,6 @@ public interface ReparacionRepository extends JpaRepository<Reparacion, Integer>
     List<Reparacion> findByEstado(EstadoReparacion estado);
 
     List<Reparacion> findAllByOrderByFechaCreacionDesc();
+
+    Optional<Reparacion> findByIdAndCliente_Cedula(Integer id, String clienteCedula);
 }

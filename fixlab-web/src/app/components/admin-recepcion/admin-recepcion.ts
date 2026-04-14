@@ -41,6 +41,8 @@ export class AdminRecepcionComponent implements OnInit {
   panelSugerenciasAbierto = signal(false);
   /** Nombre mostrado cuando la cédula está resuelta (lista o validación). */
   nombreClienteMostrar = signal<string | null>(null);
+  /** Texto fijo del único taller de recepción (sin selector). */
+  tallerRecepcionEtiqueta = signal<string | null>(null);
   private cedulaResuelta: string | null = null;
 
   form = this.fb.nonNullable.group({
@@ -63,7 +65,18 @@ export class AdminRecepcionComponent implements OnInit {
     }).subscribe({
       next: ({ tipos, talleres, staff }) => {
         this.tiposEquipo.set(tipos ?? []);
-        this.talleres.set(talleres ?? []);
+        const listTalleres = talleres ?? [];
+        this.talleres.set(listTalleres);
+        const tallerDefecto = this.idTallerPorDefecto(listTalleres);
+        if (tallerDefecto != null) {
+          const t = listTalleres.find((x) => x.id === tallerDefecto);
+          this.tallerRecepcionEtiqueta.set(
+            t ? `${t.nombre} (${t.tipoTallerNombre})` : null,
+          );
+          this.form.patchValue({ tallerId: tallerDefecto });
+        } else {
+          this.tallerRecepcionEtiqueta.set(null);
+        }
         this.tecnicosAsignables.set(staff ?? []);
         this.cargandoCatalogo.set(false);
         const avisos: string[] = [];
@@ -81,7 +94,7 @@ export class AdminRecepcionComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.errorCatalogo.set(err.error?.mensaje || 'No se pudo cargar el catálogo');
+        this.errorCatalogo.set(this.extraerMensaje(err) || 'No se pudo cargar el catálogo');
         this.cargandoCatalogo.set(false);
       },
     });
@@ -202,14 +215,29 @@ export class AdminRecepcionComponent implements OnInit {
       });
   }
 
+  /** Prioriza el taller llamado «Taller principal»; si no existe, el primero de la lista. */
+  private idTallerPorDefecto(talleres: TallerRespDTO[]): number | null {
+    if (!talleres.length) {
+      return null;
+    }
+    const norm = (n: string) => n.trim().toLowerCase();
+    const exact = talleres.find((t) => norm(t.nombre) === 'taller principal');
+    if (exact) {
+      return exact.id;
+    }
+    const partial = talleres.find((t) => /taller\s+principal/i.test(t.nombre));
+    return (partial ?? talleres[0]).id;
+  }
+
   private limpiarFormularioRecepcion(): void {
+    const tallerDefecto = this.idTallerPorDefecto(this.talleres());
     this.form.reset({
       propietarioCedula: '',
       tipoEquipoId: null,
       marca: '',
       numeroSerie: '',
       observaciones: '',
-      tallerId: null,
+      tallerId: tallerDefecto,
       descripcionFalla: '',
       tecnicoCedula: null,
     });
@@ -235,14 +263,21 @@ export class AdminRecepcionComponent implements OnInit {
 
   private extraerMensaje(err: unknown): string {
     const e = err as {
-      error?: { mensaje?: string } | Record<string, string>;
+      error?: string | { mensaje?: string; message?: string } | Record<string, string>;
       message?: string;
     };
-    if (e?.error && typeof e.error === 'object' && 'mensaje' in e.error && typeof e.error.mensaje === 'string') {
-      return e.error.mensaje;
+    const body = e?.error;
+    if (typeof body === 'string' && body.trim()) {
+      return body.trim();
     }
-    if (e?.error && typeof e.error === 'object' && !('mensaje' in e.error)) {
-      const campos = Object.entries(e.error as Record<string, string>);
+    if (body && typeof body === 'object' && 'mensaje' in body && typeof body.mensaje === 'string') {
+      return body.mensaje;
+    }
+    if (body && typeof body === 'object' && 'message' in body && typeof (body as { message?: string }).message === 'string') {
+      return (body as { message: string }).message;
+    }
+    if (body && typeof body === 'object' && !('mensaje' in body)) {
+      const campos = Object.entries(body as Record<string, string>);
       if (campos.length) {
         return campos.map(([k, v]) => `${k}: ${v}`).join('. ');
       }

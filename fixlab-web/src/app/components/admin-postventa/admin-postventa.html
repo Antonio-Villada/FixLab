@@ -1,0 +1,151 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="h4 mb-0">
+      <i class="bi bi-clipboard-check me-2"></i>Postventa — PQRS y garantías
+    </h1>
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="cargar()" [disabled]="loading()">
+      Actualizar
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-warning">{{ error() }}</div>
+  }
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      @if (loading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+      } @else if (lista().length === 0) {
+        <p class="text-muted p-4 mb-0">No hay solicitudes radicadas.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover table-sm align-middle mb-0 admin-postventa-table">
+            <thead class="table-dark">
+              <tr>
+                <th>Radicado</th>
+                <th>Tipo</th>
+                <th>Cliente / ref.</th>
+                <th>Estado</th>
+                @if (puedeCambiarEstado()) {
+                  <th>Gestión estado</th>
+                }
+                @if (puedeValidarGarantia()) {
+                  <th>Garantía física</th>
+                }
+                <th>Detalle</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of lista(); track s.id) {
+                <tr>
+                  <td class="font-monospace small">{{ s.radicado }}</td>
+                  <td>{{ labelTipo(s.tipo) }}</td>
+                  <td class="small">
+                    <div>Pedido: {{ s.pedidoId ?? '—' }}</div>
+                    <div>Ticket: {{ s.reparacionNumeroTicket ?? '—' }}</div>
+                  </td>
+                  <td>
+                    <span class="badge bg-secondary">{{ labelEstado(s.estado) }}</span>
+                    @if (s.tipo === 'SOLICITUD_GARANTIA') {
+                      <div class="small text-muted mt-1">
+                        Garantía vigente al radicar: {{ s.garantiaVigenteAlRadicar ? 'Sí' : 'No' }}
+                      </div>
+                    }
+                  </td>
+                  @if (puedeCambiarEstado()) {
+                    <td style="min-width: 220px">
+                      <select
+                        class="form-select form-select-sm mb-1"
+                        [(ngModel)]="draftEstado[s.id]"
+                        [name]="'estado-' + s.id"
+                      >
+                        @for (e of estados; track e.value) {
+                          <option [ngValue]="e.value">{{ e.label }}</option>
+                        }
+                      </select>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm mb-1"
+                        placeholder="Mensaje al cliente (correo)"
+                        [(ngModel)]="mensajeCliente[s.id]"
+                        [name]="'msg-' + s.id"
+                      />
+                      <input
+                        type="text"
+                        class="form-control form-control-sm mb-1"
+                        placeholder="Nota interna"
+                        [(ngModel)]="notasInternas[s.id]"
+                        [name]="'nota-' + s.id"
+                      />
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary w-100"
+                        (click)="aplicarEstado(s)"
+                        [disabled]="savingEstado() === s.id || draftEstado[s.id] === s.estado"
+                      >
+                        @if (savingEstado() === s.id) {
+                          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        } @else {
+                          Guardar estado
+                        }
+                      </button>
+                    </td>
+                  }
+                  @if (puedeValidarGarantia()) {
+                    <td style="min-width: 200px">
+                      @if (s.tipo === 'SOLICITUD_GARANTIA') {
+                        <div class="form-check mb-1">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            [id]="'val-' + s.id"
+                            [(ngModel)]="valSi[s.id]"
+                            [name]="'valsi-' + s.id"
+                          />
+                          <label class="form-check-label small" [for]="'val-' + s.id">Equipo conforme (garantía física)</label>
+                        </div>
+                        <input
+                          type="text"
+                          class="form-control form-control-sm mb-1"
+                          placeholder="Notas de validación"
+                          [(ngModel)]="valNotas[s.id]"
+                          [name]="'valnota-' + s.id"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-success w-100"
+                          (click)="aplicarValidacion(s)"
+                          [disabled]="savingVal() === s.id"
+                        >
+                          @if (savingVal() === s.id) {
+                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                          } @else {
+                            Registrar validación
+                          }
+                        </button>
+                      } @else {
+                        <span class="text-muted small">—</span>
+                      }
+                    </td>
+                  }
+                  <td class="small" style="max-width: 14rem">
+                    <div class="text-truncate" [title]="s.descripcion">{{ s.descripcion }}</div>
+                    @if (s.notasInternas) {
+                      <details class="mt-1">
+                        <summary class="small text-muted">Notas internas</summary>
+                        <pre class="small bg-light p-2 rounded mb-0 mt-1 text-wrap">{{ s.notasInternas }}</pre>
+                      </details>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

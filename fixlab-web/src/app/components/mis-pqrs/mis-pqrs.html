@@ -1,0 +1,207 @@
+<div class="container py-4 mis-pqrs">
+  <h1 class="h4 mb-3">
+    <i class="bi bi-inbox me-2"></i>Mis solicitudes (PQRS y garantías)
+  </h1>
+  <p class="text-muted small mb-4">
+    Radica peticiones, quejas, reclamos o solicitudes de garantía vinculadas a una factura de compra o a un ticket de servicio
+    tuyo. Los datos se tratan según nuestra
+    <a routerLink="/politica-de-privacidad">política de privacidad</a> y la Ley 1581 de 2012.
+  </p>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-primary border-opacity-25">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h6 mb-0">Nueva solicitud</h2>
+        </div>
+        <div class="card-body">
+          @if (exitoMsg()) {
+            <div class="alert alert-success small">{{ exitoMsg() }}</div>
+          }
+          @if (errorForm()) {
+            <div class="alert alert-danger small">{{ errorForm() }}</div>
+          }
+          @if (errorUpload()) {
+            <div class="alert alert-warning small">{{ errorUpload() }}</div>
+          }
+
+          <div class="mb-3">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" [(ngModel)]="tipo" name="tipo">
+              @for (t of tipos; track t.value) {
+                <option [ngValue]="t.value">{{ t.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Documento de respaldo</label>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="origen"
+                id="origenPedido"
+                [(ngModel)]="origenDocumento"
+                value="FACTURA_PEDIDO"
+              />
+              <label class="form-check-label" for="origenPedido">Factura / pedido de compra</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="origen"
+                id="origenTicket"
+                [(ngModel)]="origenDocumento"
+                value="TICKET_REPARACION"
+              />
+              <label class="form-check-label" for="origenTicket">Ticket de servicio (reparación)</label>
+            </div>
+          </div>
+
+          @if (origenDocumento === 'FACTURA_PEDIDO') {
+            <div class="mb-3">
+              <label class="form-label">Número de pedido (ID)</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="pedidoId"
+                name="pedidoId"
+                min="1"
+                placeholder="Ej. el ID de tu factura en «Mis compras»"
+              />
+            </div>
+          } @else {
+            <div class="mb-3">
+              <label class="form-label">ID de la reparación</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="reparacionId"
+                name="reparacionId"
+                min="1"
+                placeholder="ID interno de la orden (lo ves en seguimiento de reparaciones)"
+              />
+              <div class="form-text">Debe ser una orden registrada a tu nombre.</div>
+            </div>
+          }
+
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea
+              class="form-control"
+              rows="5"
+              [(ngModel)]="descripcion"
+              name="descripcion"
+              maxlength="8000"
+              placeholder="Describe los hechos con el mayor detalle posible"
+            ></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Evidencias (fotos o videos)</label>
+            <input
+              type="file"
+              class="form-control"
+              accept="image/*,video/*"
+              multiple
+              (change)="onArchivosSeleccionados($event)"
+              [disabled]="subiendoArchivos()"
+            />
+            @if (subiendoArchivos()) {
+              <div class="small text-muted mt-1">Subiendo archivos…</div>
+            }
+            @if (evidenciasUrls().length) {
+              <ul class="list-group list-group-flush small mt-2">
+                @for (u of evidenciasUrls(); track u) {
+                  <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <a [href]="u" target="_blank" rel="noopener noreferrer" class="text-truncate me-2">{{ u }}</a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="quitarEvidencia(u)">Quitar</button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="consent" [(ngModel)]="consentimiento" name="consent" />
+            <label class="form-check-label small" for="consent">
+              Autorizo el tratamiento de mis datos personales para gestionar esta PQRS, conforme a la política de privacidad
+              y la normativa colombiana.
+            </label>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary w-100"
+            (click)="radicar()"
+            [disabled]="enviando() || subiendoArchivos()"
+          >
+            @if (enviando()) {
+              <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+            }
+            Radicar solicitud
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h2 class="h6 mb-0">Seguimiento</h2>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cargarLista()" [disabled]="loadingLista()">
+            Actualizar
+          </button>
+        </div>
+        <div class="card-body p-0">
+          @if (loadingLista()) {
+            <div class="text-center py-5">
+              <div class="spinner-border text-primary" role="status"></div>
+            </div>
+          } @else if (errorLista()) {
+            <div class="alert alert-warning m-3">{{ errorLista() }}</div>
+          } @else if (lista().length === 0) {
+            <p class="text-muted p-4 mb-0">Aún no tienes solicitudes radicadas.</p>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover table-sm align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Radicado</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Ref.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (s of lista(); track s.id) {
+                    <tr>
+                      <td class="font-monospace small">{{ s.radicado }}</td>
+                      <td>{{ labelTipo(s.tipo) }}</td>
+                      <td>
+                        <span class="badge bg-secondary">{{ labelEstado(s.estado) }}</span>
+                      </td>
+                      <td class="small text-muted">{{ s.fechaRadicacion | date: 'short' }}</td>
+                      <td class="small">
+                        @if (s.pedidoId != null) {
+                          Pedido #{{ s.pedidoId }}
+                        } @else if (s.reparacionNumeroTicket) {
+                          {{ s.reparacionNumeroTicket }}
+                        } @else {
+                          —
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

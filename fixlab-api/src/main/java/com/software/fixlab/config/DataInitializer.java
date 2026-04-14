@@ -2,11 +2,9 @@ package com.software.fixlab.config;
 
 import com.software.fixlab.entity.RolUsuario;
 import com.software.fixlab.entity.Taller;
-import com.software.fixlab.entity.TipoEquipo;
 import com.software.fixlab.entity.TipoTaller;
 import com.software.fixlab.entity.Usuario;
 import com.software.fixlab.repository.TallerRepository;
-import com.software.fixlab.repository.TipoEquipoRepository;
 import com.software.fixlab.repository.TipoTallerRepository;
 import com.software.fixlab.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
-    private final TipoEquipoRepository tipoEquipoRepository;
     private final TipoTallerRepository tipoTallerRepository;
     private final TallerRepository tallerRepository;
     private final PasswordEncoder passwordEncoder;
@@ -31,11 +28,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void inicializarCatalogoTaller() {
-        if (tipoEquipoRepository.count() == 0) {
-            tipoEquipoRepository.save(TipoEquipo.builder().nombre("Portátil").build());
-            tipoEquipoRepository.save(TipoEquipo.builder().nombre("PC de escritorio").build());
-            tipoEquipoRepository.save(TipoEquipo.builder().nombre("Impresora").build());
-        }
+       
         if (tallerRepository.count() > 0) {
             return;
         }
@@ -46,7 +39,7 @@ public class DataInitializer implements CommandLineRunner {
                         .estado("ACTIVO")
                         .build()));
         tallerRepository.save(Taller.builder()
-                .nombre("FixLab — Taller principal")
+                .nombre("Fixlab - Taller principal")
                 .tipoTaller(tipoTaller)
                 .build());
     }

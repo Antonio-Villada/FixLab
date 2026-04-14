@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { CartService } from '../../services/cart.service';
 import { UsuarioService } from '../../services/usuario.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +18,9 @@ export class HeaderComponent {
   public cartService = inject(CartService);
   public usuarioService = inject(UsuarioService);
   private router = inject(Router);
+
+  /** Proceso 4 (PQRS): desactivado en environment.prod hasta lanzamiento. */
+  readonly enablePostventaModule = environment.enablePostventaModule;
 
   /** Panel de perfil/cuenta (estilo tipo Google) abierto o cerrado. */
   panelCuentaAbierto = signal(false);

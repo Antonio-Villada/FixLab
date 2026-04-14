@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
 
+    long countByTipoEquipo_Id(Integer tipoEquipoId);
+
     List<Equipo> findByCliente_CedulaOrderByFechaCreacionDesc(String clienteCedula);
 
     Optional<Equipo> findByIdAndCliente_Cedula(Integer id, String clienteCedula);
