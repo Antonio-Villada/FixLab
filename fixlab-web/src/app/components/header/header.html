@@ -29,6 +29,11 @@
             <a class="nav-link px-3" routerLink="/reparaciones" routerLinkActive="active">Seguimiento</a>
           </li>
         }
+        @if (authService.isLoggedInSignal() && authService.isCliente()) {
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/mis-compras" routerLinkActive="active">Mis Compras</a>
+          </li>
+        }
         @if (enablePostventaModule && authService.isCliente()) {
           <li class="nav-item">
             <a class="nav-link px-3" routerLink="/mis-pqrs" routerLinkActive="active">Postventa</a>

@@ -31,6 +31,8 @@ import { TallerDefaultRedirectComponent } from './components/taller-default-redi
 import { MisPqrsComponent } from './components/mis-pqrs/mis-pqrs';
 import { AdminPostventaComponent } from './components/admin-postventa/admin-postventa';
 import { postventaFeatureGuard } from './guards/postventa-feature-guard';
+import { MisComprasComponent } from './components/mis-compras/mis-compras';
+import { clienteGuard } from './guards/cliente-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -44,6 +46,11 @@ export const routes: Routes = [
   { path: 'pago-exitoso', component: PagoExitosoComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  {
+    path: 'mis-compras',
+    component: MisComprasComponent,
+    canActivate: [authGuard, clienteGuard],
+  },
   {
     path: 'mis-pqrs',
     component: MisPqrsComponent,

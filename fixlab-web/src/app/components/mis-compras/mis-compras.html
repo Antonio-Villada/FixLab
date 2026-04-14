@@ -1,0 +1,82 @@
+<div class="container py-4">
+  <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-1">Mis Compras</h1>
+      <p class="text-muted mb-0">Historial de tus facturas y órdenes de despacho.</p>
+    </div>
+    <button class="btn btn-outline-secondary" type="button" (click)="load()" [disabled]="loading()">
+      <i class="bi bi-arrow-clockwise me-2"></i>Actualizar
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>{{ errorMessage() }}</div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="card border-0 shadow-sm">
+      <div class="card-body py-4 text-center text-muted">
+        <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+        Cargando tus compras...
+      </div>
+    </div>
+  } @else {
+    @if (pedidosOrdenados().length === 0) {
+      <div class="card border-0 shadow-sm">
+        <div class="card-body py-5 text-center">
+          <div class="display-6 mb-2">🧾</div>
+          <h2 class="h6 mb-2">Aún no tienes compras registradas</h2>
+          <p class="text-muted mb-0">Cuando realices una compra, aquí verás tu factura y el estado del despacho.</p>
+        </div>
+      </div>
+    } @else {
+      <div class="row g-3">
+        @for (p of pedidosOrdenados(); track p.id) {
+          <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm h-100" [attr.id]="'pedido-' + p.id">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                  <div>
+                    <div class="text-muted small">Pedido</div>
+                    <div class="h6 mb-1">#{{ p.id }}</div>
+                    <div class="text-muted small">{{ formatFecha(p.fechaCreacion) }}</div>
+                  </div>
+                  <span class="badge" [ngClass]="estadoBadgeClass(p.estado)">
+                    {{ (p.estado || '—') }}
+                  </span>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="text-muted small">Total</div>
+                    <div class="fw-bold">{{ p.total | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <a class="btn btn-outline-primary btn-sm" [routerLink]="['/factura', p.id]">
+                      <i class="bi bi-receipt me-2"></i>Ver factura
+                    </a>
+                    <a class="btn btn-primary btn-sm" routerLink="/mis-compras" [fragment]="'pedido-' + p.id">
+                      <i class="bi bi-truck me-2"></i>Ver estado
+                    </a>
+                  </div>
+                </div>
+
+                @if (p.direccionEnvio) {
+                  <div class="mt-3 small text-muted">
+                    <i class="bi bi-geo-alt me-1"></i>{{ p.direccionEnvio }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+

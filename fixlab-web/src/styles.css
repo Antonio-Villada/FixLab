@@ -101,3 +101,33 @@ html.a11y-reduce-motion *::after {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
+
+/* ===== Impresión: mostrar solo la factura (sin layout de la app) ===== */
+@media print {
+  /* Oculta TODO por defecto para evitar "captura" de pantalla completa */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Muestra solo el área de impresión */
+  .print-area,
+  .print-area * {
+    visibility: visible !important;
+  }
+
+  /* Posiciona la factura ocupando la hoja */
+  .print-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Asegura que no queden márgenes raros del layout */
+  body {
+    margin: 0 !important;
+    overflow: visible !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

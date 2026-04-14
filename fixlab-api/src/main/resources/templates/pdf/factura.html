@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Factura FixLab</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; color: #111827; margin: 0; padding: 24px; }
+        .muted { color: #6b7280; }
+        .row { display: flex; justify-content: space-between; gap: 16px; }
+        .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; }
+        h1 { font-size: 18px; margin: 0 0 8px; }
+        h2 { font-size: 14px; margin: 0 0 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border-bottom: 1px solid #e5e7eb; padding: 10px 8px; font-size: 12px; }
+        th { text-align: left; background: #f9fafb; color: #374151; }
+        td.num, th.num { text-align: right; }
+        .total { font-weight: 800; font-size: 14px; }
+        .brand { font-weight: 800; letter-spacing: -0.2px; }
+        .footer { margin-top: 18px; font-size: 11px; color: #6b7280; }
+    </style>
+</head>
+<body>
+<div class="row">
+    <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div>{{LOGO_IMG}}</div>
+            <div>
+                <div class="brand">FixLab</div>
+                <div class="muted" style="margin-top:4px;">Factura de venta</div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:right;">
+        <div><strong>Pedido #{{PEDIDO_ID}}</strong></div>
+        <div class="muted">Fecha: {{FECHA}}</div>
+        <div class="muted">Estado: PAGADO</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px;">
+    <h1>Cliente</h1>
+    <div><strong>{{NOMBRE}}</strong></div>
+    <div class="muted">{{EMAIL}}</div>
+    <div class="muted">Dirección: {{DIRECCION}}</div>
+</div>
+
+<div class="card" style="margin-top:12px;">
+    <h2>Detalle de la compra</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th class="num">Cant.</th>
+            <th class="num">Precio</th>
+            <th class="num">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ITEMS_ROWS}}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3" class="num total">Total</td>
+            <td class="num total">{{TOTAL}}</td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="footer">
+    Este documento es una representación de la transacción de compra. Si necesitas soporte, contáctanos por los canales oficiales de FixLab.
+</div>
+</body>
+</html>

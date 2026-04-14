@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -432,17 +433,107 @@ public class ReparacionServiceImpl implements ReparacionService {
             }
             String antLeg = anterior == null ? "Registro inicial" : etiquetaEstadoParaCliente(anterior);
             String nuevoLeg = etiquetaEstadoParaCliente(nuevo);
-            emailService.enviarNotificacionCambioEstadoReparacion(
-                    c.getEmail().trim(),
-                    nombre,
-                    r.getNumeroTicket(),
-                    antLeg,
-                    nuevoLeg,
-                    lineaExtra);
+
+            // En cotización, enviar detalle (repuestos + mano de obra) en HTML.
+            if (nuevo == EstadoReparacion.COTIZADO_PENDIENTE_APROBACION) {
+                String extraHtml = construirBloqueHtmlCotizacion(r);
+                if (lineaExtra != null && !lineaExtra.isBlank()) {
+                    extraHtml = "<p style=\"color:#555;font-size:14px;margin:12px 0;\">" + esc(lineaExtra) + "</p>" + extraHtml;
+                }
+                emailService.enviarNotificacionCambioEstadoReparacionConHtmlExtra(
+                        c.getEmail().trim(),
+                        nombre,
+                        r.getNumeroTicket(),
+                        antLeg,
+                        nuevoLeg,
+                        extraHtml
+                );
+            } else {
+                emailService.enviarNotificacionCambioEstadoReparacion(
+                        c.getEmail().trim(),
+                        nombre,
+                        r.getNumeroTicket(),
+                        antLeg,
+                        nuevoLeg,
+                        lineaExtra);
+            }
         } catch (Exception e) {
             log.warn("No se pudo enviar el correo de cambio de estado al cliente (ticket {}): {}",
                     r.getNumeroTicket(), e.getMessage());
         }
+    }
+
+    private String construirBloqueHtmlCotizacion(Reparacion r) {
+        var lineas = reparacionProductoRepository.findByReparacion_IdOrderByIdAsc(r.getId());
+        double totalRepuestos = 0.0;
+        StringBuilder rows = new StringBuilder();
+        for (ReparacionProducto l : lineas) {
+            String nombre = (l.getProducto() != null && l.getProducto().getNombre() != null)
+                    ? l.getProducto().getNombre()
+                    : "Producto";
+            int cant = l.getCantidad() != null ? l.getCantidad() : 0;
+            double unit = l.getPrecioUnitarioSnapshot() != null ? l.getPrecioUnitarioSnapshot() : 0.0;
+            double sub = cant * unit;
+            totalRepuestos += sub;
+            rows.append("<tr>")
+                    .append("<td style=\"padding:10px 8px;border-bottom:1px solid #e5e7eb;\">").append(esc(nombre)).append("</td>")
+                    .append("<td style=\"padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:right;\">").append(cant).append("</td>")
+                    .append("<td style=\"padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:right;\">").append(esc(fmtMoney(unit))).append("</td>")
+                    .append("<td style=\"padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:right;\">").append(esc(fmtMoney(sub))).append("</td>")
+                    .append("</tr>");
+        }
+        if (rows.isEmpty()) {
+            rows.append("<tr><td colspan=\"4\" style=\"padding:10px 8px;color:#6b7280;\">Sin repuestos registrados.</td></tr>");
+        }
+
+        double total = r.getCotizacionTotal() != null ? r.getCotizacionTotal() : 0.0;
+        double manoObra = Math.max(0.0, total - totalRepuestos);
+
+        String diagnostico = (r.getDiagnostico() != null && !r.getDiagnostico().isBlank())
+                ? r.getDiagnostico().trim()
+                : null;
+
+        String diagBlock = diagnostico != null
+                ? "<div style=\"margin:12px 0 14px;\">"
+                + "<div style=\"font-size:13px;color:#6b7280;margin-bottom:6px;\">Diagnóstico</div>"
+                + "<div style=\"font-size:14px;color:#111827;white-space:pre-wrap;\">" + esc(diagnostico) + "</div>"
+                + "</div>"
+                : "";
+
+        return "<div style=\"margin:14px 0 0;padding:14px 14px;border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;\">"
+                + "<div style=\"font-size:15px;font-weight:700;color:#111827;margin:0 0 10px;\">Detalle de cotización</div>"
+                + diagBlock
+                + "<table style=\"width:100%;border-collapse:collapse;font-size:13px;\">"
+                + "<thead><tr>"
+                + "<th style=\"text-align:left;padding:10px 8px;border-bottom:1px solid #e5e7eb;background:#f9fafb;color:#374151;\">Repuesto / Producto</th>"
+                + "<th style=\"text-align:right;padding:10px 8px;border-bottom:1px solid #e5e7eb;background:#f9fafb;color:#374151;\">Cant.</th>"
+                + "<th style=\"text-align:right;padding:10px 8px;border-bottom:1px solid #e5e7eb;background:#f9fafb;color:#374151;\">Unitario</th>"
+                + "<th style=\"text-align:right;padding:10px 8px;border-bottom:1px solid #e5e7eb;background:#f9fafb;color:#374151;\">Subtotal</th>"
+                + "</tr></thead>"
+                + "<tbody>" + rows + "</tbody>"
+                + "</table>"
+                + "<div style=\"margin-top:12px;display:flex;justify-content:flex-end;\">"
+                + "<table style=\"border-collapse:collapse;font-size:13px;min-width:240px;\">"
+                + "<tr><td style=\"padding:6px 0;color:#6b7280;\">Repuestos</td><td style=\"padding:6px 0;text-align:right;\">" + esc(fmtMoney(totalRepuestos)) + "</td></tr>"
+                + "<tr><td style=\"padding:6px 0;color:#6b7280;\">Mano de obra</td><td style=\"padding:6px 0;text-align:right;\">" + esc(fmtMoney(manoObra)) + "</td></tr>"
+                + "<tr><td style=\"padding:8px 0;font-weight:800;color:#111827;border-top:1px solid #e5e7eb;\">Total</td>"
+                + "<td style=\"padding:8px 0;text-align:right;font-weight:800;color:#111827;border-top:1px solid #e5e7eb;\">" + esc(fmtMoney(total)) + "</td></tr>"
+                + "</table>"
+                + "</div>"
+                + "</div>";
+    }
+
+    private static String fmtMoney(double value) {
+        NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-CO"));
+        return nf.format(value);
+    }
+
+    private static String esc(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;");
     }
 
     private static String etiquetaEstadoParaCliente(EstadoReparacion e) {

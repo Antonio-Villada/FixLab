@@ -18,7 +18,9 @@ import com.software.fixlab.repository.PedidoRepository;
 import com.software.fixlab.repository.ProductoRepository;
 import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.interfaces.PedidoService;
+import com.software.fixlab.util.VentaTemplateUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +31,17 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PedidoServiceImpl implements PedidoService {
 
     @Value("${wompi.public-key}")
     private String wompiPublicKey;
+
+    @Value("${fixlab.frontend.url:http://localhost:4200}")
+    private String frontendBaseUrl;
+
+    @Value("${fixlab.mail.logo-url:}")
+    private String mailLogoUrl;
 
     private final PedidoRepository pedidoRepository;
     private final DetallePedidoRepository detallePedidoRepository;
@@ -40,6 +49,7 @@ public class PedidoServiceImpl implements PedidoService {
     private final UsuarioRepository usuarioRepository;
     private final EmailService emailService;
     private final WompiServiceImpl wompiService;
+    private final FacturaPdfService facturaPdfService;
 
     @Override
     @Transactional
@@ -133,14 +143,65 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setEstado("PAGADO");
         pedidoRepository.save(pedido);
 
-        emailService.enviarFacturaVenta(
-                pedido.getCliente().getEmail(),
-                pedido.getCliente().getNombre(),
-                String.valueOf(pedido.getId()),
-                pedido.getTotal()
-        );
+        List<DetallePedido> detalles = detallePedidoRepository.findByPedido(pedido);
 
-        return "Pago confirmado exitosamente. Factura enviada al cliente.";
+        // El pago debe confirmarse aunque falle el PDF o el correo (best-effort).
+        try {
+            byte[] pdf = facturaPdfService.generarFacturaPdf(pedido, detalles);
+
+            String nombreCompleto = (pedido.getCliente().getNombre() + " " + pedido.getCliente().getApellido()).trim();
+            String asunto = "Compra confirmada - Pedido #" + pedido.getId() + " - FixLab";
+            String buttonUrl = construirUrlEstadoPedido(pedido.getId());
+
+            List<VentaTemplateUtil.VentaItemRow> items = detalles.stream()
+                    .map(d -> new VentaTemplateUtil.VentaItemRow(
+                            d.getProducto() != null ? d.getProducto().getNombre() : "Producto",
+                            d.getCantidad() != null ? d.getCantidad() : 0,
+                            d.getPrecioUnitario() != null ? d.getPrecioUnitario() : 0.0
+                    ))
+                    .collect(Collectors.toList());
+
+            String logoUrl = construirLogoUrl();
+            String html = VentaTemplateUtil.renderEmailConfirmacionCompra(
+                    nombreCompleto,
+                    logoUrl,
+                    String.valueOf(pedido.getId()),
+                    items,
+                    pedido.getTotal() != null ? pedido.getTotal() : 0.0,
+                    buttonUrl
+            );
+
+            String nombrePdf = "Factura-FixLab-Pedido-" + pedido.getId() + ".pdf";
+            emailService.enviarCorreoHtmlConAdjuntoPdf(
+                    pedido.getCliente().getEmail(),
+                    asunto,
+                    html,
+                    nombrePdf,
+                    pdf
+            );
+
+            return "Pago confirmado exitosamente. Factura enviada al cliente.";
+        } catch (Exception e) {
+            log.error("Pago confirmado pero falló factura/email. pedidoId={}", pedido.getId(), e);
+            return "Pago confirmado exitosamente. No se pudo generar/enviar la factura en este momento.";
+        }
+    }
+
+    private String construirUrlEstadoPedido(Integer pedidoId) {
+        String base = (frontendBaseUrl != null) ? frontendBaseUrl.trim() : "";
+        if (base.isEmpty()) return "/mis-pedidos";
+        String root = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+        // Ruta conservadora: el frontend puede resolver el detalle con el query param
+        return root + "/mis-pedidos?pedidoId=" + pedidoId;
+    }
+
+    private String construirLogoUrl() {
+        String override = (mailLogoUrl != null) ? mailLogoUrl.trim() : "";
+        if (!override.isEmpty()) return override;
+
+        String base = (frontendBaseUrl != null) ? frontendBaseUrl.trim() : "";
+        if (base.isEmpty()) return null;
+        return base.endsWith("/") ? base + "images/Logo.jpeg" : base + "/images/Logo.jpeg";
     }
 
     @Override
