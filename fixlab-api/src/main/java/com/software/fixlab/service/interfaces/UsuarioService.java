@@ -1,7 +1,9 @@
 package com.software.fixlab.service.interfaces;
 
+import com.software.fixlab.dto.req.EliminarCuentaClienteReqDTO;
 import com.software.fixlab.dto.req.UsuarioUpdateReqDTO;
 import com.software.fixlab.dto.resp.ClienteSugerenciaRespDTO;
+import com.software.fixlab.dto.resp.MensajeRespDTO;
 import com.software.fixlab.dto.resp.StaffTallerAsignableRespDTO;
 import com.software.fixlab.dto.resp.UsuarioRespDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,4 +29,10 @@ public interface UsuarioService {
 
     // Delete
     void eliminarUsuario(String cedula);
+
+    /**
+     * Inactiva la cuenta del cliente autenticado (eliminación lógica), previa validación de contraseña
+     * y de que no existan procesos pendientes (reparaciones, pedidos, PQRS).
+     */
+    MensajeRespDTO eliminarMiCuentaCliente(String email, EliminarCuentaClienteReqDTO dto);
 }

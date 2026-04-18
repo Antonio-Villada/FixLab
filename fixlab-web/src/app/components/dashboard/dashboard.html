@@ -216,4 +216,58 @@
       </div>
     }
   </div>
+
+  @if (isCliente()) {
+    <div class="row g-4 mt-1">
+      <div class="col-12">
+        <div class="card border-danger shadow-sm">
+          <div class="card-header bg-danger text-white">
+            <h2 class="h6 mb-0">
+              <i class="bi bi-exclamation-octagon me-2"></i>Eliminar cuenta
+            </h2>
+          </div>
+          <div class="card-body">
+            <p class="text-muted small mb-3">
+              Puedes solicitar la eliminación de tu cuenta. Si tienes una reparación, un pedido o una PQRS en curso,
+              deberás esperar a que esos procesos terminen. Al confirmar, tu cuenta dejará de existir para el acceso a
+              FixLab; la información asociada a operaciones pasadas puede conservarse según la ley y nuestra
+              <a routerLink="/terminos-y-condiciones" class="link-danger">política de términos</a>.
+            </p>
+            @if (!showEliminarCuenta()) {
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="abrirEliminarCuenta()">
+                <i class="bi bi-person-x me-1"></i> Eliminar mi cuenta
+              </button>
+            } @else {
+              <form [formGroup]="formEliminarCuenta" (ngSubmit)="enviarEliminarCuenta()">
+                @if (errorEliminarCuenta()) {
+                  <div class="alert alert-warning py-2 small mb-3">{{ errorEliminarCuenta() }}</div>
+                }
+                <div class="mb-2">
+                  <label class="form-label">Contraseña actual</label>
+                  <input type="password" class="form-control" formControlName="passwordEliminar" autocomplete="current-password" />
+                  @if (formEliminarCuenta.get('passwordEliminar')?.invalid && formEliminarCuenta.get('passwordEliminar')?.touched) {
+                    <small class="text-danger">Obligatoria para confirmar.</small>
+                  }
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="confirmoEliminacion" formControlName="confirmoEliminacion" />
+                  <label class="form-check-label small" for="confirmoEliminacion">
+                    Entiendo que perderé el acceso a mi cuenta y que no podré eliminarla si tengo procesos pendientes.
+                  </label>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="submit" class="btn btn-danger btn-sm" [disabled]="deletingCuenta()">
+                    {{ deletingCuenta() ? 'Eliminando...' : 'Confirmar eliminación' }}
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cerrarEliminarCuenta()" [disabled]="deletingCuenta()">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

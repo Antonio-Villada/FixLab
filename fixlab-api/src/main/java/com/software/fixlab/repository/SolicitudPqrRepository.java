@@ -1,5 +1,6 @@
 package com.software.fixlab.repository;
 
+import com.software.fixlab.entity.EstadoSolicitudPqr;
 import com.software.fixlab.entity.SolicitudPqr;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +31,6 @@ public interface SolicitudPqrRepository extends JpaRepository<SolicitudPqr, Long
     Optional<SolicitudPqr> findDetailedByIdAndCliente_Cedula(@Param("id") Long id, @Param("cedula") String cedula);
 
     Optional<SolicitudPqr> findByIdAndCliente_Cedula(Long id, String clienteCedula);
+
+    boolean existsByCliente_CedulaAndEstadoNotIn(String clienteCedula, Collection<EstadoSolicitudPqr> estados);
 }

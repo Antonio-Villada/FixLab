@@ -1,5 +1,6 @@
 package com.software.fixlab.config;
 
+import com.software.fixlab.repository.UsuarioRepository;
 import com.software.fixlab.service.impl.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,6 +21,7 @@ import java.util.Collections;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -43,6 +45,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
             // 5. Si extrajimos el correo exitosamente y el usuario aún no está autenticado en este ciclo
             if (correo != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                var usuarioOpt = usuarioRepository.findByEmail(correo);
+                if (usuarioOpt.isEmpty()) {
+                    usuarioOpt = usuarioRepository.findByEmailIgnoreCase(correo);
+                }
+                if (usuarioOpt.isEmpty() || !usuarioOpt.get().isActivo()) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
 
                 // Le decimos a Spring Security: "Este usuario es válido, déjalo pasar y asígnale su rol"
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

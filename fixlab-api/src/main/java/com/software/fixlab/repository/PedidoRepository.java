@@ -4,6 +4,7 @@ import com.software.fixlab.entity.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,4 +14,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     List<Pedido> findByCliente_Cedula(String cedula);
 
     Optional<Pedido> findByIdAndCliente_Cedula(Integer id, String clienteCedula);
+
+    boolean existsByCliente_CedulaAndEstadoNotIn(String clienteCedula, Collection<String> estados);
 }

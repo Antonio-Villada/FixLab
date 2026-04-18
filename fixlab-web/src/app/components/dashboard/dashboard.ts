@@ -60,6 +60,15 @@ export class Dashboard implements OnInit {
     { validators: confirmNewPasswordMatch }
   );
 
+  readonly showEliminarCuenta = signal(false);
+  readonly deletingCuenta = signal(false);
+  readonly errorEliminarCuenta = signal<string | null>(null);
+
+  formEliminarCuenta: FormGroup = this.fb.group({
+    passwordEliminar: ['', [Validators.required]],
+    confirmoEliminacion: [false, [Validators.requiredTrue]],
+  });
+
   ngOnInit(): void {
     if (this.usuarioService.currentUser()) {
       this.loadingPerfil.set(false);
@@ -218,5 +227,39 @@ export class Dashboard implements OnInit {
     if (this.fotoPerfilInputRef?.nativeElement) {
       this.fotoPerfilInputRef.nativeElement.value = '';
     }
+  }
+
+  abrirEliminarCuenta(): void {
+    this.errorEliminarCuenta.set(null);
+    this.formEliminarCuenta.reset({ passwordEliminar: '', confirmoEliminacion: false });
+    this.showEliminarCuenta.set(true);
+  }
+
+  cerrarEliminarCuenta(): void {
+    if (this.deletingCuenta()) return;
+    this.showEliminarCuenta.set(false);
+    this.errorEliminarCuenta.set(null);
+    this.formEliminarCuenta.reset({ passwordEliminar: '', confirmoEliminacion: false });
+  }
+
+  enviarEliminarCuenta(): void {
+    if (this.formEliminarCuenta.invalid) {
+      this.formEliminarCuenta.markAllAsTouched();
+      return;
+    }
+    const pwd = (this.formEliminarCuenta.get('passwordEliminar')?.value as string)?.trim() ?? '';
+    this.deletingCuenta.set(true);
+    this.errorEliminarCuenta.set(null);
+    this.usuarioService.eliminarMiCuenta({ password: pwd }).subscribe({
+      next: () => {
+        this.deletingCuenta.set(false);
+        this.usuarioService.clearCurrentUser();
+        this.authService.logout();
+      },
+      error: (err) => {
+        this.errorEliminarCuenta.set(err.error?.mensaje || 'No se pudo eliminar la cuenta. Intenta de nuevo.');
+        this.deletingCuenta.set(false);
+      },
+    });
   }
 }

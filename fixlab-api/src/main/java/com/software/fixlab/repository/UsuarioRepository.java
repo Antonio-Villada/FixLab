@@ -25,5 +25,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> { // <
 
     List<Usuario> findTop20ByRolAndCedulaContainingIgnoreCaseOrderByCedulaAsc(RolUsuario rol, String cedulaFragment);
 
+    List<Usuario> findTop20ByRolAndCedulaContainingIgnoreCaseAndActivoTrueOrderByCedulaAsc(RolUsuario rol, String cedulaFragment);
+
     List<Usuario> findByRolInOrderByApellidoAscNombreAsc(Collection<RolUsuario> roles);
 }

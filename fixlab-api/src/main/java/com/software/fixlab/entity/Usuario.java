@@ -92,4 +92,12 @@ public class Usuario {
     @JsonIgnore
     @Column(name = "ultimo_envio_codigo_login_2fa")
     private LocalDateTime ultimoEnvioCodigoLogin2fa;
+
+    /**
+     * Cuenta activa en la plataforma. Si es false, el cliente no puede iniciar sesión ni usar el API;
+     * el registro en base de datos se conserva por trazabilidad y relaciones con pedidos, reparaciones, etc.
+     */
+    @Column(name = "activo", nullable = false)
+    @Builder.Default
+    private boolean activo = true;
 }

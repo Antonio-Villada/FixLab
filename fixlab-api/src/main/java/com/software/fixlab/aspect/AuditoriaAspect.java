@@ -1,7 +1,6 @@
 package com.software.fixlab.aspect;
 
-import com.software.fixlab.entity.RegistroAuditoria;
-import com.software.fixlab.repository.AuditoriaRepository;
+import com.software.fixlab.service.AuditoriaPersistenceService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class AuditoriaAspect {
 
-    private final AuditoriaRepository auditoriaRepository;
+    private final AuditoriaPersistenceService auditoriaPersistenceService;
 
     // 🎯 EL RADAR: Intercepta TODOS los métodos de CUALQUIER clase dentro del paquete 'controller'
     @Pointcut("execution(* com.software.fixlab.controller..*(..))")
@@ -78,16 +77,13 @@ public class AuditoriaAspect {
                 detalleLog += " | Datos enviados: [No se pudieron leer]";
             }
 
-            // 4. Construimos y guardamos el registro en la BD
-            RegistroAuditoria registro = RegistroAuditoria.builder()
-                    .usuarioEmail(usuarioActual)
-                    .modulo(moduloDeducido)
-                    .accion(accionDeducida)
-                    .detalle(detalleLog)
-                    .fechaHora(LocalDateTime.now()) // Hora, minuto y segundo exacto del sistema
-                    .build();
-
-            auditoriaRepository.save(registro);
+            // 4. Guardamos en la tabla de auditoría del dominio correspondiente
+            auditoriaPersistenceService.guardar(
+                    moduloDeducido,
+                    usuarioActual,
+                    accionDeducida,
+                    detalleLog,
+                    LocalDateTime.now());
 
         } catch (Exception e) {
             log.error("Error silencioso guardando auditoría global", e);

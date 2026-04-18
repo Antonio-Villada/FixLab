@@ -1,5 +1,6 @@
 package com.software.fixlab.controller;
 
+import com.software.fixlab.dto.req.EliminarCuentaClienteReqDTO;
 import com.software.fixlab.dto.req.UsuarioUpdateReqDTO;
 import com.software.fixlab.dto.resp.ClienteSugerenciaRespDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -41,6 +43,14 @@ public class UsuarioController {
             Authentication authentication,
             @RequestBody UsuarioUpdateReqDTO dto) {
         return ResponseEntity.ok(usuarioService.actualizarMiPerfil(authentication.getName(), dto));
+    }
+
+    @PostMapping("/me/eliminar-cuenta")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<MensajeRespDTO> eliminarMiCuentaCliente(
+            Authentication authentication,
+            @Valid @RequestBody EliminarCuentaClienteReqDTO dto) {
+        return ResponseEntity.ok(usuarioService.eliminarMiCuentaCliente(authentication.getName(), dto));
     }
 
     @PostMapping(value = "/me/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -5,6 +5,7 @@ import com.software.fixlab.entity.Reparacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,6 @@ public interface ReparacionRepository extends JpaRepository<Reparacion, Integer>
     List<Reparacion> findAllByOrderByFechaCreacionDesc();
 
     Optional<Reparacion> findByIdAndCliente_Cedula(Integer id, String clienteCedula);
+
+    boolean existsByCliente_CedulaAndEstadoNotIn(String clienteCedula, Collection<EstadoReparacion> estados);
 }

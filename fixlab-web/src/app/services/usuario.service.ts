@@ -4,6 +4,8 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   ClienteSugerenciaRespDTO,
+  EliminarCuentaClienteReqDTO,
+  MensajeRespDTO,
   StaffTallerAsignableRespDTO,
   UsuarioRespDTO,
   UsuarioUpdateReqDTO,
@@ -78,5 +80,10 @@ export class UsuarioService {
 
   delete(cedula: string): Observable<unknown> {
     return this.http.delete(`${url}/${cedula}`);
+  }
+
+  /** Eliminación lógica de la cuenta del cliente autenticado (requiere contraseña). */
+  eliminarMiCuenta(dto: EliminarCuentaClienteReqDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${url}/me/eliminar-cuenta`, dto);
   }
 }

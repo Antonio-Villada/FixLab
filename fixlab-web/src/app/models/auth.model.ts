@@ -130,6 +130,11 @@ export interface CambiarPasswordReqDTO {
   nuevaPassword: string;
 }
 
+/** Eliminación de cuenta cliente (POST /api/usuarios/me/eliminar-cuenta). */
+export interface EliminarCuentaClienteReqDTO {
+  password: string;
+}
+
 // Asignar nueva contraseña a un usuario (solo ADMIN, POST /api/auth/admin/asignar-password)
 export interface AdminAsignarPasswordReqDTO {
   cedula: string;

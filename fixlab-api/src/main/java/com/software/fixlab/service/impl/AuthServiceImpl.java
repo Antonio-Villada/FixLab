@@ -194,6 +194,10 @@ public class AuthServiceImpl implements AuthService {
             throw new Exception("Credenciales incorrectas");
         }
 
+        if (!usuario.isActivo()) {
+            throw new Exception("Tu cuenta fue eliminada de FixLab. Si crees que es un error, contacta a soporte.");
+        }
+
         if (usuario.getRol() == RolUsuario.CLIENTE && !usuario.isCorreoVerificado()) {
             throw new Exception("Debes verificar tu correo antes de iniciar sesión. Revisa el código de 6 dígitos que enviamos a tu email.");
         }
@@ -229,6 +233,10 @@ public class AuthServiceImpl implements AuthService {
         String email = dto.getEmail().trim();
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Solicitud inválida. Vuelve a iniciar sesión desde el principio."));
+
+        if (!usuario.isActivo()) {
+            throw new Exception("Tu cuenta fue eliminada de FixLab. Si crees que es un error, contacta a soporte.");
+        }
 
         if (usuario.getCodigoLogin2fa() == null || usuario.getExpiracionCodigoLogin2fa() == null) {
             throw new Exception("No hay un código pendiente. Inicia sesión de nuevo con tu correo y contraseña.");
@@ -301,6 +309,10 @@ public class AuthServiceImpl implements AuthService {
         Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
+        if (!usuario.isActivo()) {
+            throw new Exception("No se puede completar la verificación de esta cuenta.");
+        }
+
         if (usuario.isCorreoVerificado()) {
             return new MensajeRespDTO("La cuenta ya se encuentra verificada.");
         }
@@ -340,6 +352,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Usuario usuario = ou.get();
+        if (!usuario.isActivo()) {
+            log.info("Recuperación de contraseña: cuenta inactiva (respuesta genérica al cliente).");
+            return;
+        }
         String codigo = String.format("%06d", new java.util.Random().nextInt(999999));
         usuario.setTokenRecuperacion(codigo);
         usuario.setExpiracionToken(LocalDateTime.now().plusMinutes(15));
@@ -368,6 +384,10 @@ public class AuthServiceImpl implements AuthService {
             ou = usuarioRepository.findByEmailNormalized(emailRaw);
         }
         Usuario usuario = ou.orElseThrow(() -> new Exception("Código incorrecto o expirado."));
+
+        if (!usuario.isActivo()) {
+            throw new Exception("Código incorrecto o expirado.");
+        }
 
         if (usuario.getTokenRecuperacion() == null || usuario.getExpiracionToken() == null) {
             log.warn("Usuario sin código pendiente: {}", usuario.getEmail());
@@ -399,6 +419,10 @@ public class AuthServiceImpl implements AuthService {
         Usuario usuario = usuarioRepository.findByTokenRecuperacion(token)
                 .orElseThrow(() -> new Exception("Token inválido o no existe"));
 
+        if (!usuario.isActivo()) {
+            throw new Exception("Token inválido o no existe");
+        }
+
         if (usuario.getExpiracionToken().isBefore(LocalDateTime.now())) {
             throw new Exception("El token ha expirado. Solicita uno nuevo.");
         }
@@ -415,6 +439,9 @@ public class AuthServiceImpl implements AuthService {
     public void cambiarPassword(String email, String contraseñaActual, String nuevaPassword) throws Exception {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
+        if (!usuario.isActivo()) {
+            throw new Exception("Usuario no encontrado");
+        }
         if (!passwordEncoder.matches(contraseñaActual, usuario.getPassword())) {
             throw new Exception("La contraseña actual no es correcta.");
         }
