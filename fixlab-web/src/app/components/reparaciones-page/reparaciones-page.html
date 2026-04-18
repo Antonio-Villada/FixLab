@@ -212,14 +212,22 @@
                   }
                 </ul>
               }
-              @if (r.lineasProducto && r.lineasProducto.length > 0) {
+              @if ((r.lineasProducto && r.lineasProducto.length > 0) || manoDeObraCotizacion(r) > 0) {
                 <hr />
-                <p class="small text-muted mb-2">Repuestos / ítems</p>
-                <ul class="small mb-0">
-                  @for (ln of r.lineasProducto; track ln.id) {
-                    <li>{{ ln.nombreProducto }} × {{ ln.cantidad }} — ${{ ln.subtotal | number: '1.2-2' }}</li>
-                  }
-                </ul>
+                @if (r.lineasProducto && r.lineasProducto.length > 0) {
+                  <p class="small text-muted mb-2">Repuestos / ítems</p>
+                  <ul class="small mb-0">
+                    @for (ln of r.lineasProducto; track ln.id) {
+                      <li>{{ ln.nombreProducto }} × {{ ln.cantidad }} — ${{ ln.subtotal | number: '1.2-2' }}</li>
+                    }
+                  </ul>
+                }
+                @if (manoDeObraCotizacion(r) > 0) {
+                  <p class="small text-muted mb-2" [class.mt-3]="r.lineasProducto && r.lineasProducto.length > 0">Mano de obra</p>
+                  <ul class="small mb-0">
+                    <li>Mano de obra × 1 — ${{ manoDeObraCotizacion(r) | number: '1.2-2' }}</li>
+                  </ul>
+                }
               }
             </div>
           </div>

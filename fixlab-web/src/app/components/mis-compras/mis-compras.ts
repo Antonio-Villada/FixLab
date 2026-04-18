@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CheckoutService } from '../../services/checkout.service';
 import { PedidoRespDTO } from '../../models/checkout.model';
 
@@ -13,6 +13,7 @@ import { PedidoRespDTO } from '../../models/checkout.model';
 })
 export class MisComprasComponent implements OnInit {
   private checkoutService = inject(CheckoutService);
+  private route = inject(ActivatedRoute);
 
   pedidos = signal<PedidoRespDTO[]>([]);
   loading = signal(true);
@@ -38,6 +39,7 @@ export class MisComprasComponent implements OnInit {
       next: (data) => {
         this.pedidos.set(data || []);
         this.loading.set(false);
+        queueMicrotask(() => this.aplicarFragmentoUrlSiCorresponde());
       },
       error: (err) => {
         this.errorMessage.set(err?.error?.mensaje || 'No se pudieron cargar tus compras.');
@@ -56,6 +58,29 @@ export class MisComprasComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
     });
+  }
+
+  /**
+   * Centra la tarjeta del pedido en pantalla y la resalta un momento.
+   * Sirve con muchas compras en pantalla o al abrir /mis-compras#pedido-123.
+   */
+  irAPedidoEnLista(pedidoId: number): void {
+    if (typeof document === 'undefined' || pedidoId == null) return;
+    const el = document.getElementById('pedido-' + pedidoId);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('pedido-card-flash');
+    void el.offsetWidth;
+    el.classList.add('pedido-card-flash');
+    window.setTimeout(() => el.classList.remove('pedido-card-flash'), 1800);
+  }
+
+  private aplicarFragmentoUrlSiCorresponde(): void {
+    const frag = this.route.snapshot.fragment;
+    if (!frag?.startsWith('pedido-')) return;
+    const id = Number(frag.slice('pedido-'.length));
+    if (!Number.isFinite(id)) return;
+    this.irAPedidoEnLista(id);
   }
 
   estadoBadgeClass(estado: string): string {

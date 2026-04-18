@@ -50,14 +50,7 @@
             @if (m.role === 'user') {
               <span class="chatbot-role">Tú</span>
             } @else {
-              <span class="chatbot-role-row">
-                <span class="chatbot-role">Asistente</span>
-                @if (m.replySource === 'IA') {
-                  <span class="chatbot-source chatbot-source-ia">IA</span>
-                } @else if (m.replySource === 'FAQ') {
-                  <span class="chatbot-source chatbot-source-faq">Ayuda rápida</span>
-                }
-              </span>
+              <span class="chatbot-role">Asistente</span>
             }
             <div class="chatbot-text">
               @for (part of chatRichParts(m.text); track $index) {

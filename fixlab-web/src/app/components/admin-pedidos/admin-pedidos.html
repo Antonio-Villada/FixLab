@@ -130,7 +130,7 @@
               <td><strong>#{{ p.id }}</strong></td>
               <td>{{ formatFecha(p.fechaCreacion) }}</td>
               <td>{{ p.clienteNombre ?? p.clienteCedula ?? '-' }}</td>
-              <td class="text-break">{{ p.direccionEnvio ?? '-' }}</td>
+              <td class="text-break" style="white-space: pre-line;">{{ p.direccionEnvio ?? '-' }}</td>
               <td>${{ p.total | number:'1.2-2' }}</td>
               <td>
                 <span class="badge" [ngClass]="estadoBadgeClass(p.estado)">
@@ -149,19 +149,47 @@
                 }
               </td>
               <td>
-                @if (puedeConfirmarPago(p.estado)) {
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-success"
-                    [disabled]="confirmingId() === p.id"
-                    (click)="confirmarPago(p)"
-                    title="Confirmar pago manualmente (si el webhook de Wompi no llegó)">
-                    @if (confirmingId() === p.id) {
-                      <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                    }
-                    <i class="bi bi-check-circle"></i> Confirmar pago
-                  </button>
-                }
+                <div class="d-flex flex-wrap gap-1">
+                  @if (puedeConfirmarPago(p.estado)) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-success"
+                      [disabled]="confirmingId() === p.id || estadoAccionPedidoId() === p.id"
+                      (click)="confirmarPago(p)"
+                      title="Confirmar pago manualmente (si el webhook de Wompi no llegó)">
+                      @if (confirmingId() === p.id) {
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                      }
+                      <i class="bi bi-check-circle"></i> Confirmar pago
+                    </button>
+                  }
+                  @if (puedeMarcarEnviado(p.estado)) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-primary"
+                      [disabled]="estadoAccionPedidoId() === p.id || confirmingId() === p.id"
+                      (click)="marcarEnviado(p)"
+                      title="El pedido está pagado; marcarlo como enviado al cliente">
+                      @if (estadoAccionPedidoId() === p.id) {
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                      }
+                      <i class="bi bi-truck"></i> Marcar enviado
+                    </button>
+                  }
+                  @if (puedeMarcarEntregado(p.estado)) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      [disabled]="estadoAccionPedidoId() === p.id || confirmingId() === p.id"
+                      (click)="marcarEntregado(p)"
+                      title="Confirmar que el cliente recibió el pedido">
+                      @if (estadoAccionPedidoId() === p.id) {
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                      }
+                      <i class="bi bi-box-seam"></i> Marcar entregado
+                    </button>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {

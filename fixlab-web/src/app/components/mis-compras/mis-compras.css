@@ -9,3 +9,17 @@
   letter-spacing: 0.1px;
 }
 
+@keyframes pedido-card-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 12px rgba(13, 110, 253, 0);
+  }
+}
+
+.pedido-card-flash {
+  animation: pedido-card-flash 1.1s ease-out 1;
+  border-radius: 12px;
+}
+

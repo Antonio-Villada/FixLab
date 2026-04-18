@@ -71,7 +71,7 @@
               <div class="alert alert-danger py-2 mt-2 mb-0 small">{{ errorPago() }}</div>
             }
             @if (!authService.isLoggedInSignal()) {
-              <p class="text-muted small mt-2 mb-0">Inicia sesión para pagar con Wompi.</p>
+              <p class="text-muted small mt-2 mb-0">Inicia sesión para pagar.</p>
               <a routerLink="/login" class="btn btn-outline-primary w-100 mt-2">Iniciar sesión</a>
             } @else {
               <button type="button" class="btn btn-primary w-100 mt-2 py-2 fw-semibold" (click)="procederAPagar()"
@@ -79,7 +79,7 @@
                 @if (loadingPago()) {
                   <span class="spinner-border spinner-border-sm me-2"></span>
                 }
-                <i class="bi bi-credit-card me-2"></i>Proceder a pagar (Wompi)
+                <i class="bi bi-credit-card me-2"></i>Proceder a pagar
               </button>
             }
             <button type="button" class="btn btn-outline-secondary w-100 mt-2" (click)="cartService.clear()">
@@ -103,20 +103,32 @@
           </div>
           <div class="modal-body">
             <p class="text-muted small">Serás redirigido a Wompi para completar el pago de forma segura.</p>
-            <label class="form-label fw-semibold">Dirección de envío <span class="text-danger">*</span></label>
-            <textarea [(ngModel)]="direccionEnvio" class="form-control" rows="3"
-              placeholder="Calle, número, ciudad, departamento"></textarea>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Dirección <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" [(ngModel)]="envioDireccion"
+                placeholder="Calle, número, barrio, referencias" autocomplete="street-address">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Ciudad <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" [(ngModel)]="envioCiudad"
+                placeholder="Ciudad" autocomplete="address-level2">
+            </div>
+            <div class="mb-0">
+              <label class="form-label fw-semibold">Departamento <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" [(ngModel)]="envioDepartamento"
+                placeholder="Departamento" autocomplete="address-level1">
+            </div>
             @if (errorPago()) {
               <div class="alert alert-danger py-2 mt-2 small">{{ errorPago() }}</div>
             }
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="cancelarPago()">Cancelar</button>
-            <button type="button" class="btn btn-primary" (click)="confirmarPago()" [disabled]="loadingPago() || !direccionEnvio.trim()">
+            <button type="button" class="btn btn-primary" (click)="confirmarPago()" [disabled]="loadingPago() || !direccionEnvioLista()">
               @if (loadingPago()) {
                 <span class="spinner-border spinner-border-sm me-1"></span>
               }
-              Ir a Wompi a pagar
+              Ir a pagar
             </button>
           </div>
         </div>

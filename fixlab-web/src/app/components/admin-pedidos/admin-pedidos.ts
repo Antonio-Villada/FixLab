@@ -45,6 +45,8 @@ export class AdminPedidosComponent implements OnInit {
   loading = signal(true);
   errorMessage = signal<string | null>(null);
   confirmingId = signal<number | null>(null);
+  /** Pedido en el que se está aplicando un cambio de estado (envío / entrega). */
+  estadoAccionPedidoId = signal<number | null>(null);
 
   filterEstado = signal<string>('');
   filterCategoriaId = signal<number | ''>('');
@@ -152,6 +154,14 @@ export class AdminPedidosComponent implements OnInit {
     return e === 'PENDIENTE' || e === 'PROCESANDO_PAGO' || e === '';
   }
 
+  puedeMarcarEnviado(estado: string): boolean {
+    return (estado || '').toUpperCase() === 'PAGADO';
+  }
+
+  puedeMarcarEntregado(estado: string): boolean {
+    return (estado || '').toUpperCase() === 'ENVIADO';
+  }
+
   confirmarPago(p: PedidoRespDTO): void {
     if (!p.id || !this.puedeConfirmarPago(p.estado)) return;
     if (!confirm(`¿Confirmar pago del pedido #${p.id}?`)) return;
@@ -165,6 +175,40 @@ export class AdminPedidosComponent implements OnInit {
       error: (err) => {
         this.confirmingId.set(null);
         this.errorMessage.set(err.error?.mensaje || 'Error al confirmar el pago');
+      },
+    });
+  }
+
+  marcarEnviado(p: PedidoRespDTO): void {
+    if (!p.id || !this.puedeMarcarEnviado(p.estado)) return;
+    if (!confirm(`¿Marcar el pedido #${p.id} como ENVIADO?`)) return;
+    this.estadoAccionPedidoId.set(p.id);
+    this.errorMessage.set(null);
+    this.checkoutService.actualizarEstadoPedido(p.id, 'ENVIADO').subscribe({
+      next: () => {
+        this.estadoAccionPedidoId.set(null);
+        this.loadPedidos();
+      },
+      error: (err) => {
+        this.estadoAccionPedidoId.set(null);
+        this.errorMessage.set(err.error?.mensaje || 'Error al actualizar el estado');
+      },
+    });
+  }
+
+  marcarEntregado(p: PedidoRespDTO): void {
+    if (!p.id || !this.puedeMarcarEntregado(p.estado)) return;
+    if (!confirm(`¿Marcar el pedido #${p.id} como ENTREGADO?`)) return;
+    this.estadoAccionPedidoId.set(p.id);
+    this.errorMessage.set(null);
+    this.checkoutService.actualizarEstadoPedido(p.id, 'ENTREGADO').subscribe({
+      next: () => {
+        this.estadoAccionPedidoId.set(null);
+        this.loadPedidos();
+      },
+      error: (err) => {
+        this.estadoAccionPedidoId.set(null);
+        this.errorMessage.set(err.error?.mensaje || 'Error al actualizar el estado');
       },
     });
   }

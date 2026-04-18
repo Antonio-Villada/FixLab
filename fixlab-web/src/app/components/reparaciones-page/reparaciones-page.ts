@@ -196,6 +196,17 @@ export class ReparacionesPageComponent implements OnInit {
     });
   }
 
+  /** Suma de subtotales de repuestos en la cotización (alineado con el cálculo del backend). */
+  totalRepuestosCotizacion(r: ReparacionRespDTO): number {
+    return (r.lineasProducto ?? []).reduce((s, ln) => s + (Number(ln.subtotal) || 0), 0);
+  }
+
+  /** Mano de obra = total cotizado menos repuestos (no puede ser negativa). */
+  manoDeObraCotizacion(r: ReparacionRespDTO): number {
+    if (r.cotizacionTotal == null) return 0;
+    return Math.max(0, r.cotizacionTotal - this.totalRepuestosCotizacion(r));
+  }
+
   badgeClass(estado: string): string {
     const e = (estado || '').toUpperCase();
     if (e.includes('ENTREGADO')) return 'bg-secondary';

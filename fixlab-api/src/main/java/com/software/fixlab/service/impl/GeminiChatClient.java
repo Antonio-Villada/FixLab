@@ -37,12 +37,19 @@ public class GeminiChatClient {
                     + "Responde siempre en español de forma clara y breve. "
                     + "FixLab usa Wompi para pagos. Los pedidos y el taller se gestionan desde la cuenta (dashboard) "
                     + "y áreas de administración. "
+                    + "Usa SIEMPRE el bloque \"Contexto de esta petición\" cuando venga: resume en qué pantalla está "
+                    + "el usuario y qué datos reales tiene su cuenta (pedidos/reparaciones). "
+                    + "Si el usuario pregunta por \"esta página\", \"aquí\" o \"lo que veo\", alude explícitamente a esa ruta o datos. "
+                    + "Si no hay datos en el contexto para algo que preguntan, dilo y orienta a la sección correcta. "
                     + "Si no sabes algo específico del usuario (número de pedido, estado real), dilo y orienta a revisar "
                     + "su cuenta o contactar soporte. "
                     + "No inventes datos de pedidos ni políticas que no conozcas. "
                     + "Cuando indiques una página de la app, añade un enlace Markdown con ruta interna que empiece por / "
                     + "(ej. [Ver productos](/productos)). No uses URLs externas ni javascript:. "
-                    + "Máximo uno o dos enlaces por respuesta, solo si ayudan al usuario.";
+                    + "Máximo uno o dos enlaces por respuesta, solo si ayudan al usuario. "
+                    + "Nunca escribas en tu respuesta el encabezado \"## Contexto de esta petición\" ni un resumen "
+                    + "literal de ese bloque (ni listar que no hay datos de cuenta); el usuario no debe ver metadatos "
+                    + "del sistema: usa el contexto solo para razonar y responde en lenguaje natural directo.";
 
 
     public GeminiChatClient(ObjectMapper objectMapper) {
@@ -74,7 +81,14 @@ public class GeminiChatClient {
      * Genera la respuesta del modelo a partir del historial completo del usuario (orden ascendente por fecha).
      * Si no hay clave, falla la petición o la respuesta está bloqueada, devuelve vacío para usar respaldo local.
      */
-    public Optional<String> generateReply(List<ChatMensaje> historyOrderedAsc, RolUsuario rolUsuario) {
+    /**
+     * @param contextoTurno Texto libre (pantalla actual, carrito, resumen de cuenta) solo para esta respuesta;
+     *                        no se persiste en el historial del chat.
+     */
+    public Optional<String> generateReply(
+            List<ChatMensaje> historyOrderedAsc,
+            RolUsuario rolUsuario,
+            String contextoTurno) {
         if (apiKey == null || apiKey.isBlank()) {
             return Optional.empty();
         }
@@ -101,6 +115,10 @@ public class GeminiChatClient {
         }
 
         String systemText = SYSTEM_PROMPT + "\n\n" + navigationHintForRole(rolUsuario);
+        if (contextoTurno != null && !contextoTurno.isBlank()) {
+            systemText += "\n\n## Contexto de esta petición (datos reales enviados por la app; úsalos en la respuesta)\n"
+                    + contextoTurno.trim();
+        }
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("systemInstruction", Map.of(
                 "parts", List.of(Map.of("text", systemText))

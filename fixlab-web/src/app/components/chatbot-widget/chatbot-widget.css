@@ -123,6 +123,7 @@
   color: #333;
   margin: 0;
   padding: 0.5rem;
+  white-space: pre-line;
 }
 
 .chatbot-loading {
@@ -157,37 +158,6 @@
   letter-spacing: 0.04em;
   opacity: 0.65;
   margin-bottom: 0.25rem;
-}
-
-.chatbot-role-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.25rem;
-}
-
-.chatbot-role-row .chatbot-role {
-  margin-bottom: 0;
-}
-
-.chatbot-source {
-  font-size: 0.6rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-}
-
-.chatbot-source-ia {
-  background: #e7f1ff;
-  color: #0d6efd;
-}
-
-.chatbot-source-faq {
-  background: #e9ecef;
-  color: #495057;
 }
 
 .chatbot-text {

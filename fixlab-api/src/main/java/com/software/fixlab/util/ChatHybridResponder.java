@@ -13,7 +13,7 @@ public final class ChatHybridResponder {
 
     private ChatHybridResponder() {}
 
-    public static String reply(String userText, RolUsuario rol) {
+    public static String reply(String userText, RolUsuario rol, String contextoTurno) {
         if (userText == null || userText.isBlank()) {
             return "Escribe una pregunta breve.";
         }
@@ -21,10 +21,15 @@ public final class ChatHybridResponder {
             rol = RolUsuario.CLIENTE;
         }
         String n = normalize(userText);
+        String pantalla = primeraLineaRuta(contextoTurno);
 
         if (Pattern.compile("\\b(hola|buenas|hey|hi)\\b", Pattern.CASE_INSENSITIVE).matcher(n).find()) {
-            return "¡Hola! Pregúntame por pedidos, pagos (Wompi), envíos, productos o cuenta y contraseña. "
+            String base = "¡Hola! Pregúntame por pedidos, pagos (Wompi), envíos, productos o cuenta y contraseña. "
                     + "Enlaces: [Productos](/productos), [Tu panel](/dashboard).";
+            if (!pantalla.isEmpty()) {
+                return pantalla + " " + base;
+            }
+            return base;
         }
         if (Pattern.compile("\\b(gracias|thank)\\b", Pattern.CASE_INSENSITIVE).matcher(n).find()) {
             return "¡Con gusto! Si necesitas algo más, aquí estaré.";
@@ -63,6 +68,20 @@ public final class ChatHybridResponder {
         }
         return "No tengo una respuesta exacta para eso. Prueba con palabras como pedido, pago, envío, productos o contraseña. "
                 + "O navega: [Productos](/productos), [Panel](/dashboard).";
+    }
+
+    /** Primera línea tipo "Ruta en la app web: /x" para saludos breves. */
+    private static String primeraLineaRuta(String contextoTurno) {
+        if (contextoTurno == null || contextoTurno.isBlank()) {
+            return "";
+        }
+        for (String line : contextoTurno.split("\\R")) {
+            String t = line.trim();
+            if (t.startsWith("Ruta en la app web:")) {
+                return "Veo que estás en " + t.substring("Ruta en la app web:".length()).trim() + ".";
+            }
+        }
+        return "";
     }
 
     private static String normalize(String s) {

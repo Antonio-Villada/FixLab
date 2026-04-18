@@ -22,7 +22,11 @@ export class CarritoComponent implements OnInit {
   authService = inject(AuthService);
   private checkoutService = inject(CheckoutService);
 
-  direccionEnvio = '';
+  /** Líneas capturadas en el modal; se envían al backend unidas en `direccionEnvio`. */
+  envioDireccion = '';
+  envioCiudad = '';
+  envioDepartamento = '';
+
   showDireccionModal = signal(false);
   loadingPago = signal(false);
   errorPago = signal<string | null>(null);
@@ -54,7 +58,9 @@ export class CarritoComponent implements OnInit {
       this.errorPago.set('Algunos productos no se pueden enviar al pago. Quítalos y añádelos de nuevo desde Productos.');
       return;
     }
-    this.direccionEnvio = '';
+    this.envioDireccion = '';
+    this.envioCiudad = '';
+    this.envioDepartamento = '';
     this.showDireccionModal.set(true);
   }
 
@@ -63,12 +69,28 @@ export class CarritoComponent implements OnInit {
     this.errorPago.set(null);
   }
 
+  /** Dirección, ciudad y departamento listos para enviar en un solo campo al API. */
+  direccionEnvioLista(): boolean {
+    return (
+      !!this.envioDireccion?.trim() &&
+      !!this.envioCiudad?.trim() &&
+      !!this.envioDepartamento?.trim()
+    );
+  }
+
+  private componerDireccionEnvio(): string {
+    const d = this.envioDireccion.trim();
+    const c = this.envioCiudad.trim();
+    const dep = this.envioDepartamento.trim();
+    return `Dirección: ${d}\nCiudad: ${c}\nDepartamento: ${dep}`;
+  }
+
   confirmarPago(): void {
-    const dir = this.direccionEnvio?.trim();
-    if (!dir) {
-      this.errorPago.set('Ingresa la dirección de envío.');
+    if (!this.direccionEnvioLista()) {
+      this.errorPago.set('Completa dirección, ciudad y departamento de envío.');
       return;
     }
+    const dir = this.componerDireccionEnvio();
 
     const items = this.cartService
       .cartItems()

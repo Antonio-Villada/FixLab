@@ -55,6 +55,13 @@ export class CheckoutService {
     return this.http.post<{ mensaje: string }>(`${this.baseUrl}/${id}/confirmar-pago`, {});
   }
 
+  /** Cambiar estado del pedido (solo ADMIN). Ej: ENVIADO, ENTREGADO. */
+  actualizarEstadoPedido(id: number, nuevoEstado: string): Observable<PedidoRespDTO> {
+    return this.http.patch<PedidoRespDTO>(`${this.baseUrl}/${id}/estado`, null, {
+      params: { nuevoEstado },
+    });
+  }
+
   /**
    * Construye la URL de pago de Wompi (por si se usa redirección).
    * Parámetro con nombre literal "signature:integrity" para evitar 403 por encoding.

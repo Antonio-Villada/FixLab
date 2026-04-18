@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { CartService } from './cart.service';
 
 export type ChatRole = 'user' | 'bot';
 
@@ -38,6 +40,8 @@ const TOKEN_KEY = 'fixlab_auth_token';
 export class ChatbotService {
   private http = inject(HttpClient);
   private platformId = inject(PLATFORM_ID);
+  private router = inject(Router);
+  private cart = inject(CartService);
 
   private readonly baseUrl = environment.apiBaseUrl
     ? `${environment.apiBaseUrl.replace(/\/$/, '')}/api/chat`
@@ -90,7 +94,7 @@ export class ChatbotService {
 
   getWelcomeMessage(isLoggedIn: boolean): string {
     if (isLoggedIn) {
-      return '¡Hola! Soy el asistente de FixLab. Aquí ves tu historial guardado en tu cuenta. Cada respuesta nueva indica si vino con IA o con ayuda rápida. Usa + para empezar un chat nuevo.';
+      return '¡Hola! Soy tu asistente. ¡Bienvenido a FixLab! 🛠️\nTodo listo para asistirte. ¿Empezamos?';
     }
     return '¡Hola! Inicia sesión para guardar tu historial de consultas. Como invitado, el chat no se guarda al cerrar la página.';
   }
@@ -101,7 +105,12 @@ export class ChatbotService {
 
     if (this.hasToken()) {
       this.enviando.set(true);
-      this.http.post<ChatEnviarRespDTO>(`${this.baseUrl}/mensaje`, { texto: trimmed }).subscribe({
+      this.http
+        .post<ChatEnviarRespDTO>(`${this.baseUrl}/mensaje`, {
+          texto: trimmed,
+          ...this.buildChatContextPayload(),
+        })
+        .subscribe({
         next: (res) => {
           const botFuente =
             res.respuestaFuente === 'IA' || res.respuestaFuente === 'FAQ' ? res.respuestaFuente : undefined;
@@ -123,6 +132,26 @@ export class ChatbotService {
     this.pushLocalUserAndBot(trimmed);
   }
 
+  /** Ruta del SPA y resumen del carrito (sin datos sensibles) para cada mensaje al API o al FAQ local. */
+  private buildChatContextPayload(): { rutaApp?: string; resumenCarrito?: string } {
+    if (!isPlatformBrowser(this.platformId)) {
+      return {};
+    }
+    const raw = this.router.url ?? '';
+    const rutaApp = raw.length > 500 ? raw.slice(0, 500) : raw || undefined;
+    const n = this.cart.totalCount();
+    let resumenCarrito: string | undefined;
+    if (n > 0) {
+      const sub = this.cart.subtotal();
+      const line = `${n} unidades en carrito, subtotal ${sub}`;
+      resumenCarrito = line.length > 300 ? line.slice(0, 300) : line;
+    }
+    return {
+      ...(rutaApp ? { rutaApp } : {}),
+      ...(resumenCarrito ? { resumenCarrito } : {}),
+    };
+  }
+
   private mapApiToMessage(d: ChatApiMensajeDTO, botReplySource?: 'IA' | 'FAQ'): ChatMessage {
     const isUser = d.role === 'USER';
     return {
@@ -136,7 +165,7 @@ export class ChatbotService {
 
   private pushLocalUserAndBot(trimmed: string): void {
     this.pushMessage({ role: 'user', text: trimmed });
-    const reply = this.hybridReply(trimmed);
+    const reply = this.hybridReply(trimmed, this.buildChatContextPayload());
     window.setTimeout(() => this.pushMessage({ role: 'bot', text: reply }), 280);
   }
 
@@ -156,11 +185,21 @@ export class ChatbotService {
       .replace(/\p{M}/gu, '');
   }
 
-  private hybridReply(userText: string): string {
+  private hybridReply(
+    userText: string,
+    ctx: { rutaApp?: string; resumenCarrito?: string },
+  ): string {
     const n = this.normalize(userText);
+    const pantalla =
+      ctx.rutaApp && ctx.rutaApp.length > 0 ? `Veo que estás en **${ctx.rutaApp}**. ` : '';
+    const carritoHint = ctx.resumenCarrito ? ` (${ctx.resumenCarrito})` : '';
 
     if (/\b(hola|buenas|hey|hi)\b/.test(n)) {
-      return '¡Hola! Pregúntame por pedidos, pagos (Wompi), envíos, productos o cuenta. Enlaces: [Productos](/productos), [Login](/login).';
+      return (
+        pantalla +
+        '¡Hola! Pregúntame por pedidos, pagos (Wompi), envíos, productos o cuenta. Enlaces: [Productos](/productos), [Login](/login).' +
+        (ctx.resumenCarrito ? ` Tu carrito ahora mismo: ${ctx.resumenCarrito}.` : '')
+      );
     }
     if (/\b(gracias|thank)\b/.test(n)) {
       return '¡Con gusto! Si necesitas algo más, aquí estaré.';
@@ -171,7 +210,16 @@ export class ChatbotService {
     }
 
     if (/(pago|pagar|wompi|tarjeta|checkout|transaccion)/.test(n)) {
-      return 'Los pagos se procesan con Wompi. Usa el [carrito](/carrito) y completa el pago en la pasarela.';
+      const aqui =
+        ctx.rutaApp?.includes('/carrito') || ctx.rutaApp?.includes('/checkout')
+          ? ' Estás en el flujo de compra; revisa el total y sigue a la pasarela desde aquí.'
+          : '';
+      return (
+        pantalla +
+        'Los pagos se procesan con Wompi. Usa el [carrito](/carrito) y completa el pago en la pasarela.' +
+        aqui +
+        carritoHint
+      );
     }
 
     if (/(envio|envío|domicilio|entrega|recibir)/.test(n)) {
@@ -195,6 +243,7 @@ export class ChatbotService {
     }
 
     return (
+      pantalla +
       'No tengo una respuesta exacta. Prueba: pedido, pago, envío, productos. O abre [Productos](/productos) o [Inicio](/home).'
     );
   }
