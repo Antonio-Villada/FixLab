@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         // Needed so browsers can complete CORS preflight without authentication.
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -78,7 +79,11 @@ public class SecurityConfig {
                 "http://34.171.85.92",
                 "http://34.171.85.92:*",
                 "https://34.171.85.92",
-                "https://34.171.85.92:*"
+                "https://34.171.85.92:*",
+                "http://104.196.160.2",
+                "http://104.196.160.2:*",
+                "https://104.196.160.2",
+                "https://104.196.160.2:*"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
