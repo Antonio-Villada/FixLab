@@ -16,6 +16,7 @@ import {
   VerificarCorreoReqDTO,
   ResetearPasswordDTO,
   AdminAsignarPasswordReqDTO,
+  UsuarioRespDTO,
 } from '../models/auth.model';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart.service';
@@ -40,6 +41,8 @@ export class AuthService {
     : '/api/auth';
   private readonly TOKEN_KEY = 'fixlab_auth_token';
   private readonly ROL_KEY = 'fixlab_user_rol';
+  /** Marca sesión con cambio de contraseña obligatorio (cliente registrado en mostrador). */
+  private readonly REQUIERE_CAMBIO_PWD_KEY = 'fixlab_requiere_cambio_password';
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -138,11 +141,41 @@ export class AuthService {
           if (res.rol) {
             localStorage.setItem(this.ROL_KEY, res.rol);
           }
+          if (res.requiereCambioPassword) {
+            localStorage.setItem(this.REQUIERE_CAMBIO_PWD_KEY, '1');
+          } else {
+            localStorage.removeItem(this.REQUIERE_CAMBIO_PWD_KEY);
+          }
           this.isLoggedInSignal.set(true);
           this.chatbotService.loadHistorial();
         }
       })
     );
+  }
+
+  /** Sincroniza el flag con el perfil (p. ej. tras F5 o carga del header). */
+  syncRequiereCambioPasswordFromProfile(u: UsuarioRespDTO | null): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    if (u?.requiereCambioPassword) {
+      localStorage.setItem(this.REQUIERE_CAMBIO_PWD_KEY, '1');
+    } else {
+      localStorage.removeItem(this.REQUIERE_CAMBIO_PWD_KEY);
+    }
+  }
+
+  requiereCambioPasswordPendiente(): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+    return localStorage.getItem(this.REQUIERE_CAMBIO_PWD_KEY) === '1';
+  }
+
+  clearRequiereCambioPasswordPendiente(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.REQUIERE_CAMBIO_PWD_KEY);
+    }
   }
 
   /**
@@ -212,6 +245,7 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.ROL_KEY);
+      localStorage.removeItem(this.REQUIERE_CAMBIO_PWD_KEY);
       this.cartService.clear();
       this.chatbotService.resetConversation();
       this.isLoggedInSignal.set(false);

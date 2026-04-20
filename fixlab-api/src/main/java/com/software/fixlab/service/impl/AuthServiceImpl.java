@@ -5,6 +5,7 @@ import com.software.fixlab.dto.resp.LoginPaso1RespDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
 import com.software.fixlab.dto.resp.TokenRecuperacionRespDTO;
 import com.software.fixlab.dto.resp.TokenRespDTO;
+import com.software.fixlab.dto.resp.UsuarioRespDTO;
 import com.software.fixlab.util.EmailMaskUtil;
 import com.software.fixlab.entity.RolUsuario;
 import com.software.fixlab.entity.Usuario;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -95,6 +97,83 @@ public class AuthServiceImpl implements AuthService {
         emailService.enviarCodigoVerificacion(nuevoUsuario.getEmail(), nuevoUsuario.getNombre(), codigoGenerado);
 
         return new MensajeRespDTO("Registro exitoso. Hemos enviado un código de 6 dígitos a tu correo para verificar tu cuenta.");
+    }
+
+    @Override
+    @Transactional
+    public UsuarioRespDTO registrarClienteMostrador(ClienteMostradorReqDTO dto) throws Exception {
+        if (DisposableEmailValidator.isDisposable(dto.getEmail())) {
+            throw new Exception(
+                    "No se permite el registro con correos temporales o desechables. Por favor utiliza un correo electrónico permanente.");
+        }
+        String email = dto.getEmail().trim();
+        if (usuarioRepository.findByEmail(email).isPresent()) {
+            throw new Exception("El correo electrónico ya se encuentra registrado.");
+        }
+        String cedula = dto.getCedula().trim();
+        if (usuarioRepository.existsById(cedula)) {
+            throw new Exception("La cédula ya se encuentra registrada en el sistema.");
+        }
+
+        String passwordTemporalPlano = generarPasswordTemporalSeguro();
+        validarFormatoPassword(passwordTemporalPlano);
+
+        String tel = dto.getTelefono();
+        if (tel != null) {
+            tel = tel.trim();
+            if (tel.isEmpty()) {
+                tel = null;
+            }
+        }
+
+        Usuario nuevoUsuario = Usuario.builder()
+                .cedula(cedula)
+                .nombre(dto.getNombre().trim())
+                .apellido(dto.getApellido().trim())
+                .email(email)
+                .telefono(tel)
+                .password(passwordEncoder.encode(passwordTemporalPlano))
+                .rol(RolUsuario.CLIENTE)
+                .intentosFallidos(0)
+                .correoVerificado(true)
+                .requiereCambioPassword(true)
+                .build();
+
+        usuarioRepository.save(nuevoUsuario);
+        emailService.enviarPasswordTemporalRegistroMostrador(email, nuevoUsuario.getNombre(), passwordTemporalPlano);
+        return usuarioMapper.toDto(nuevoUsuario);
+    }
+
+    /** Contraseña aleatoria que cumple {@link #validarFormatoPassword(String)}. */
+    private static String generarPasswordTemporalSeguro() {
+        SecureRandom r = new SecureRandom();
+        String upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        String lower = "abcdefghijkmnopqrstuvwxyz";
+        String digits = "23456789";
+        String special = "@#$%&*!?";
+        String all = upper + lower + digits + special;
+        for (int intento = 0; intento < 50; intento++) {
+            StringBuilder sb = new StringBuilder(16);
+            sb.append(upper.charAt(r.nextInt(upper.length())));
+            sb.append(lower.charAt(r.nextInt(lower.length())));
+            sb.append(digits.charAt(r.nextInt(digits.length())));
+            sb.append(special.charAt(r.nextInt(special.length())));
+            for (int i = 4; i < 16; i++) {
+                sb.append(all.charAt(r.nextInt(all.length())));
+            }
+            char[] arr = sb.toString().toCharArray();
+            for (int i = arr.length - 1; i > 0; i--) {
+                int j = r.nextInt(i + 1);
+                char t = arr[i];
+                arr[i] = arr[j];
+                arr[j] = t;
+            }
+            String candidate = new String(arr);
+            if (PASSWORD_PATTERN.matcher(candidate).matches()) {
+                return candidate;
+            }
+        }
+        return "Fx7!" + UUID.randomUUID().toString().replace("-", "").substring(0, 10) + "@";
     }
 
     @Override
@@ -271,7 +350,7 @@ public class AuthServiceImpl implements AuthService {
         usuarioRepository.save(usuario);
 
         String jwtToken = jwtService.generarToken(usuario);
-        return new TokenRespDTO(jwtToken, usuario.getRol().name());
+        return new TokenRespDTO(jwtToken, usuario.getRol().name(), usuario.isRequiereCambioPassword());
     }
 
     @Override
@@ -456,6 +535,27 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
         validarFormatoPassword(nuevaPassword);
         usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void completarCambioPasswordPrimerAcceso(String email, String nuevaPassword) throws Exception {
+        String em = email == null ? "" : email.trim();
+        Usuario usuario = usuarioRepository.findByEmail(em)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+        if (!usuario.isActivo()) {
+            throw new Exception("Tu cuenta no está disponible.");
+        }
+        if (!usuario.isRequiereCambioPassword()) {
+            throw new Exception("No tienes un cambio de contraseña pendiente. Usa la opción de cambiar contraseña en tu perfil.");
+        }
+        validarFormatoPassword(nuevaPassword);
+        if (passwordEncoder.matches(nuevaPassword, usuario.getPassword())) {
+            throw new Exception("La nueva contraseña debe ser distinta de la contraseña temporal que recibiste por correo.");
+        }
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuario.setRequiereCambioPassword(false);
         usuarioRepository.save(usuario);
     }
 }

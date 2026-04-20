@@ -16,8 +16,7 @@
   </div>
 
   <p class="text-muted small mb-4">
-    Registra el equipo del cliente y opten el ticket de servicio.
-  
+    Registra el equipo del cliente y obtén el ticket de servicio.
   </p>
 
   @if (cargandoCatalogo()) {
@@ -92,6 +91,16 @@
               >
                 {{ nombreClienteMostrar() || 'Selecciona una cédula de la lista o completa y valida al salir del campo.' }}
               </div>
+              @if (!nombreClienteMostrar() && form.controls.propietarioCedula.value.trim().length >= 3) {
+                <div class="mt-2">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="abrirModalRegistroCliente()">
+                    Cliente nuevo: registrar en el sistema
+                  </button>
+                  <span class="text-muted small ms-2 d-block d-md-inline mt-1 mt-md-0"
+                    >Usa esta opción si la cédula aún no tiene cuenta de cliente.</span
+                  >
+                </div>
+              }
             </div>
             <div class="col-md-4">
               <label class="form-label">Marca</label>
@@ -159,6 +168,105 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  }
+
+  @if (modalRegistroClienteAbierto()) {
+    <div
+      class="recepcion-modal-registro-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="recepcionModalRegistroTitulo"
+      (click)="cerrarModalRegistroCliente()"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg recepcion-modal-registro-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-content shadow recepcion-modal-registro-panel">
+          <div class="modal-header recepcion-mr-header">
+            <h2 class="modal-title h5 mb-0" id="recepcionModalRegistroTitulo">Registrar cliente</h2>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Cerrar"
+              [disabled]="guardandoRegistroCliente()"
+              (click)="cerrarModalRegistroCliente()"
+            ></button>
+          </div>
+          <div class="modal-body recepcion-mr-body">
+            @if (errorRegistroCliente()) {
+              <div class="alert alert-danger mb-3">{{ errorRegistroCliente() }}</div>
+            }
+            <p class="small text-muted recepcion-mr-intro">
+              Se enviará una contraseña temporal al correo. En el primer acceso el cliente deberá elegir una contraseña nueva.
+            </p>
+            <form [formGroup]="formRegistroCliente" (ngSubmit)="guardarClienteMostrador()">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <label class="form-label">Cédula <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" formControlName="cedula" maxlength="20" autocomplete="off" />
+                  <div class="form-text">Puedes completar o corregir el número aquí antes de guardar.</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Teléfono</label>
+                  <input type="text" class="form-control" formControlName="telefono" maxlength="20" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" formControlName="nombre" />
+                  @if (formRegistroCliente.controls.nombre.invalid && formRegistroCliente.controls.nombre.touched) {
+                    <div class="invalid-feedback d-block">Indica el nombre.</div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Apellido <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" formControlName="apellido" />
+                  @if (formRegistroCliente.controls.apellido.invalid && formRegistroCliente.controls.apellido.touched) {
+                    <div class="invalid-feedback d-block">Indica el apellido.</div>
+                  }
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control" formControlName="email" autocomplete="off" />
+                  @if (formRegistroCliente.controls.email.hasError('required') && formRegistroCliente.controls.email.touched) {
+                    <div class="invalid-feedback d-block">El correo es obligatorio.</div>
+                  }
+                  @if (formRegistroCliente.controls.email.hasError('email') && formRegistroCliente.controls.email.touched) {
+                    <div class="invalid-feedback d-block">Formato de correo no válido.</div>
+                  }
+                  @if (formRegistroCliente.controls.email.hasError('disposableEmail')) {
+                    <div class="invalid-feedback d-block">
+                      {{ formRegistroCliente.controls.email.getError('disposableEmail')?.message }}
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="recepcion-mr-footer d-flex flex-wrap justify-content-end gap-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  [disabled]="guardandoRegistroCliente()"
+                  (click)="cerrarModalRegistroCliente()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="
+                    guardandoRegistroCliente() ||
+                    formRegistroCliente.invalid ||
+                    formRegistroCliente.pending
+                  "
+                >
+                  @if (guardandoRegistroCliente()) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  }
+                  Guardar cliente
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   }

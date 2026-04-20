@@ -4,10 +4,17 @@ import com.software.fixlab.dto.req.*;
 import com.software.fixlab.dto.resp.LoginPaso1RespDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
 import com.software.fixlab.dto.resp.TokenRespDTO;
+import com.software.fixlab.dto.resp.UsuarioRespDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AuthService {
     MensajeRespDTO registrarCliente(RegistroReqDTO dto) throws Exception;
+
+    /**
+     * Alta de cliente en mostrador por personal autorizado: correo verificado de inmediato (identidad presencial),
+     * sin envío de código de verificación por correo.
+     */
+    UsuarioRespDTO registrarClienteMostrador(ClienteMostradorReqDTO dto) throws Exception;
     MensajeRespDTO registrarClienteConFoto(RegistroReqDTO dto, org.springframework.web.multipart.MultipartFile foto) throws Exception;
     MensajeRespDTO registrarEmpleado(RegistroEmpleadoReqDTO dto) throws Exception;
     LoginPaso1RespDTO login(LoginReqDTO dto) throws Exception;
@@ -30,4 +37,7 @@ public interface AuthService {
 
     /** Asigna una nueva contraseña a un usuario por cédula (solo ADMIN, p. ej. usuario olvidó contraseña). */
     void asignarNuevaPasswordPorCedula(String cedula, String nuevaPassword) throws Exception;
+
+    /** Cambio obligatorio tras primer acceso (cuenta creada en mostrador con contraseña temporal por correo). */
+    void completarCambioPasswordPrimerAcceso(String email, String nuevaPassword) throws Exception;
 }

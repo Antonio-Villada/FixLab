@@ -47,6 +47,7 @@ public class UsuarioMapper {
                 .fotoUrl(entity.getFotoUrl())
                 .rol(entity.getRol())
                 .correoVerificado(entity.isCorreoVerificado())
+                .requiereCambioPassword(entity.isRequiereCambioPassword())
                 .build();
     }
 }

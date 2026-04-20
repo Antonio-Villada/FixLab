@@ -3,13 +3,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
+  ClienteMostradorReqDTO,
   ClienteSugerenciaRespDTO,
   EliminarCuentaClienteReqDTO,
   MensajeRespDTO,
+  PrimerCambioPasswordReqDTO,
   StaffTallerAsignableRespDTO,
   UsuarioRespDTO,
   UsuarioUpdateReqDTO,
 } from '../models/auth.model';
+import { AuthService } from './auth';
 
 const base = environment.apiBaseUrl?.replace(/\/$/, '') ?? '';
 const url = base ? `${base}/api/usuarios` : '/api/usuarios';
@@ -17,6 +20,7 @@ const url = base ? `${base}/api/usuarios` : '/api/usuarios';
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
   /** Perfil del usuario logueado (compartido con header y dashboard). */
   readonly currentUser = signal<UsuarioRespDTO | null>(null);
@@ -28,6 +32,11 @@ export class UsuarioService {
   getByCedula(cedula: string): Observable<UsuarioRespDTO> {
     const c = encodeURIComponent(cedula.trim());
     return this.http.get<UsuarioRespDTO>(`${url}/${c}`);
+  }
+
+  /** Registro de cliente nuevo desde mostrador (recepción). Requiere JWT de admin, técnico o recepcionista. */
+  registrarClienteMostrador(dto: ClienteMostradorReqDTO): Observable<UsuarioRespDTO> {
+    return this.http.post<UsuarioRespDTO>(`${url}/cliente-mostrador`, dto);
   }
 
   /** Búsqueda por fragmento de cédula (mín. 2 caracteres en backend). */
@@ -49,8 +58,16 @@ export class UsuarioService {
   /** Carga el perfil actual y lo guarda en currentUser. Retorna el observable por si se necesita manejar loading/error. */
   loadCurrentUser(): Observable<UsuarioRespDTO> {
     return this.getMe().pipe(
-      tap((u) => this.currentUser.set(u))
+      tap((u) => {
+        this.currentUser.set(u);
+        this.authService.syncRequiereCambioPasswordFromProfile(u);
+      })
     );
+  }
+
+  /** Tras primer acceso con contraseña temporal (registro en mostrador). */
+  completarPrimerCambioPassword(dto: PrimerCambioPasswordReqDTO): Observable<MensajeRespDTO> {
+    return this.http.post<MensajeRespDTO>(`${url}/me/primer-cambio-password`, dto);
   }
 
   /** Limpia currentUser (p. ej. al cerrar sesión). */

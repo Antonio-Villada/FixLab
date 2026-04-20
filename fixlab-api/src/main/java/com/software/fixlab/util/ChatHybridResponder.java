@@ -1,10 +1,10 @@
 package com.software.fixlab.util;
 
-import com.software.fixlab.entity.RolUsuario;
-
 import java.text.Normalizer;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import com.software.fixlab.entity.RolUsuario;
 
 /**
  * Misma lógica híbrida que el frontend (reglas + respuesta genérica).

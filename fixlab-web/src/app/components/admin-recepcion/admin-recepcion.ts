@@ -9,7 +9,13 @@ import { EquipoService } from '../../services/equipo.service';
 import { ReparacionService } from '../../services/reparacion.service';
 import { AuthService } from '../../services/auth';
 import { UsuarioService } from '../../services/usuario.service';
-import { ClienteSugerenciaRespDTO, RolUsuario, StaffTallerAsignableRespDTO } from '../../models/auth.model';
+import {
+  ClienteMostradorReqDTO,
+  ClienteSugerenciaRespDTO,
+  RolUsuario,
+  StaffTallerAsignableRespDTO,
+} from '../../models/auth.model';
+import { disposableEmailAsyncValidator } from '../../validators/disposable-email.validator';
 import { EquipoReqDTO, ReparacionRespDTO, TallerRespDTO, TipoEquipoRespDTO } from '../../models/reparacion.model';
 
 @Component({
@@ -44,6 +50,31 @@ export class AdminRecepcionComponent implements OnInit {
   /** Texto fijo del único taller de recepción (sin selector). */
   tallerRecepcionEtiqueta = signal<string | null>(null);
   private cedulaResuelta: string | null = null;
+
+  modalRegistroClienteAbierto = signal(false);
+  guardandoRegistroCliente = signal(false);
+  errorRegistroCliente = signal<string | null>(null);
+
+  formRegistroCliente = this.fb.group({
+    cedula: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(20)]),
+    nombre: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(100),
+    ]),
+    apellido: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(100),
+    ]),
+    email: this.fb.nonNullable.control('', [Validators.required, Validators.email], [
+      disposableEmailAsyncValidator(this.authService),
+    ]),
+    telefono: this.fb.nonNullable.control('', [
+      Validators.maxLength(20),
+      Validators.pattern(/^$|^[0-9+\-\s]+$/),
+    ]),
+  });
 
   form = this.fb.nonNullable.group({
     propietarioCedula: ['', [Validators.required, Validators.maxLength(20)]],
@@ -169,6 +200,71 @@ export class AdminRecepcionComponent implements OnInit {
     this.panelSugerenciasAbierto.set(false);
   }
 
+  abrirModalRegistroCliente(): void {
+    this.errorRegistroCliente.set(null);
+    const c = this.form.controls.propietarioCedula.value?.trim() ?? '';
+    if (c.length < 3) {
+      this.errorEnvio.set('Escribe al menos 3 caracteres de la cédula en el campo principal, o complétala en el formulario.');
+      return;
+    }
+    this.errorEnvio.set(null);
+    this.formRegistroCliente.reset({
+      cedula: c,
+      nombre: '',
+      apellido: '',
+      email: '',
+      telefono: '',
+    });
+    this.modalRegistroClienteAbierto.set(true);
+  }
+
+  /**
+   * @param syncCedulaAlPrincipal Si true (cierre normal), copia la cédula del modal al campo principal. En false (p. ej. al limpiar todo el formulario) no se toca.
+   */
+  cerrarModalRegistroCliente(syncCedulaAlPrincipal = true): void {
+    if (syncCedulaAlPrincipal && this.modalRegistroClienteAbierto()) {
+      const modalCed = this.formRegistroCliente.controls.cedula.value?.trim() ?? '';
+      if (modalCed) {
+        this.form.controls.propietarioCedula.setValue(modalCed, { emitEvent: true });
+      }
+    }
+    this.modalRegistroClienteAbierto.set(false);
+    this.errorRegistroCliente.set(null);
+    this.guardandoRegistroCliente.set(false);
+  }
+
+  guardarClienteMostrador(): void {
+    this.errorRegistroCliente.set(null);
+    if (this.formRegistroCliente.invalid) {
+      this.formRegistroCliente.markAllAsTouched();
+      return;
+    }
+    const v = this.formRegistroCliente.getRawValue();
+    const dto: ClienteMostradorReqDTO = {
+      cedula: v.cedula.trim(),
+      nombre: v.nombre.trim(),
+      apellido: v.apellido.trim(),
+      email: v.email.trim(),
+      telefono: v.telefono?.trim() ? v.telefono.trim() : undefined,
+    };
+    this.guardandoRegistroCliente.set(true);
+    this.usuarioService.registrarClienteMostrador(dto).subscribe({
+      next: (u) => {
+        this.guardandoRegistroCliente.set(false);
+        this.form.controls.propietarioCedula.setValue(u.cedula, { emitEvent: false });
+        if (u.rol === RolUsuario.CLIENTE) {
+          this.nombreClienteMostrar.set(`${u.nombre} ${u.apellido}`.trim());
+          this.cedulaResuelta = u.cedula;
+        }
+        this.modalRegistroClienteAbierto.set(false);
+      },
+      error: (err) => {
+        this.guardandoRegistroCliente.set(false);
+        this.errorRegistroCliente.set(this.extraerMensaje(err));
+      },
+    });
+  }
+
   enviar(): void {
     this.errorEnvio.set(null);
     this.exito.set(null);
@@ -245,6 +341,7 @@ export class AdminRecepcionComponent implements OnInit {
     this.cedulaResuelta = null;
     this.sugerenciasClientes.set([]);
     this.panelSugerenciasAbierto.set(false);
+    this.cerrarModalRegistroCliente(false);
   }
 
   limpiarManual(): void {

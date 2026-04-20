@@ -3,7 +3,9 @@ import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth';
 
-export const authGuard: CanActivateFn = () => {
+const RUTA_PRIMER_CAMBIO = '/primer-cambio-password';
+
+export const authGuard: CanActivateFn = (_route, state) => {
   const router = inject(Router);
   const authService = inject(AuthService);
   const platformId = inject(PLATFORM_ID);
@@ -14,9 +16,19 @@ export const authGuard: CanActivateFn = () => {
   }
 
   const token = authService.getToken();
-  if (token) {
-    return true;
+  if (!token) {
+    router.navigate(['/login']);
+    return false;
   }
-  router.navigate(['/login']);
-  return false;
+
+  const url = (state.url.split('?')[0] ?? '').trim();
+  if (
+    authService.requiereCambioPasswordPendiente() &&
+    url !== RUTA_PRIMER_CAMBIO &&
+    !url.startsWith(RUTA_PRIMER_CAMBIO + '/')
+  ) {
+    return router.parseUrl(RUTA_PRIMER_CAMBIO);
+  }
+
+  return true;
 };

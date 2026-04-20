@@ -1,1 +1,5 @@
 /* Estilos admin productos */
+
+.admin-productos-filtros {
+  background-color: var(--bs-tertiary-bg, #f8f9fa);
+}

@@ -22,11 +22,27 @@ export interface RegistroReqDTO {
   telefono: string;
 }
 
+/** Alta de cliente en recepción (POST /api/usuarios/cliente-mostrador, personal autenticado). */
+export interface ClienteMostradorReqDTO {
+  cedula: string;
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono?: string;
+}
+
+/** Cambio obligatorio de contraseña tras primer acceso (POST /api/usuarios/me/primer-cambio-password). */
+export interface PrimerCambioPasswordReqDTO {
+  nuevaPassword: string;
+}
+
 // Respuesta que contiene el JWT (y opcionalmente el rol para redirigir por tipo de usuario)
 export interface TokenRespDTO {
   token: string;
   /** Rol del usuario: CLIENTE | RECEPCIONISTA | TECNICO | ADMIN. */
   rol?: string;
+  /** Si true, debe completarse el cambio de contraseña en /primer-cambio-password. */
+  requiereCambioPassword?: boolean;
 }
 
 /** Primer paso del login: se envió el código al correo. */
@@ -54,6 +70,8 @@ export interface UsuarioRespDTO {
   telefono?: string | null;
   rol: RolUsuario;
   correoVerificado: boolean;
+  /** True si el backend exige cambiar la contraseña en el primer acceso. */
+  requiereCambioPassword?: boolean;
   /** URL de foto de perfil (opcional; si no hay, el header muestra iniciales). */
   fotoUrl?: string | null;
 }

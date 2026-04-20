@@ -44,6 +44,40 @@ export class AdminProductosComponent implements OnInit {
   cantidadSeleccion = signal<Record<number, string>>({});
   infoMessage = signal<string | null>(null);
 
+  /** Filtros de tabla (nombre/SKU, categoría, tipo). */
+  filtroTexto = signal('');
+  filtroCategoriaId = signal<number | null>(null);
+  filtroTipoProductoId = signal<number | null>(null);
+
+  /** Lista aplicando filtros actuales (sin nueva llamada al API). */
+  productsFiltrados = computed(() => {
+    let list = this.products();
+    const texto = this.filtroTexto().trim().toLowerCase();
+    if (texto) {
+      list = list.filter((p) => {
+        const n = (p.nombre ?? '').toLowerCase();
+        const s = (p.sku ?? '').toLowerCase();
+        return n.includes(texto) || s.includes(texto);
+      });
+    }
+    const catId = this.filtroCategoriaId();
+    if (catId != null) {
+      list = list.filter((p) => p.categoria?.id === catId);
+    }
+    const tipoId = this.filtroTipoProductoId();
+    if (tipoId != null) {
+      list = list.filter((p) => p.tipoProducto?.id === tipoId);
+    }
+    return list;
+  });
+
+  filtrosActivos = computed(
+    () =>
+      this.filtroTexto().trim().length > 0 ||
+      this.filtroCategoriaId() != null ||
+      this.filtroTipoProductoId() != null,
+  );
+
   form: FormGroup = this.fb.group({
     sku: ['', [Validators.required, Validators.maxLength(50)]],
     nombre: ['', [Validators.required, Validators.maxLength(150)]],
@@ -55,6 +89,12 @@ export class AdminProductosComponent implements OnInit {
   });
 
   isEditing = computed(() => this.editingProduct() !== null);
+
+  limpiarFiltros(): void {
+    this.filtroTexto.set('');
+    this.filtroCategoriaId.set(null);
+    this.filtroTipoProductoId.set(null);
+  }
 
   ngOnInit(): void {
     // Evitar llamadas al backend durante SSR/prerender (SSR no tiene localStorage).

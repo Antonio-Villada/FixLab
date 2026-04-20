@@ -66,6 +66,32 @@ public class EmailService {
         enviarCorreoHtml(destino, "Código para restablecer contraseña - FixLab", html);
     }
 
+    /**
+     * Contraseña temporal generada en recepción; el cliente debe cambiarla al primer acceso.
+     */
+    public void enviarPasswordTemporalRegistroMostrador(String destino, String nombre, String passwordPlano) {
+        String n = nombre != null && !nombre.isBlank() ? nombre.trim() : "cliente";
+        String pwdEsc = escaparHtmlSimple(passwordPlano != null ? passwordPlano : "");
+        String logo = getLogoUrl();
+        String logoBlock = (logo != null && !logo.isBlank())
+                ? "<p style=\"margin:0 0 16px 0;\"><img src=\"" + escaparAttr(logo) + "\" alt=\"FixLab\" width=\"40\" height=\"40\" style=\"display:block;border:0;\" /></p>"
+                : "";
+        String html = "<!DOCTYPE html><html><body style=\"font-family:Segoe UI,Arial,sans-serif;background:#f6f7f9;margin:0;padding:24px;\">"
+                + "<table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td align=\"center\">"
+                + "<div style=\"max-width:520px;background:#fff;border-radius:8px;padding:28px;text-align:left;border:1px solid #e5e7eb;\">"
+                + logoBlock
+                + "<h1 style=\"font-size:18px;color:#111827;margin:0 0 8px;\">Tu cuenta en FixLab</h1>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 16px;\">Hola <strong>" + escaparHtmlSimple(n) + "</strong>,</p>"
+                + "<p style=\"color:#374151;font-size:15px;margin:0 0 12px;\">Te registramos en el taller. Tu contraseña temporal es:</p>"
+                + "<p style=\"font-family:ui-monospace,monospace;font-size:18px;font-weight:600;background:#f3f4f6;padding:12px 16px;border-radius:6px;letter-spacing:0.04em;\">"
+                + pwdEsc + "</p>"
+                + "<p style=\"color:#374151;font-size:15px;margin:16px 0 0;\">Al iniciar sesión por primera vez te pediremos definir una contraseña nueva. "
+                + "Ingresa con tu correo y esta contraseña temporal; luego recibirás el código de verificación habitual.</p>"
+                + "<p style=\"color:#9ca3af;font-size:12px;margin:24px 0 0;\">FixLab — Servicio técnico</p>"
+                + "</div></td></tr></table></body></html>";
+        enviarCorreoHtml(destino, "Tu contraseña temporal - FixLab", html);
+    }
+
     /** Código de 6 dígitos para completar el inicio de sesión (2FA por correo). */
     public void enviarCodigoLogin2fa(String destino, String nombre, String codigo) {
         String html = EmailTemplateUtil.construirHtmlCodigo(

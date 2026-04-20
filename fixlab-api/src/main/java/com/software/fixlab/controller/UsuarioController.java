@@ -1,13 +1,17 @@
 package com.software.fixlab.controller;
 
+import com.software.fixlab.dto.req.ClienteMostradorReqDTO;
 import com.software.fixlab.dto.req.EliminarCuentaClienteReqDTO;
+import com.software.fixlab.dto.req.PrimerCambioPasswordReqDTO;
 import com.software.fixlab.dto.req.UsuarioUpdateReqDTO;
 import com.software.fixlab.dto.resp.ClienteSugerenciaRespDTO;
 import com.software.fixlab.dto.resp.MensajeRespDTO;
 import com.software.fixlab.dto.resp.StaffTallerAsignableRespDTO;
 import com.software.fixlab.dto.resp.UsuarioRespDTO;
+import com.software.fixlab.service.interfaces.AuthService;
 import com.software.fixlab.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +28,7 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final AuthService authService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -65,6 +70,15 @@ public class UsuarioController {
         }
     }
 
+    @PostMapping("/me/primer-cambio-password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<MensajeRespDTO> completarPrimerCambioPassword(
+            Authentication authentication,
+            @Valid @RequestBody PrimerCambioPasswordReqDTO dto) throws Exception {
+        authService.completarCambioPasswordPrimerAcceso(authentication.getName(), dto.getNuevaPassword());
+        return ResponseEntity.ok(new MensajeRespDTO("Contraseña actualizada. Ya puedes usar FixLab con normalidad."));
+    }
+
     @GetMapping("/sugerencias-clientes")
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO','RECEPCIONISTA')")
     public ResponseEntity<List<ClienteSugerenciaRespDTO>> sugerenciasClientes(@RequestParam("q") String q) {
@@ -81,6 +95,13 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO','RECEPCIONISTA')")
     public ResponseEntity<UsuarioRespDTO> obtenerPorCedula(@PathVariable String cedula) {
         return ResponseEntity.ok(usuarioService.obtenerPorCedula(cedula));
+    }
+
+    @PostMapping("/cliente-mostrador")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO','RECEPCIONISTA')")
+    public ResponseEntity<UsuarioRespDTO> registrarClienteMostrador(@Valid @RequestBody ClienteMostradorReqDTO dto)
+            throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.registrarClienteMostrador(dto));
     }
 
     @PutMapping("/{cedula}")

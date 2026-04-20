@@ -100,4 +100,11 @@ public class Usuario {
     @Column(name = "activo", nullable = false)
     @Builder.Default
     private boolean activo = true;
+
+    /**
+     * Si es true, el usuario debe establecer una nueva contraseña al iniciar sesión (p. ej. alta en mostrador con clave enviada por correo).
+     */
+    @Column(name = "requiere_cambio_password", nullable = false)
+    @Builder.Default
+    private boolean requiereCambioPassword = false;
 }

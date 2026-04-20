@@ -16,4 +16,6 @@ public class UsuarioRespDTO {
     private String fotoUrl;
     private RolUsuario rol;
     private boolean correoVerificado;
+    /** True si debe cambiar la contraseña en el primer acceso (registro en mostrador). */
+    private boolean requiereCambioPassword;
 }

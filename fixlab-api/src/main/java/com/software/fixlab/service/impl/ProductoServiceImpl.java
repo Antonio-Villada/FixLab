@@ -1,5 +1,12 @@
 package com.software.fixlab.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.software.fixlab.dto.req.ProductoReqDTO;
 import com.software.fixlab.dto.resp.CategoriaRespDTO;
 import com.software.fixlab.dto.resp.ProductoRespDTO;
@@ -7,7 +14,6 @@ import com.software.fixlab.dto.resp.TipoProductoRespDTO;
 import com.software.fixlab.entity.Categoria;
 import com.software.fixlab.entity.Producto;
 import com.software.fixlab.entity.TipoProducto;
-import com.software.fixlab.exception.BadRequestException;
 import com.software.fixlab.exception.NoExisteCategoriaException;
 import com.software.fixlab.exception.NoExisteProductoException;
 import com.software.fixlab.exception.NoExisteTipoProductoException;
@@ -16,13 +22,8 @@ import com.software.fixlab.repository.ProductoRepository;
 import com.software.fixlab.repository.TipoProductoRepository;
 import com.software.fixlab.service.interfaces.CloudinaryService;
 import com.software.fixlab.service.interfaces.ProductoService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

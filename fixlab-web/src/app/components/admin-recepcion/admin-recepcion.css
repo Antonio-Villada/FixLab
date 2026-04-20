@@ -34,3 +34,59 @@
   background-color: var(--bs-secondary-bg, #f8f9fa);
   pointer-events: none;
 }
+
+.recepcion-modal-registro-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  background-color: rgba(33, 37, 41, 0.72);
+  overflow-y: auto;
+}
+
+.recepcion-modal-registro-dialog {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+}
+
+.recepcion-modal-registro-panel {
+  background-color: #fff !important;
+  opacity: 1;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.recepcion-modal-registro-panel .recepcion-mr-header {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid var(--bs-border-color-translucent, rgba(0, 0, 0, 0.08));
+}
+
+.recepcion-modal-registro-panel .recepcion-mr-body {
+  padding: 1.5rem 1.75rem 1.25rem;
+}
+
+.recepcion-modal-registro-panel .recepcion-mr-intro {
+  line-height: 1.5;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  background-color: var(--bs-tertiary-bg, #f8f9fa);
+  border-radius: 0.375rem;
+  border: 1px solid var(--bs-border-color-translucent, rgba(0, 0, 0, 0.06));
+}
+
+.recepcion-modal-registro-panel .recepcion-mr-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--bs-border-color-translucent, rgba(0, 0, 0, 0.08));
+}
+
+.recepcion-modal-registro-panel .form-control,
+.recepcion-modal-registro-panel .form-select {
+  padding: 0.55rem 0.85rem;
+}

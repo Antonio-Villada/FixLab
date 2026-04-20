@@ -84,7 +84,11 @@ export class Login implements OnInit {
     const email = this.loginForm.get('email')?.value?.trim();
     const codigo = this.codigoForm.get('codigo')?.value?.trim();
     this.authService.loginVerificarCodigo({ email, codigo }).subscribe({
-      next: () => {
+      next: (res) => {
+        if (res.requiereCambioPassword) {
+          this.router.navigate(['/primer-cambio-password']);
+          return;
+        }
         const rol = this.authService.getRol();
         if (rol === 'ADMIN') {
           this.router.navigate(['/home']);

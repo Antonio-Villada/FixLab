@@ -33,11 +33,18 @@ import { AdminPostventaComponent } from './components/admin-postventa/admin-post
 import { postventaFeatureGuard } from './guards/postventa-feature-guard';
 import { MisComprasComponent } from './components/mis-compras/mis-compras';
 import { clienteGuard } from './guards/cliente-guard';
+import { PrimerCambioPasswordComponent } from './components/primer-cambio-password/primer-cambio-password';
+import { primerCambioPasswordGuard } from './guards/primer-cambio-password-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: Login },
+  {
+    path: 'primer-cambio-password',
+    component: PrimerCambioPasswordComponent,
+    canActivate: [authGuard, primerCambioPasswordGuard],
+  },
   { path: 'recuperar-password', component: RecuperarPasswordComponent },
   { path: 'reset-password', redirectTo: 'recuperar-password', pathMatch: 'full' },
   { path: 'productos', component: ProductListComponent },
