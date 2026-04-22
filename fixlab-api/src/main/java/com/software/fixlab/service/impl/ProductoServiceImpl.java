@@ -1,5 +1,6 @@
 package com.software.fixlab.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,17 +8,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.software.fixlab.dto.req.EntradaMercanciaReqDTO;
 import com.software.fixlab.dto.req.ProductoReqDTO;
 import com.software.fixlab.dto.resp.CategoriaRespDTO;
+import com.software.fixlab.dto.resp.EntradaMercanciaRespDTO;
 import com.software.fixlab.dto.resp.ProductoRespDTO;
 import com.software.fixlab.dto.resp.TipoProductoRespDTO;
 import com.software.fixlab.entity.Categoria;
+import com.software.fixlab.entity.EntradaMercancia;
 import com.software.fixlab.entity.Producto;
 import com.software.fixlab.entity.TipoProducto;
+import com.software.fixlab.exception.BadRequestException;
 import com.software.fixlab.exception.NoExisteCategoriaException;
 import com.software.fixlab.exception.NoExisteProductoException;
 import com.software.fixlab.exception.NoExisteTipoProductoException;
 import com.software.fixlab.repository.CategoriaRepository;
+import com.software.fixlab.repository.EntradaMercanciaRepository;
 import com.software.fixlab.repository.ProductoRepository;
 import com.software.fixlab.repository.TipoProductoRepository;
 import com.software.fixlab.service.interfaces.CloudinaryService;
@@ -32,6 +38,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final TipoProductoRepository tipoProductoRepository;
+    private final EntradaMercanciaRepository entradaMercanciaRepository;
     private final CloudinaryService cloudinaryService;
 
     @Override
@@ -43,6 +50,8 @@ public class ProductoServiceImpl implements ProductoService {
 
         TipoProducto tipoProducto = tipoProductoRepository.findById(dto.getTipoProductoId())
                 .orElseThrow(() -> new NoExisteTipoProductoException("El tipo de producto con ID " + dto.getTipoProductoId() + " no existe."));
+
+        int stockMinimo = resolverStockMinimo(dto);
 
         // Subida de imagen
         String urlImagenSubida;
@@ -57,6 +66,7 @@ public class ProductoServiceImpl implements ProductoService {
                 .descripcion(dto.getDescripcion())
                 .precio(dto.getPrecio())
                 .stock(dto.getStock())
+                .stockMinimo(stockMinimo)
                 .sku(dto.getSku())
                 .imagenUrl(urlImagenSubida)
                 .categoria(categoria)
@@ -101,6 +111,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setDescripcion(dto.getDescripcion());
         producto.setPrecio(dto.getPrecio());
         producto.setStock(dto.getStock());
+        producto.setStockMinimo(resolverStockMinimo(dto));
         producto.setSku(dto.getSku());
         producto.setCategoria(categoria);
         producto.setTipoProducto(tipoProducto);
@@ -130,13 +141,74 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.save(producto);
     }
 
+    @Override
+    @Transactional
+    public EntradaMercanciaRespDTO registrarEntradaMercancia(Long productoId, EntradaMercanciaReqDTO dto) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new NoExisteProductoException("Producto no encontrado con ID: " + productoId));
+
+        EntradaMercancia entrada = EntradaMercancia.builder()
+                .producto(producto)
+                .cantidad(dto.getCantidad())
+                .comentario(dto.getComentario() != null && !dto.getComentario().isBlank()
+                        ? dto.getComentario().trim()
+                        : null)
+                .fechaRegistro(Instant.now())
+                .build();
+        entradaMercanciaRepository.save(entrada);
+
+        int nuevoStock = producto.getStock() + dto.getCantidad();
+        producto.setStock(nuevoStock);
+        productoRepository.save(producto);
+
+        return EntradaMercanciaRespDTO.builder()
+                .id(entrada.getId())
+                .productoId(producto.getId())
+                .sku(producto.getSku())
+                .nombreProducto(producto.getNombre())
+                .cantidad(dto.getCantidad())
+                .nuevoStock(nuevoStock)
+                .comentario(entrada.getComentario())
+                .fechaRegistro(entrada.getFechaRegistro())
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductoRespDTO> listarProductosConStockBajo() {
+        return productoRepository.findActivosConStockBajo().stream()
+                .map(this::mapearADto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EntradaMercanciaRespDTO> listarEntradasMercancia(Long productoId) {
+        if (!productoRepository.existsById(productoId)) {
+            throw new NoExisteProductoException("Producto no encontrado con ID: " + productoId);
+        }
+        return entradaMercanciaRepository.findByProducto_IdOrderByFechaRegistroDesc(productoId).stream()
+                .map(this::mapearEntradaADto)
+                .collect(Collectors.toList());
+    }
+
+    private int resolverStockMinimo(ProductoReqDTO dto) {
+        int v = dto.getStockMinimo() != null ? dto.getStockMinimo() : 5;
+        if (v < 0) {
+            throw new BadRequestException("El stock mínimo no puede ser negativo.");
+        }
+        return v;
+    }
+
     private ProductoRespDTO mapearADto(Producto producto) {
+        int stockMinimoResp = producto.getStockMinimo() != null ? producto.getStockMinimo() : 5;
         return ProductoRespDTO.builder()
                 .id(producto.getId())
                 .nombre(producto.getNombre())
                 .descripcion(producto.getDescripcion())
                 .precio(producto.getPrecio())
                 .stock(producto.getStock())
+                .stockMinimo(stockMinimoResp)
                 .sku(producto.getSku())
                 .imagenUrl(producto.getImagenUrl())
                 .activo(producto.getActivo())
@@ -148,6 +220,19 @@ public class ProductoServiceImpl implements ProductoService {
                         .id(producto.getTipoProducto().getId())
                         .nombre(producto.getTipoProducto().getNombre())
                         .build())
+                .build();
+    }
+
+    private EntradaMercanciaRespDTO mapearEntradaADto(EntradaMercancia e) {
+        Producto p = e.getProducto();
+        return EntradaMercanciaRespDTO.builder()
+                .id(e.getId())
+                .productoId(p.getId())
+                .sku(p.getSku())
+                .nombreProducto(p.getNombre())
+                .cantidad(e.getCantidad())
+                .comentario(e.getComentario())
+                .fechaRegistro(e.getFechaRegistro())
                 .build();
     }
 }

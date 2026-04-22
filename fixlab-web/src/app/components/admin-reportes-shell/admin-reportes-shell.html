@@ -1,0 +1,55 @@
+<div class="admin-reportes-shell">
+  <div class="border-bottom bg-light shadow-sm">
+    <div class="container-fluid py-3 px-3 px-lg-4">
+      <h1 class="h4 mb-1">
+        <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Reportes
+      </h1>
+      <p class="text-muted small mb-3">
+        Informes de inventario, ventas, taller, postventa y administración.
+      </p>
+      <ul class="nav nav-pills flex-wrap gap-2 mb-0 admin-reportes-shell-nav" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a
+            class="nav-link"
+            routerLink="existencias"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Existencias
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" routerLink="inventario" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Inventario
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" routerLink="ventas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Ventas
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" routerLink="taller" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Taller
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" routerLink="postventa" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Postventa
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a
+            class="nav-link"
+            routerLink="administracion"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Administración
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <router-outlet />
+</div>

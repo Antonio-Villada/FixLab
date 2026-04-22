@@ -10,6 +10,7 @@ import {
   ProductoReqDTO,
   CategoriaRespDTO,
   TipoProductoRespDTO,
+  EntradaMercanciaRespDTO,
 } from '../../models/product.model';
 
 @Component({
@@ -48,6 +49,7 @@ export class AdminProductosComponent implements OnInit {
   filtroTexto = signal('');
   filtroCategoriaId = signal<number | null>(null);
   filtroTipoProductoId = signal<number | null>(null);
+  filtroSoloStockBajo = signal(false);
 
   /** Lista aplicando filtros actuales (sin nueva llamada al API). */
   productsFiltrados = computed(() => {
@@ -68,14 +70,23 @@ export class AdminProductosComponent implements OnInit {
     if (tipoId != null) {
       list = list.filter((p) => p.tipoProducto?.id === tipoId);
     }
+    if (this.filtroSoloStockBajo()) {
+      list = list.filter((p) => this.esStockBajo(p));
+    }
     return list;
   });
+
+  /** Productos activos con stock en o por debajo del mínimo (para aviso superior). */
+  productosConAlertaStock = computed(() =>
+    this.products().filter((p) => p.activo !== false && this.esStockBajo(p)).length,
+  );
 
   filtrosActivos = computed(
     () =>
       this.filtroTexto().trim().length > 0 ||
       this.filtroCategoriaId() != null ||
-      this.filtroTipoProductoId() != null,
+      this.filtroTipoProductoId() != null ||
+      this.filtroSoloStockBajo(),
   );
 
   form: FormGroup = this.fb.group({
@@ -84,9 +95,21 @@ export class AdminProductosComponent implements OnInit {
     descripcion: [''],
     precio: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
+    stockMinimo: [5, [Validators.required, Validators.min(0)]],
     categoriaId: [null as number | null, [Validators.required]],
     tipoProductoId: [null as number | null, [Validators.required]],
   });
+
+  /** Modal registrar entrada de mercancía. */
+  entradaProduct = signal<Product | null>(null);
+  entradaCantidad = signal('1');
+  entradaComentario = signal('');
+  entradaSubmitting = signal(false);
+
+  /** Modal historial de entradas. */
+  historialProduct = signal<Product | null>(null);
+  historialEntradas = signal<EntradaMercanciaRespDTO[]>([]);
+  historialLoading = signal(false);
 
   isEditing = computed(() => this.editingProduct() !== null);
 
@@ -94,6 +117,90 @@ export class AdminProductosComponent implements OnInit {
     this.filtroTexto.set('');
     this.filtroCategoriaId.set(null);
     this.filtroTipoProductoId.set(null);
+    this.filtroSoloStockBajo.set(false);
+  }
+
+  stockMinimoEfectivo(p: Product): number {
+    const v = p.stockMinimo;
+    return v != null && Number.isFinite(v) ? v : 5;
+  }
+
+  esStockBajo(p: Product): boolean {
+    return p.stock <= this.stockMinimoEfectivo(p);
+  }
+
+  openEntradaMercancia(product: Product): void {
+    this.entradaProduct.set(product);
+    this.entradaCantidad.set('1');
+    this.entradaComentario.set('');
+  }
+
+  closeEntradaMercancia(): void {
+    this.entradaProduct.set(null);
+    this.entradaSubmitting.set(false);
+  }
+
+  submitEntradaMercancia(): void {
+    const product = this.entradaProduct();
+    if (!product?.id) return;
+    const cant = parseInt(this.entradaCantidad().trim(), 10);
+    if (!Number.isFinite(cant) || cant < 1) {
+      this.errorMessage.set('La cantidad debe ser un entero mayor o igual a 1.');
+      return;
+    }
+    this.errorMessage.set(null);
+    this.entradaSubmitting.set(true);
+    const comentario = this.entradaComentario().trim();
+    this.productService
+      .registrarEntradaMercancia(product.id, {
+        cantidad: cant,
+        comentario: comentario.length > 0 ? comentario : undefined,
+      })
+      .subscribe({
+        next: (resp) => {
+          this.entradaSubmitting.set(false);
+          this.infoMessage.set(
+            `Entrada registrada: +${resp.cantidad} unidades. Nuevo stock: ${resp.nuevoStock}.`,
+          );
+          this.closeEntradaMercancia();
+          this.loadProducts();
+        },
+        error: (err) => {
+          this.entradaSubmitting.set(false);
+          const body = err.error;
+          let msg: string | undefined;
+          if (typeof body?.mensaje === 'string') {
+            msg = body.mensaje;
+          } else if (body && typeof body === 'object') {
+            const first = Object.values(body as Record<string, string>).find((v) => typeof v === 'string');
+            msg = first;
+          }
+          this.errorMessage.set(msg ?? 'No se pudo registrar la entrada de mercancía.');
+        },
+      });
+  }
+
+  openHistorialEntradas(product: Product): void {
+    if (!product.id) return;
+    this.historialProduct.set(product);
+    this.historialEntradas.set([]);
+    this.historialLoading.set(true);
+    this.productService.getEntradasMercancia(product.id).subscribe({
+      next: (list) => {
+        this.historialEntradas.set(list);
+        this.historialLoading.set(false);
+      },
+      error: () => {
+        this.historialLoading.set(false);
+        this.historialEntradas.set([]);
+        this.errorMessage.set('No se pudo cargar el historial de entradas.');
+      },
+    });
+  }
+
+  closeHistorialEntradas(): void {
+    this.historialProduct.set(null);
+    this.historialEntradas.set([]);
   }
 
   ngOnInit(): void {
@@ -198,6 +305,7 @@ export class AdminProductosComponent implements OnInit {
       descripcion: '',
       precio: 0,
       stock: 0,
+      stockMinimo: 5,
       categoriaId: null,
       tipoProductoId: null,
     });
@@ -213,6 +321,7 @@ export class AdminProductosComponent implements OnInit {
       descripcion: product.descripcion ?? '',
       precio: product.precio,
       stock: product.stock,
+      stockMinimo: this.stockMinimoEfectivo(product),
       categoriaId: product.categoria?.id ?? null,
       tipoProductoId: product.tipoProducto?.id ?? null,
     });
@@ -269,6 +378,7 @@ export class AdminProductosComponent implements OnInit {
       descripcion: value.descripcion || '',
       precio: Number(value.precio),
       stock: Number(value.stock),
+      stockMinimo: Number(value.stockMinimo),
       imagenUrl,
       categoriaId: Number(value.categoriaId),
       tipoProductoId: Number(value.tipoProductoId),

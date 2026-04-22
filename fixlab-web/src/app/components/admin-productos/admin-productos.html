@@ -33,6 +33,17 @@
       <button type="button" class="btn-close" (click)="infoMessage.set(null)" aria-label="Cerrar"></button>
     </div>
   }
+  @if (!modoSeleccionReparacion() && productosConAlertaStock() > 0) {
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2" role="alert">
+      <span>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Hay <strong>{{ productosConAlertaStock() }}</strong> producto(s) con stock en o por debajo del mínimo configurado.
+      </span>
+      <button type="button" class="btn btn-sm btn-outline-dark" (click)="filtroSoloStockBajo.set(true)">
+        Filtrar solo estos
+      </button>
+    </div>
+  }
 
   @if (loading()) {
     <div class="text-center py-5">
@@ -84,7 +95,17 @@
               }
             </select>
           </div>
-          <div class="col-lg-2 col-md-6">
+          <div class="col-lg-2 col-md-6 d-flex flex-column gap-2">
+            <div class="form-check mb-0">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="filtroStockBajo"
+                [checked]="filtroSoloStockBajo()"
+                (change)="filtroSoloStockBajo.set($any($event.target).checked)"
+              />
+              <label class="form-check-label small" for="filtroStockBajo">Solo stock bajo</label>
+            </div>
             <button
               type="button"
               class="btn btn-outline-secondary w-100"
@@ -125,7 +146,13 @@
               <td>{{ p.categoria?.nombre ?? '-' }}</td>
               <td>{{ p.tipoProducto?.nombre ?? '-' }}</td>
               <td>${{ p.precio | number:'1.2-2' }}</td>
-              <td>{{ p.stock }}</td>
+              <td [class.table-warning]="esStockBajo(p)">
+                <span class="fw-medium">{{ p.stock }}</span>
+                <span class="text-muted small"> / mín. {{ stockMinimoEfectivo(p) }}</span>
+                @if (esStockBajo(p)) {
+                  <span class="badge bg-warning text-dark ms-1">Bajo</span>
+                }
+              </td>
               <td>
                 @if (p.activo !== false) {
                   <span class="badge bg-success">Sí</span>
@@ -157,12 +184,20 @@
                 </td>
               } @else {
                 <td>
-                  <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(p)" title="Editar">
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(p)" title="Desactivar">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                  <div class="d-flex flex-wrap gap-1">
+                    <button type="button" class="btn btn-sm btn-outline-success" (click)="openEntradaMercancia(p)" title="Entrada de mercancía">
+                      <i class="bi bi-box-arrow-in-down"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="openHistorialEntradas(p)" title="Historial de entradas">
+                      <i class="bi bi-clock-history"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="openEdit(p)" title="Editar">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(p)" title="Desactivar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
                 </td>
               }
             </tr>
@@ -247,6 +282,11 @@
                       <label class="form-label">Stock <span class="text-danger">*</span></label>
                       <input type="number" formControlName="stock" class="form-control" min="0">
                     </div>
+                    <div class="col-12">
+                      <label class="form-label">Stock mínimo (alerta) <span class="text-danger">*</span></label>
+                      <input type="number" formControlName="stockMinimo" class="form-control" min="0" title="Se considera stock bajo cuando el stock actual es menor o igual a este valor.">
+                      <small class="text-muted">Aviso cuando el stock sea menor o igual a este número.</small>
+                    </div>
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Imagen del producto</label>
@@ -283,6 +323,107 @@
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (entradaProduct(); as ep) {
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Entrada de mercancía — {{ ep.nombre }}</h5>
+            <button type="button" class="btn-close" (click)="closeEntradaMercancia()" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <p class="small text-muted mb-3">
+              Stock actual: <strong>{{ ep.stock }}</strong>
+              · Mínimo: <strong>{{ stockMinimoEfectivo(ep) }}</strong>
+              · SKU <code>{{ ep.sku }}</code>
+            </p>
+            <div class="mb-3">
+              <label class="form-label">Cantidad a ingresar <span class="text-danger">*</span></label>
+              <input
+                type="number"
+                class="form-control"
+                min="1"
+                [ngModel]="entradaCantidad()"
+                (ngModelChange)="entradaCantidad.set($event)"
+              />
+            </div>
+            <div class="mb-0">
+              <label class="form-label">Comentario (opcional)</label>
+              <textarea
+                class="form-control"
+                rows="2"
+                maxlength="500"
+                placeholder="Ej: Factura F-10234, proveedor…"
+                [ngModel]="entradaComentario()"
+                (ngModelChange)="entradaComentario.set($event)"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeEntradaMercancia()">Cancelar</button>
+            <button
+              type="button"
+              class="btn btn-success"
+              [disabled]="entradaSubmitting()"
+              (click)="submitEntradaMercancia()"
+            >
+              @if (entradaSubmitting()) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              }
+              Registrar entrada
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (historialProduct(); as hp) {
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Entradas de mercancía — {{ hp.nombre }}</h5>
+            <button type="button" class="btn-close" (click)="closeHistorialEntradas()" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            @if (historialLoading()) {
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+              </div>
+            } @else if (historialEntradas().length === 0) {
+              <p class="text-muted mb-0">No hay entradas registradas para este producto.</p>
+            } @else {
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Cantidad</th>
+                      <th>Comentario</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (e of historialEntradas(); track e.id) {
+                      <tr>
+                        <td>{{ e.fechaRegistro | date: 'short' }}</td>
+                        <td><span class="badge bg-success">+{{ e.cantidad }}</span></td>
+                        <td>{{ e.comentario || '—' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeHistorialEntradas()">Cerrar</button>
+          </div>
         </div>
       </div>
     </div>

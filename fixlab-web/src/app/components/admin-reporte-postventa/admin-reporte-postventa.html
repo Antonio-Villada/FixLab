@@ -1,0 +1,68 @@
+<div class="container-fluid py-3 px-3 px-lg-4">
+  <h2 class="h5 mb-3">Postventa</h2>
+
+  <ul class="nav nav-tabs mb-3 flex-wrap">
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'pqrs'" (click)="setTab('pqrs')">PQRS</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'gar'" (click)="setTab('gar')">Garantías servicio</button></li>
+  </ul>
+
+  @if (tab() === 'pqrs') {
+    <div class="row g-2 align-items-end mb-3 no-print">
+      <div class="col-md-3">
+        <label class="form-label small text-muted mb-0">Desde</label>
+        <input type="date" class="form-control" [ngModel]="desde()" (ngModelChange)="desde.set($event)" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small text-muted mb-0">Hasta</label>
+        <input type="date" class="form-control" [ngModel]="hasta()" (ngModelChange)="hasta.set($event)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+      </div>
+    </div>
+  } @else {
+    <div class="row g-2 align-items-end mb-3 no-print">
+      <div class="col-md-3">
+        <label class="form-label small text-muted mb-0">Días ventana próximas</label>
+        <input type="number" class="form-control" min="1" max="730" [ngModel]="diasGarantia()" (ngModelChange)="diasGarantia.set(+$event)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+      </div>
+    </div>
+  }
+
+  @if (error()) { <div class="alert alert-danger">{{ error() }}</div> }
+  @if (loading()) { <div class="text-center py-4"><div class="spinner-border text-primary"></div></div> }
+  @else if (tab() === 'pqrs' && pqrs(); as p) {
+    <p class="small">Total solicitudes radicadas en el rango: <strong>{{ p.totalSolicitudes }}</strong>
+      @if (p.diasPromedioHastaCierre != null) { · Días promedio hasta cierre (resuelto/cerrado): <strong>{{ p.diasPromedioHastaCierre | number: '1.1-1' }}</strong> }
+    </p>
+    <div class="row">
+      <div class="col-md-6">
+        <h6>Por tipo</h6>
+        <table class="table table-sm"><tbody>
+          @for (x of p.porTipo; track x.tipo) { <tr><td>{{ x.tipo }}</td><td>{{ x.cantidad }}</td></tr> }
+        </tbody></table>
+      </div>
+      <div class="col-md-6">
+        <h6>Por estado</h6>
+        <table class="table table-sm"><tbody>
+          @for (x of p.porEstado; track x.estado) { <tr><td>{{ x.estado }}</td><td>{{ x.cantidad }}</td></tr> }
+        </tbody></table>
+      </div>
+    </div>
+  } @else if (tab() === 'gar' && gar(); as g) {
+    <p class="small text-muted">Vencidas (fin anterior a hoy): <strong>{{ g.vencidas }}</strong> · Próximas (ventana {{ g.diasVentana }} d): <strong>{{ g.proximasAVencer }}</strong></p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>Ticket</th><th>Cliente</th><th>Fin garantía</th><th>Situación</th></tr></thead>
+        <tbody>
+          @for (l of g.lineas; track l.reparacionId) {
+            <tr><td>{{ l.numeroTicket }}</td><td>{{ l.clienteNombre }}</td><td>{{ l.fechaFinGarantia }}</td><td>{{ l.situacion }}</td></tr>
+          } @empty { <tr><td colspan="4" class="text-muted text-center">Sin registros</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

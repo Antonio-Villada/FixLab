@@ -15,6 +15,7 @@ public class ProductoRespDTO {
     private String descripcion;
     private Double precio;
     private Integer stock;
+    private Integer stockMinimo;
     private String sku;
     private String imagenUrl;
     private Boolean activo;

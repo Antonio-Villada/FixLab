@@ -1,0 +1,12 @@
+.admin-reportes-shell .nav-pills .nav-link.active {
+  background-color: var(--bs-primary);
+  color: #fff;
+}
+
+.admin-reportes-shell .nav-pills .nav-link:not(.active):not(.disabled):hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.08);
+}
+
+.admin-reportes-shell-nav .nav-link {
+  font-size: 0.9rem;
+}

@@ -6,6 +6,8 @@ import {
   ProductoReqDTO,
   CategoriaRespDTO,
   TipoProductoRespDTO,
+  EntradaMercanciaReqDTO,
+  EntradaMercanciaRespDTO,
 } from '../models/product.model';
 import { environment } from '../../environments/environment';
 
@@ -16,6 +18,9 @@ export class ProductService {
   private http = inject(HttpClient);
   private readonly apiBase = environment.apiBaseUrl?.replace(/\/$/, '') ?? '';
   private readonly baseUrl = this.apiBase ? `${this.apiBase}/api/productos` : '/api/productos';
+  private readonly adminProductosUrl = this.apiBase
+    ? `${this.apiBase}/api/admin/productos`
+    : '/api/admin/productos';
   private readonly categoriasUrl = this.apiBase ? `${this.apiBase}/api/categorias` : '/api/categorias';
   private readonly tiposUrl = this.apiBase ? `${this.apiBase}/api/tipos-producto` : '/api/tipos-producto';
 
@@ -57,6 +62,7 @@ export class ProductService {
     formData.append('descripcion', data.descripcion ?? '');
     formData.append('precio', String(data.precio));
     formData.append('stock', String(data.stock));
+    formData.append('stockMinimo', String(data.stockMinimo ?? 5));
     formData.append('sku', data.sku);
     formData.append('imagenUrl', data.imagenUrl ?? '');
     formData.append('categoriaId', String(data.categoriaId));
@@ -69,5 +75,28 @@ export class ProductService {
 
   delete(id: number): Observable<unknown> {
     return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  /** Admin: productos activos con stock en o por debajo del mínimo configurado. */
+  getProductosStockBajo(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.adminProductosUrl}/stock-bajo`);
+  }
+
+  /** Admin: registra una entrada de mercancía y aumenta el stock. */
+  registrarEntradaMercancia(
+    productoId: number,
+    body: EntradaMercanciaReqDTO,
+  ): Observable<EntradaMercanciaRespDTO> {
+    return this.http.post<EntradaMercanciaRespDTO>(
+      `${this.adminProductosUrl}/${productoId}/entrada-mercancia`,
+      body,
+    );
+  }
+
+  /** Admin: historial de entradas de mercancía de un producto. */
+  getEntradasMercancia(productoId: number): Observable<EntradaMercanciaRespDTO[]> {
+    return this.http.get<EntradaMercanciaRespDTO[]>(
+      `${this.adminProductosUrl}/${productoId}/entradas-mercancia`,
+    );
   }
 }
