@@ -32,6 +32,13 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
+    /**
+     * Umbral para alertas de stock bajo (productos activos con stock en o por debajo de este valor).
+     * Si es null en BD legada, el backend trata 5 como valor por defecto.
+     */
+    @Column(name = "stock_minimo")
+    private Integer stockMinimo;
+
     // Aquí guardaremos el link de Cloudinary
     @Column(name = "imagen_url", length = 500)
     private String imagenUrl;

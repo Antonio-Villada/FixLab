@@ -1,0 +1,14 @@
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .reporte-existencias .table {
+    font-size: 10pt;
+  }
+
+  .reporte-existencias .card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
+}

@@ -68,13 +68,23 @@
             <a class="nav-link px-3" routerLink="/admin/taller/recepcion" [class.active]="tallerNavActivo()">Taller</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+            <a
+              class="nav-link px-3"
+              routerLink="/admin/reportes"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: false }"
+            >
+              Reportes
+            </a>
           </li>
           @if (enablePostventaModule) {
             <li class="nav-item">
               <a class="nav-link px-3" routerLink="/admin/postventa" routerLinkActive="active">Postventa</a>
             </li>
           }
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+          </li>
         }
       </ul>
 

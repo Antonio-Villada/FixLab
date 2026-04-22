@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -33,4 +34,8 @@ public interface SolicitudPqrRepository extends JpaRepository<SolicitudPqr, Long
     Optional<SolicitudPqr> findByIdAndCliente_Cedula(Long id, String clienteCedula);
 
     boolean existsByCliente_CedulaAndEstadoNotIn(String clienteCedula, Collection<EstadoSolicitudPqr> estados);
+
+    List<SolicitudPqr> findByFechaRadicacionGreaterThanEqualAndFechaRadicacionBeforeOrderByFechaRadicacionDesc(
+            LocalDateTime desdeInclusive,
+            LocalDateTime hastaExclusive);
 }

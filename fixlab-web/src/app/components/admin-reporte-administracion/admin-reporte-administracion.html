@@ -1,0 +1,63 @@
+<div class="container-fluid py-3 px-3 px-lg-4">
+  <h2 class="h5 mb-3">Administración</h2>
+
+  <ul class="nav nav-tabs mb-3 flex-wrap">
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'cli'" (click)="setTab('cli')">Clientes (compras)</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'usr'" (click)="setTab('usr')">Usuarios por rol</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'fin'" (click)="setTab('fin')">Financiero</button></li>
+  </ul>
+
+  @if (tab() !== 'usr') {
+    <div class="row g-2 align-items-end mb-3 no-print">
+      <div class="col-md-3">
+        <label class="form-label small text-muted mb-0">Desde</label>
+        <input type="date" class="form-control" [ngModel]="desde()" (ngModelChange)="desde.set($event)" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small text-muted mb-0">Hasta</label>
+        <input type="date" class="form-control" [ngModel]="hasta()" (ngModelChange)="hasta.set($event)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+      </div>
+    </div>
+  } @else {
+    <div class="mb-3 no-print">
+      <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+    </div>
+  }
+
+  @if (error()) { <div class="alert alert-danger">{{ error() }}</div> }
+  @if (loading()) { <div class="text-center py-4"><div class="spinner-border text-primary"></div></div> }
+  @else if (tab() === 'cli' && cli(); as c) {
+    <p class="small">Clientes distintos con pedido <strong>PAGADO</strong> en el rango: <strong>{{ c.clientesDistintosConCompra }}</strong></p>
+    <h6>Top por monto</h6>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>Cliente</th><th>Pedidos</th><th>Monto</th></tr></thead>
+        <tbody>
+          @for (l of c.topClientes; track l.clienteCedula) {
+            <tr><td>{{ l.clienteNombre }} <small class="text-muted">({{ l.clienteCedula }})</small></td><td>{{ l.pedidosPagados }}</td><td>${{ l.montoTotal | number: '1.2-2' }}</td></tr>
+          } @empty { <tr><td colspan="3" class="text-muted text-center">Sin datos</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  } @else if (tab() === 'usr' && usr(); as u) {
+    <p class="small text-muted">Total usuarios: <strong>{{ u.totalUsuarios }}</strong></p>
+    <table class="table table-sm table-bordered">
+      <thead class="table-light"><tr><th>Rol</th><th>Total</th><th>Activos</th></tr></thead>
+      <tbody>
+        @for (l of u.lineas; track l.rol) {
+          <tr><td>{{ l.rol }}</td><td>{{ l.cantidadUsuarios }}</td><td>{{ l.activos }}</td></tr>
+        }
+      </tbody>
+    </table>
+  } @else if (tab() === 'fin' && fin(); as f) {
+    <div class="row g-2">
+      <div class="col-md-4"><div class="border rounded p-3">Valor inventario (activos)<br><strong>${{ f.valorInventarioActivos | number: '1.2-2' }}</strong></div></div>
+      <div class="col-md-4"><div class="border rounded p-3">Ventas pagadas (periodo)<br><strong>${{ f.ventasPagadasPeriodo | number: '1.2-2' }}</strong></div></div>
+      <div class="col-md-4"><div class="border rounded p-3">Ventas entregadas (periodo)<br><strong>${{ f.ventasEntregadasPeriodo | number: '1.2-2' }}</strong></div></div>
+    </div>
+    <p class="small mt-2 text-muted">Pedidos pagados en el periodo: <strong>{{ f.pedidosPagadosPeriodo }}</strong></p>
+  }
+</div>

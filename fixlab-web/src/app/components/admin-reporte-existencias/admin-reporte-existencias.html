@@ -1,0 +1,159 @@
+<div class="container-fluid py-4 reporte-existencias">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4 no-print">
+    <div>
+      <h2 class="h4 mb-1">
+        <i class="bi bi-clipboard-data me-2 text-primary"></i>Existencias
+      </h2>
+      <p class="text-muted small mb-0">
+        Inventario actual por SKU: unidades, mínimos, valor estimado (activos) y estado.
+      </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <button type="button" class="btn btn-outline-primary" (click)="cargar()" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+        }
+        Actualizar
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="imprimir()" [disabled]="!reporte()">
+        <i class="bi bi-printer me-1"></i> Imprimir
+      </button>
+      <button type="button" class="btn btn-success" (click)="descargarCsv()" [disabled]="csvDownloading() || !reporte()">
+        @if (csvDownloading()) {
+          <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+        }
+        <i class="bi bi-filetype-csv me-1"></i> Descargar CSV
+      </button>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger alert-dismissible fade show no-print" role="alert">
+      {{ errorMessage() }}
+      <button type="button" class="btn-close" (click)="errorMessage.set(null)" aria-label="Cerrar"></button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="text-center py-5 no-print">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">Generando reporte…</p>
+    </div>
+  } @else if (reporte(); as rep) {
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-xl-2">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="text-muted small">Referencias (SKU)</div>
+            <div class="fs-4 fw-semibold">{{ rep.resumen.totalProductos }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-2">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="text-muted small">Activos / Inactivos</div>
+            <div class="fs-5 fw-semibold">
+              {{ rep.resumen.productosActivos }} <span class="text-muted">/</span> {{ rep.resumen.productosInactivos }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-2">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="text-muted small">Unidades en stock</div>
+            <div class="fs-4 fw-semibold">{{ rep.resumen.totalUnidadesStock }}</div>
+            <div class="small text-muted">Activos: {{ rep.resumen.totalUnidadesStockActivos }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-2">
+        <div class="card border-0 shadow-sm h-100 border-warning-subtle">
+          <div class="card-body py-3">
+            <div class="text-muted small">Stock bajo (activos)</div>
+            <div class="fs-4 fw-semibold text-warning-emphasis">{{ rep.resumen.productosConStockBajo }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-xl-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="text-muted small">Valor inventario (activos)</div>
+            <div class="fs-4 fw-semibold">${{ rep.resumen.valorInventarioActivos | number: '1.2-2' }}</div>
+            <div class="small text-muted">Σ (stock × precio) · generado {{ rep.resumen.fechaGeneracion | date: 'medium' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3 no-print">
+      <div class="card-body py-3">
+        <label class="form-label small fw-semibold text-muted mb-1">Filtrar tabla (SKU, nombre, categoría, tipo)</label>
+        <input
+          type="search"
+          class="form-control"
+          placeholder="Buscar en el reporte…"
+          autocomplete="off"
+          [ngModel]="filtroTexto()"
+          (ngModelChange)="filtroTexto.set($event)"
+        />
+      </div>
+    </div>
+
+    <div class="table-responsive card shadow-sm border-0">
+      <div class="card-body p-0">
+        <table class="table table-hover table-sm align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>SKU</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Tipo</th>
+              <th class="text-center">Activo</th>
+              <th class="text-end">Stock</th>
+              <th class="text-end">Mín.</th>
+              <th class="text-end">Precio</th>
+              <th class="text-end">Valor exist.</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of lineasFiltradas(); track l.sku + l.nombre) {
+              <tr [ngClass]="filaClase(l)">
+                <td><code>{{ l.sku }}</code></td>
+                <td>{{ l.nombre }}</td>
+                <td>{{ l.categoriaNombre }}</td>
+                <td>{{ l.tipoProductoNombre }}</td>
+                <td class="text-center">
+                  @if (l.activo) {
+                    <span class="badge bg-success">Sí</span>
+                  } @else {
+                    <span class="badge bg-secondary">No</span>
+                  }
+                </td>
+                <td class="text-end">{{ l.stock }}</td>
+                <td class="text-end">{{ l.stockMinimo }}</td>
+                <td class="text-end">${{ l.precioUnitario | number: '1.2-2' }}</td>
+                <td class="text-end">${{ l.valorExistencia | number: '1.2-2' }}</td>
+                <td>
+                  @if (l.estadoExistencia === 'BAJO') {
+                    <span class="badge bg-warning text-dark">{{ l.estadoExistencia }}</span>
+                  } @else if (l.estadoExistencia === 'Inactivo') {
+                    <span class="badge bg-secondary">{{ l.estadoExistencia }}</span>
+                  } @else {
+                    <span class="badge bg-light text-dark border">{{ l.estadoExistencia }}</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="10" class="text-center text-muted py-4">No hay líneas que coincidan con el filtro.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

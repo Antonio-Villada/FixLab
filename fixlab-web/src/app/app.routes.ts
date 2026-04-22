@@ -30,6 +30,13 @@ import { tallerRecepcionShellGuard } from './guards/taller-recepcion-shell-guard
 import { TallerDefaultRedirectComponent } from './components/taller-default-redirect/taller-default-redirect';
 import { MisPqrsComponent } from './components/mis-pqrs/mis-pqrs';
 import { AdminPostventaComponent } from './components/admin-postventa/admin-postventa';
+import { AdminReportesShellComponent } from './components/admin-reportes-shell/admin-reportes-shell';
+import { AdminReporteExistenciasComponent } from './components/admin-reporte-existencias/admin-reporte-existencias';
+import { AdminReporteInventarioComponent } from './components/admin-reporte-inventario/admin-reporte-inventario';
+import { AdminReporteVentasComponent } from './components/admin-reporte-ventas/admin-reporte-ventas';
+import { AdminReporteTallerComponent } from './components/admin-reporte-taller/admin-reporte-taller';
+import { AdminReportePostventaComponent } from './components/admin-reporte-postventa/admin-reporte-postventa';
+import { AdminReporteAdministracionComponent } from './components/admin-reporte-administracion/admin-reporte-administracion';
 import { postventaFeatureGuard } from './guards/postventa-feature-guard';
 import { MisComprasComponent } from './components/mis-compras/mis-compras';
 import { clienteGuard } from './guards/cliente-guard';
@@ -66,6 +73,20 @@ export const routes: Routes = [
   { path: 'factura/:id', component: FacturaComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminRedirectComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/productos', component: AdminProductosComponent, canActivate: [authGuard, adminGuard] },
+  {
+    path: 'admin/reportes',
+    component: AdminReportesShellComponent,
+    canActivate: [authGuard, adminGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'existencias' },
+      { path: 'existencias', component: AdminReporteExistenciasComponent },
+      { path: 'inventario', component: AdminReporteInventarioComponent },
+      { path: 'ventas', component: AdminReporteVentasComponent },
+      { path: 'taller', component: AdminReporteTallerComponent },
+      { path: 'postventa', component: AdminReportePostventaComponent },
+      { path: 'administracion', component: AdminReporteAdministracionComponent },
+    ],
+  },
   { path: 'admin/pedidos', component: AdminPedidosComponent, canActivate: [authGuard, adminGuard] },
   {
     path: 'admin/taller',

@@ -28,4 +28,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> { // <
     List<Usuario> findTop20ByRolAndCedulaContainingIgnoreCaseAndActivoTrueOrderByCedulaAsc(RolUsuario rol, String cedulaFragment);
 
     List<Usuario> findByRolInOrderByApellidoAscNombreAsc(Collection<RolUsuario> roles);
+
+    long countByRol(RolUsuario rol);
+
+    long countByRolAndActivoTrue(RolUsuario rol);
 }

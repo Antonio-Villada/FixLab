@@ -1,0 +1,59 @@
+<div class="container-fluid py-3 px-3 px-lg-4">
+  <h2 class="h5 mb-3">Taller</h2>
+
+  <div class="row g-2 align-items-end mb-3 no-print">
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-0">Desde</label>
+      <input type="date" class="form-control" [ngModel]="desde()" (ngModelChange)="desde.set($event)" />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-0">Hasta</label>
+      <input type="date" class="form-control" [ngModel]="hasta()" (ngModelChange)="hasta.set($event)" />
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs mb-3 flex-wrap">
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'est'" (click)="setTab('est')">Por estado</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'tec'" (click)="setTab('tec')">Rendimiento técnico</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'rep'" (click)="setTab('rep')">Repuestos usados</button></li>
+  </ul>
+
+  @if (error()) { <div class="alert alert-danger">{{ error() }}</div> }
+  @if (loading()) { <div class="text-center py-4"><div class="spinner-border text-primary"></div></div> }
+  @else if (tab() === 'est' && est(); as e) {
+    <p class="small text-muted">Reparaciones creadas en el rango: <strong>{{ e.totalReparacionesPeriodo }}</strong></p>
+    <table class="table table-sm table-bordered"><thead class="table-light"><tr><th>Estado</th><th>Cantidad</th></tr></thead>
+      <tbody>
+        @for (l of e.lineas; track l.estado) {
+          <tr><td>{{ l.estado }}</td><td>{{ l.cantidad }}</td></tr>
+        } @empty { <tr><td colspan="2" class="text-muted text-center">Sin datos</td></tr> }
+      </tbody>
+    </table>
+  } @else if (tab() === 'tec' && tec(); as t) {
+    <p class="small text-muted">Entregadas vs. otras (no entregada ni cancelada) en el periodo.</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>Técnico</th><th>Entregadas</th><th>Otras activas</th></tr></thead>
+        <tbody>
+          @for (l of t.lineas; track l.tecnicoCedula) {
+            <tr><td>{{ l.tecnicoNombre }} <small class="text-muted">({{ l.tecnicoCedula }})</small></td><td>{{ l.reparacionesEntregadas }}</td><td>{{ l.reparacionesActivasOtras }}</td></tr>
+          } @empty { <tr><td colspan="3" class="text-muted text-center">Sin técnicos con datos</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  } @else if (tab() === 'rep' && rep(); as r) {
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>SKU</th><th>Producto</th><th>Uds.</th><th>Valor</th></tr></thead>
+        <tbody>
+          @for (l of r.lineas; track l.productoId) {
+            <tr><td><code>{{ l.sku }}</code></td><td>{{ l.nombreProducto }}</td><td>{{ l.unidadesUsadas }}</td><td>${{ l.valorTotal | number: '1.2-2' }}</td></tr>
+          } @empty { <tr><td colspan="4" class="text-muted text-center">Sin repuestos en el periodo</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

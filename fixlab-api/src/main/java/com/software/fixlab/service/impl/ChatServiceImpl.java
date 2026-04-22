@@ -35,7 +35,7 @@ public class ChatServiceImpl implements ChatService {
     private final UsuarioRepository usuarioRepository;
     private final PedidoRepository pedidoRepository;
     private final ReparacionRepository reparacionRepository;
-    private final GeminiChatClient geminiChatClient;
+    private final OllamaChatClient ollamaChatClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,7 +65,7 @@ public class ChatServiceImpl implements ChatService {
 
         List<ChatMensaje> historialAsc = chatMensajeRepository.findByUsuarioEmailOrderByCreadoEnAsc(email);
         String contextoTurno = buildTurnContext(usuario, body);
-        var iaReply = geminiChatClient
+        var iaReply = ollamaChatClient
                 .generateReply(historialAsc, usuario.getRol(), contextoTurno)
                 .filter(s -> !s.isBlank());
         String replyText = iaReply.orElseGet(() -> ChatHybridResponder.reply(t, usuario.getRol(), contextoTurno));

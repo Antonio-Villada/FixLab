@@ -1,0 +1,96 @@
+<div class="container-fluid py-3 px-3 px-lg-4">
+  <h2 class="h5 mb-3">Inventario avanzado</h2>
+
+  <div class="row g-2 align-items-end mb-3 no-print">
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-0">Desde</label>
+      <input type="date" class="form-control" [ngModel]="desde()" (ngModelChange)="desde.set($event)" />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-0">Hasta</label>
+      <input type="date" class="form-control" [ngModel]="hasta()" (ngModelChange)="hasta.set($event)" />
+    </div>
+    <div class="col-md-3">
+      <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs mb-3 flex-wrap">
+    <li class="nav-item">
+      <button type="button" class="nav-link" [class.active]="tab() === 'mov'" (click)="setTab('mov')">Movimientos stock</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="nav-link" [class.active]="tab() === 'sin'" (click)="setTab('sin')">Sin ventas (activos)</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="nav-link" [class.active]="tab() === 'rot'" (click)="setTab('rot')">Rotación</button>
+    </li>
+  </ul>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+  @if (loading()) {
+    <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+  } @else if (tab() === 'mov' && mov(); as m) {
+    <p class="text-muted small">Generado {{ m.meta.generadoEn | date: 'medium' }}</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>Fecha</th><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Comentario</th></tr></thead>
+        <tbody>
+          @for (l of m.lineas; track l.id) {
+            <tr>
+              <td>{{ l.fechaRegistro | date: 'short' }}</td>
+              <td><code>{{ l.sku }}</code></td>
+              <td>{{ l.nombreProducto }}</td>
+              <td><span class="badge bg-success">+{{ l.cantidad }}</span></td>
+              <td>{{ l.comentario || '—' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="text-muted text-center">Sin movimientos en el rango.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (tab() === 'sin' && sin(); as s) {
+    <p class="text-muted small">Activos sin línea en pedidos <strong>PAGADO</strong> en el rango: {{ s.totalProductosActivosSinVentas }}</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>SKU</th><th>Nombre</th><th>Categoría</th><th>Tipo</th><th>Stock</th></tr></thead>
+        <tbody>
+          @for (l of s.lineas; track l.sku) {
+            <tr>
+              <td><code>{{ l.sku }}</code></td>
+              <td>{{ l.nombre }}</td>
+              <td>{{ l.categoriaNombre }}</td>
+              <td>{{ l.tipoProductoNombre }}</td>
+              <td>{{ l.stock }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="text-muted text-center">Todos los activos tuvieron al menos una venta pagada en el periodo.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (tab() === 'rot' && rot(); as r) {
+    <p class="text-muted small">Solo productos con ventas <strong>PAGADO</strong> en el rango. Índice ≈ vendido / stock actual.</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>SKU</th><th>Nombre</th><th>Vendidas</th><th>Stock</th><th>Índice</th></tr></thead>
+        <tbody>
+          @for (l of r.lineas; track l.productoId) {
+            <tr>
+              <td><code>{{ l.sku }}</code></td>
+              <td>{{ l.nombre }}</td>
+              <td>{{ l.unidadesVendidasPeriodo }}</td>
+              <td>{{ l.stockActual }}</td>
+              <td>{{ l.indiceRotacion | number: '1.2-2' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="text-muted text-center">Sin datos de venta en el periodo.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

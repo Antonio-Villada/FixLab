@@ -1,0 +1,85 @@
+<div class="container-fluid py-3 px-3 px-lg-4">
+  <h2 class="h5 mb-3">Ventas y logística</h2>
+
+  <div class="row g-2 align-items-end mb-3 no-print">
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-0">Desde</label>
+      <input type="date" class="form-control" [ngModel]="desde()" (ngModelChange)="desde.set($event)" />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-0">Hasta</label>
+      <input type="date" class="form-control" [ngModel]="hasta()" (ngModelChange)="hasta.set($event)" />
+    </div>
+    <div class="col-md-2" [class.d-none]="tab() !== 'top'">
+      <label class="form-label small text-muted mb-0">Top N</label>
+      <input type="number" class="form-control" min="1" max="100" [ngModel]="limiteTop()" (ngModelChange)="limiteTop.set(+$event)" />
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading()">Actualizar</button>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs mb-3 flex-wrap">
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'res'" (click)="setTab('res')">Resumen</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'cat'" (click)="setTab('cat')">Por categoría</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'top'" (click)="setTab('top')">Top productos</button></li>
+    <li class="nav-item"><button type="button" class="nav-link" [class.active]="tab() === 'log'" (click)="setTab('log')">Pedidos logística</button></li>
+  </ul>
+
+  @if (error()) { <div class="alert alert-danger">{{ error() }}</div> }
+  @if (loading()) { <div class="text-center py-4"><div class="spinner-border text-primary"></div></div> }
+  @else if (tab() === 'res' && res(); as r) {
+    <div class="row g-2 mb-3">
+      <div class="col-6 col-md-3"><div class="border rounded p-2 small">Pedidos periodo<br><strong>{{ r.totalPedidosPeriodo }}</strong></div></div>
+      <div class="col-6 col-md-3"><div class="border rounded p-2 small">Pagados<br><strong>{{ r.pedidosPagados }}</strong></div></div>
+      <div class="col-6 col-md-3"><div class="border rounded p-2 small">Entregados<br><strong>{{ r.pedidosEntregados }}</strong></div></div>
+      <div class="col-6 col-md-3"><div class="border rounded p-2 small">Cancelados<br><strong>{{ r.pedidosCancelados }}</strong></div></div>
+    </div>
+    <p class="small text-muted">Monto pagado: <strong>${{ r.totalMontoPedidosPagados | number: '1.2-2' }}</strong> · Monto entregado: <strong>${{ r.totalMontoPedidosEntregados | number: '1.2-2' }}</strong> · Total pedidos (todos estados): <strong>${{ r.totalMontoTodosEstados | number: '1.2-2' }}</strong></p>
+    @if (r.ticketPromedioPagados != null) {
+      <p class="small">Ticket promedio (pagados): <strong>${{ r.ticketPromedioPagados | number: '1.2-2' }}</strong></p>
+    }
+    <h6 class="mt-3">Por estado</h6>
+    <table class="table table-sm"><tbody>
+      @for (k of estadosKeys(r); track k) {
+        <tr><td>{{ k }}</td><td>{{ r.pedidosPorEstado[k] }}</td></tr>
+      }
+    </tbody></table>
+  } @else if (tab() === 'cat' && cat(); as c) {
+    <p class="small text-muted">Monto total pagado (líneas): ${{ c.montoTotalPagado | number: '1.2-2' }}</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>Categoría</th><th>Unidades</th><th>Monto</th><th>%</th></tr></thead>
+        <tbody>
+          @for (l of c.lineas; track l.categoriaId) {
+            <tr><td>{{ l.categoriaNombre }}</td><td>{{ l.unidadesVendidas }}</td><td>${{ l.montoTotal | number: '1.2-2' }}</td><td>{{ l.participacionPorcentaje | number: '1.1-1' }}%</td></tr>
+          } @empty { <tr><td colspan="4" class="text-center text-muted">Sin datos</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  } @else if (tab() === 'top' && top(); as t) {
+    <p class="small text-muted">Top {{ t.limite }} por monto (pedidos PAGADO)</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>SKU</th><th>Producto</th><th>Uds.</th><th>Monto</th></tr></thead>
+        <tbody>
+          @for (l of t.lineas; track l.productoId) {
+            <tr><td><code>{{ l.sku }}</code></td><td>{{ l.nombre }}</td><td>{{ l.unidadesVendidas }}</td><td>${{ l.montoTotal | number: '1.2-2' }}</td></tr>
+          } @empty { <tr><td colspan="4" class="text-center text-muted">Sin datos</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  } @else if (tab() === 'log' && log(); as g) {
+    <p class="small text-muted">Estados <strong>PAGADO</strong> y <strong>ENVIADO</strong> (máx. 500 más recientes). Generado {{ g.generadoEn | date: 'medium' }}</p>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light"><tr><th>#</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Cliente</th></tr></thead>
+        <tbody>
+          @for (l of g.lineas; track l.pedidoId) {
+            <tr><td>{{ l.pedidoId }}</td><td>{{ l.fechaCreacion | date: 'short' }}</td><td>{{ l.estado }}</td><td>${{ l.total | number: '1.2-2' }}</td><td>{{ l.clienteNombre }}</td></tr>
+          } @empty { <tr><td colspan="5" class="text-center text-muted">Sin pedidos en esos estados</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
