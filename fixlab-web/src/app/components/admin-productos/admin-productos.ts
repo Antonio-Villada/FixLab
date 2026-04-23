@@ -143,7 +143,8 @@ export class AdminProductosComponent implements OnInit {
   submitEntradaMercancia(): void {
     const product = this.entradaProduct();
     if (!product?.id) return;
-    const cant = parseInt(this.entradaCantidad().trim(), 10);
+    const rawCant = String(this.entradaCantidad() ?? '').trim();
+    const cant = parseInt(rawCant, 10);
     if (!Number.isFinite(cant) || cant < 1) {
       this.errorMessage.set('La cantidad debe ser un entero mayor o igual a 1.');
       return;

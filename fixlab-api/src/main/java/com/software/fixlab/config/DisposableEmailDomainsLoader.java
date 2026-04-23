@@ -1,19 +1,19 @@
 package com.software.fixlab.config;
 
-import com.software.fixlab.util.DisposableEmailValidator;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.software.fixlab.util.DisposableEmailValidator;
 
 /**
  * Al arranque de la aplicación, descarga la lista pública de dominios de correo temporal
