@@ -15,5 +15,5 @@ export const environment: Environment = {
    */
   appBaseUrlForWompi: 'https://app.fixlabcol.com',
   /** Cambia a true cuando quieras publicar PQRS/postventa en app.fixlabcol.com */
-  enablePostventaModule: false,
+  enablePostventaModule: true,
 };

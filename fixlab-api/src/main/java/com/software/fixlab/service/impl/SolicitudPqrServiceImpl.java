@@ -77,7 +77,7 @@ public class SolicitudPqrServiceImpl implements SolicitudPqrService {
             pedido = pedidoRepository.findByIdAndCliente_Cedula(dto.getPedidoId(), cliente.getCedula())
                     .orElseThrow(() -> new BadRequestException(
                             "La factura de venta no existe o no está asociada a su cuenta"));
-        } else {
+        } else if (dto.getOrigenDocumento() == OrigenDocumentoPqr.TICKET_REPARACION) {
             reparacion = reparacionRepository.findByIdAndCliente_Cedula(dto.getReparacionId(), cliente.getCedula())
                     .orElseThrow(() -> new BadRequestException(
                             "El ticket de servicio no existe o no está asociado a su cuenta"));
@@ -119,15 +119,55 @@ public class SolicitudPqrServiceImpl implements SolicitudPqrService {
     }
 
     private void validarOrigenYReferencias(SolicitudPqrCreateReqDTO dto) {
-        if (dto.getOrigenDocumento() == OrigenDocumentoPqr.FACTURA_PEDIDO) {
-            if (dto.getPedidoId() == null || dto.getReparacionId() != null) {
+        TipoSolicitudPqr tipo = dto.getTipo();
+        boolean exigeDocumento =
+                tipo == TipoSolicitudPqr.RECLAMO || tipo == TipoSolicitudPqr.SOLICITUD_GARANTIA;
+
+        Integer pid = dto.getPedidoId();
+        Integer rid = dto.getReparacionId();
+        OrigenDocumentoPqr origen = dto.getOrigenDocumento();
+
+        if (!exigeDocumento) {
+            if (origen == OrigenDocumentoPqr.SIN_REFERENCIA) {
+                if (pid != null || rid != null) {
+                    throw new BadRequestException(
+                            "Si radica sin documento de respaldo, no envíe número de pedido ni de reparación");
+                }
+                return;
+            }
+            if (origen == OrigenDocumentoPqr.FACTURA_PEDIDO) {
+                if (pid == null || rid != null) {
+                    throw new BadRequestException("Indique solo el número de pedido (factura) asociado a su compra");
+                }
+                return;
+            }
+            if (origen == OrigenDocumentoPqr.TICKET_REPARACION) {
+                if (rid == null || pid != null) {
+                    throw new BadRequestException("Indique solo el identificador del ticket de servicio (reparación)");
+                }
+                return;
+            }
+            throw new BadRequestException("Origen de documento no válido para esta solicitud");
+        }
+
+        if (origen == OrigenDocumentoPqr.SIN_REFERENCIA || (pid == null && rid == null)) {
+            throw new BadRequestException(tipo == TipoSolicitudPqr.RECLAMO
+                    ? "Para reclamos debe indicar la factura de compra o el ticket de servicio asociado a su cuenta"
+                    : "Para solicitudes de garantía debe indicar la factura de compra o el ticket de servicio");
+        }
+        if (origen == OrigenDocumentoPqr.FACTURA_PEDIDO) {
+            if (pid == null || rid != null) {
                 throw new BadRequestException("Indique solo el número de pedido (factura) asociado a su compra");
             }
-        } else {
-            if (dto.getReparacionId() == null || dto.getPedidoId() != null) {
+            return;
+        }
+        if (origen == OrigenDocumentoPqr.TICKET_REPARACION) {
+            if (rid == null || pid != null) {
                 throw new BadRequestException("Indique solo el identificador del ticket de servicio (reparación)");
             }
+            return;
         }
+        throw new BadRequestException("Origen de documento no válido para esta solicitud");
     }
 
     private void validarVigenciaGarantiaPedido(Pedido p) {
@@ -365,6 +405,7 @@ public class SolicitudPqrServiceImpl implements SolicitudPqrService {
             case QUEJA -> "Queja";
             case RECLAMO -> "Reclamo";
             case SOLICITUD_GARANTIA -> "Solicitud de garantía";
+            case SUGERENCIA -> "Sugerencia";
         };
     }
 }

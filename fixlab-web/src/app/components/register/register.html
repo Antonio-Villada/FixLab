@@ -14,14 +14,14 @@
         <div class="form-row">
           <div class="form-group">
             <label for="nombre">Nombre <span class="text-danger">*</span></label>
-            <input id="nombre" type="text" formControlName="nombre" placeholder="Ej: Juan" autocomplete="given-name" />
+            <input id="nombre" type="text" formControlName="nombre" class="form-control" placeholder="Ej: Juan" autocomplete="given-name" />
             @if (registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched) {
               <span class="error">Requerido, 2-100 caracteres.</span>
             }
           </div>
           <div class="form-group">
             <label for="apellido">Apellido <span class="text-danger">*</span></label>
-            <input id="apellido" type="text" formControlName="apellido" placeholder="Ej: Pérez" autocomplete="family-name" />
+            <input id="apellido" type="text" formControlName="apellido" class="form-control" placeholder="Ej: Pérez" autocomplete="family-name" />
             @if (registroForm.get('apellido')?.invalid && registroForm.get('apellido')?.touched) {
               <span class="error">Requerido, 2-100 caracteres.</span>
             }
@@ -31,14 +31,14 @@
         <div class="form-row">
           <div class="form-group">
             <label for="cedula">Documento de identidad <span class="text-danger">*</span></label>
-            <input id="cedula" type="text" formControlName="cedula" placeholder="Ej: 1234567890" />
+            <input id="cedula" type="text" formControlName="cedula" class="form-control" placeholder="Ej: 1234567890" />
             @if (registroForm.get('cedula')?.invalid && registroForm.get('cedula')?.touched) {
               <span class="error">Entre 5 y 20 caracteres.</span>
             }
           </div>
           <div class="form-group">
             <label for="telefono">Teléfono <span class="text-danger">*</span></label>
-            <input id="telefono" type="tel" formControlName="telefono" placeholder="Ej: 3001234567" />
+            <input id="telefono" type="tel" formControlName="telefono" class="form-control" placeholder="Ej: 3001234567" />
             @if (registroForm.get('telefono')?.invalid && registroForm.get('telefono')?.touched) {
               <span class="error">Números, 7-20 dígitos.</span>
             }
@@ -47,7 +47,7 @@
 
         <div class="form-group">
           <label for="email">Correo electrónico <span class="text-danger">*</span></label>
-          <input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" autocomplete="email" />
+          <input id="email" type="email" formControlName="email" class="form-control" placeholder="correo@ejemplo.com" autocomplete="email" />
           @if (registroForm.get('email')?.invalid && registroForm.get('email')?.touched) {
             <span class="error">
               @if (registroForm.get('email')?.errors?.['disposableEmail']) {
@@ -79,7 +79,7 @@
           <div class="form-group">
             <label for="password">Contraseña <span class="text-danger">*</span></label>
             <div class="password-input-wrap">
-              <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Mín. 8 caracteres, letras, números y caracteres especiales" autocomplete="new-password" />
+              <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" placeholder="Mín. 8 caracteres, letras, números y caracteres especiales" autocomplete="new-password" />
               <button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'" [title]="showPassword ? 'Ocultar' : 'Ver contraseña'">
                 <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
               </button>
@@ -122,7 +122,7 @@
           <div class="form-group">
             <label for="confirmPassword">Confirmar contraseña</label>
             <div class="password-input-wrap">
-              <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="Repite la contraseña" autocomplete="new-password" />
+              <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="form-control" placeholder="Repite la contraseña" autocomplete="new-password" />
               <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Ver contraseña'" [title]="showConfirmPassword ? 'Ocultar' : 'Ver contraseña'">
                 <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
               </button>
@@ -146,8 +146,8 @@
           }
         </div>
 
-        <button type="submit" class="btn-create" [disabled]="registroForm.invalid || submitting">
-          {{ submitting ? 'Creando...' : 'Crear cuenta' }}
+        <button type="submit" class="btn btn-primary w-100 py-3 mt-1" [disabled]="registroForm.invalid || submitting">
+          {{ submitting ? 'Creando…' : 'Crear cuenta' }}
         </button>
       </form>
       } @else {
@@ -155,22 +155,18 @@
       <p class="text-muted mb-3">Enviamos un código de 6 dígitos a <strong>{{ emailParaVerificar() }}</strong>. Ingresa el código aquí para completar tu registro.</p>
       <div class="register-form">
         <div class="form-group">
-          <label for="codigo">Código de verificación</label>
-          <input
-            id="codigo"
-            type="text"
+          <app-verification-code-input
             [formControl]="codigoVerificacion"
-            placeholder="000000"
-            maxlength="6"
-            inputmode="numeric"
-            autocomplete="one-time-code"
+            heading="Código de verificación"
+            ariaLabel="Código de verificación de seis dígitos"
+            [hasError]="!!(codigoVerificacion.invalid && codigoVerificacion.touched)"
           />
           @if (codigoVerificacion.invalid && codigoVerificacion.touched) {
             <span class="error">Ingresa los 6 dígitos que recibiste por correo.</span>
           }
         </div>
-        <button type="button" class="btn-create" (click)="onVerificar()" [disabled]="codigoVerificacion.invalid || verifying">
-          {{ verifying ? 'Verificando...' : 'Verificar y continuar' }}
+        <button type="button" class="btn btn-primary w-100 py-3 mt-1" (click)="onVerificar()" [disabled]="codigoVerificacion.invalid || verifying">
+          {{ verifying ? 'Verificando…' : 'Verificar y continuar' }}
         </button>
         <p class="footer-copy mt-2">Si no recibes el código, revisa la carpeta de spam o vuelve a registrarte más tarde.</p>
       </div>

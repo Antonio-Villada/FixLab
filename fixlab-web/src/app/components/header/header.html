@@ -1,9 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm header-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark header-navbar header-navbar-glass">
   <div class="container flex-nowrap">
     <a class="navbar-brand d-flex align-items-center py-0" routerLink="/home">
-      <img src="images/Logo.jpeg" 
-           alt="FixLab Logo" 
-           class="fixlab-logo">
+      <img src="images/Logo.jpeg" alt="FixLab Logo" class="fixlab-logo" />
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -16,8 +14,31 @@
           <a class="nav-link px-3" routerLink="/home" routerLinkActive="active">Inicio</a>
         </li>
         @if (authService.isAdmin()) {
-          <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/productos" routerLinkActive="active">Productos</a>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle px-3"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              [class.active]="catalogoVentasNavActivo()"
+            >
+              Catálogo y Ventas
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li>
+                <a class="dropdown-item" routerLink="/admin/pedidos" routerLinkActive="active">Pedidos</a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/admin/productos" routerLinkActive="active">Productos</a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/admin/categorias" routerLinkActive="active">Categorías</a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/admin/tipos-producto" routerLinkActive="active">Tipos de producto</a>
+              </li>
+            </ul>
           </li>
         } @else {
           <li class="nav-item">
@@ -36,7 +57,7 @@
         }
         @if (enablePostventaModule && authService.isCliente()) {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/mis-pqrs" routerLinkActive="active">Postventa</a>
+            <a class="nav-link px-3" routerLink="/mis-pqrs" routerLinkActive="active">Soporte y Garantías</a>
           </li>
         }
         @if (authService.isTecnico() && !authService.isAdmin()) {
@@ -50,36 +71,142 @@
           </li>
           @if (enablePostventaModule) {
             <li class="nav-item">
-              <a class="nav-link px-3" routerLink="/admin/recepcion/postventa" routerLinkActive="active">Postventa</a>
+              <a class="nav-link px-3" routerLink="/admin/recepcion/postventa" routerLinkActive="active">Soporte y garantías</a>
             </li>
           }
         }
         @if (authService.isAdmin()) {
-          <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/pedidos" routerLinkActive="active">Pedidos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/categorias" routerLinkActive="active">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/tipos-producto" routerLinkActive="active">Tipos de producto</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/taller/recepcion" [class.active]="tallerNavActivo()">Taller</a>
-          </li>
-          <li class="nav-item">
+          <li class="nav-item dropdown">
             <a
-              class="nav-link px-3"
-              routerLink="/admin/reportes"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: false }"
+              class="nav-link dropdown-toggle px-3"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              [class.active]="tallerNavActivo()"
+            >
+              Taller
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/taller/recepcion"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Recepción</a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/taller/lista"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Lista taller</a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/taller/gestion"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Gestión taller</a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/taller/seguimiento"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Seguimiento</a>
+              </li>
+              @if (enablePostventaModule) {
+                <li>
+                  <a
+                    class="dropdown-item"
+                    routerLink="/admin/taller/postventa"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    >Soporte y garantías</a>
+                </li>
+              }
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/taller/tipos-equipo"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Tipo de equipo</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle px-3"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              [class.active]="reportesNavActivo()"
             >
               Reportes
             </a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/reportes/existencias"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Existencias</a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/reportes/inventario"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Inventario</a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/reportes/ventas"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Ventas</a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/reportes/taller"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Taller</a>
+              </li>
+              @if (enablePostventaModule) {
+                <li>
+                  <a
+                    class="dropdown-item"
+                    routerLink="/admin/reportes/postventa"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    >Soporte y garantías</a>
+                </li>
+              }
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/admin/reportes/administracion"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Administración</a>
+              </li>
+            </ul>
           </li>
           @if (enablePostventaModule) {
             <li class="nav-item">
-              <a class="nav-link px-3" routerLink="/admin/postventa" routerLinkActive="active">Postventa</a>
+              <a class="nav-link px-3" routerLink="/admin/postventa" routerLinkActive="active">Soporte y garantías</a>
             </li>
           }
           <li class="nav-item">
@@ -90,7 +217,7 @@
 
       <div class="d-flex align-items-center gap-3">
         @if (authService.isLoggedInSignal()) {
-          <button type="button" class="btn btn-outline-light position-relative d-flex align-items-center gap-1 px-3"
+          <button type="button" class="btn btn-outline-light btn-nav-modern position-relative d-flex align-items-center gap-1 px-3"
             title="Ver productos que vas a comprar" (click)="goToCart()">
             <i class="bi bi-cart3 fs-4"></i>
             <span class="d-none d-md-inline">Carrito</span>
@@ -105,8 +232,8 @@
 
         <div class="d-flex align-items-center gap-2 border-start ps-3">
           @if (!authService.isLoggedInSignal()) {
-            <a routerLink="/login" class="btn btn-outline-light d-flex align-items-center">
-              <i class="bi bi-person-fill me-2"></i> Iniciar Sesión
+            <a routerLink="/login" class="btn btn-outline-light btn-nav-modern d-flex align-items-center">
+              <i class="bi bi-person-fill me-2"></i> Iniciar sesión
             </a>
           } @else {
             <button type="button" class="header-avatar-btn d-flex align-items-center justify-content-center"
@@ -124,35 +251,43 @@
   </div>
 </nav>
 
-<!-- Panel de cuenta (estilo tipo Google): se abre al hacer clic en el avatar -->
+<!-- Panel de cuenta -->
 @if (panelCuentaAbierto()) {
   <div class="panel-cuenta-backdrop" (click)="closePanelCuenta()" role="button" aria-label="Cerrar panel"></div>
-  <aside class="panel-cuenta" role="dialog" aria-label="Tu cuenta">
-    <div class="panel-cuenta-header">
-      <button type="button" class="panel-cuenta-close btn btn-link" (click)="closePanelCuenta()" aria-label="Cerrar">
+  <aside class="panel-cuenta" role="dialog" aria-label="Tu cuenta FixLab">
+    <div class="panel-cuenta-shell">
+      <div class="panel-cuenta-hero" aria-hidden="true"></div>
+      <button type="button" class="panel-cuenta-close" (click)="closePanelCuenta()" aria-label="Cerrar panel">
         <i class="bi bi-x-lg"></i>
       </button>
-    </div>
-    <div class="panel-cuenta-body">
-      <div class="panel-cuenta-foto-wrap">
-        <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-foto-link">
-          @if (usuarioService.currentUser()?.fotoUrl) {
-            <img [src]="usuarioService.currentUser()!.fotoUrl" alt="" class="panel-cuenta-foto" />
-          } @else {
-            <span class="panel-cuenta-iniciales">{{ getInitials() }}</span>
-          }
+
+      <div class="panel-cuenta-body">
+        <div class="panel-cuenta-foto-wrap">
+          <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-foto-link" title="Ir a tu panel">
+            @if (usuarioService.currentUser()?.fotoUrl) {
+              <img [src]="usuarioService.currentUser()!.fotoUrl" alt="" class="panel-cuenta-foto" />
+            } @else {
+              <span class="panel-cuenta-iniciales">{{ getInitials() }}</span>
+            }
+          </a>
+        </div>
+        <p class="panel-cuenta-eyebrow">Tu cuenta FixLab</p>
+        <h2 class="panel-cuenta-saludo">¡Hola, {{ getNombreParaSaludo() || 'Usuario' }}!</h2>
+        @if (usuarioService.currentUser()?.email) {
+          <p class="panel-cuenta-email text-break">{{ usuarioService.currentUser()!.email }}</p>
+        }
+        <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-action-primary">
+          <i class="bi bi-person-lines-fill me-2" aria-hidden="true"></i>
+          Editar perfil
         </a>
       </div>
-      <h2 class="panel-cuenta-saludo">¡Hola, {{ getNombreParaSaludo() || 'Usuario' }}!</h2>
-      <a routerLink="/dashboard" (click)="closePanelCuenta()" class="panel-cuenta-admin-btn">
-        Editar perfil
-      </a>
-    </div>
-    <div class="panel-cuenta-footer">
-      <button type="button" class="panel-cuenta-logout" (click)="logoutAndClose()">
-        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-        <span>Cerrar sesión</span>
-      </button>
+
+      <div class="panel-cuenta-footer">
+        <button type="button" class="panel-cuenta-logout" (click)="logoutAndClose()">
+          <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
     </div>
   </aside>
 }

@@ -28,6 +28,9 @@ export class PrimerCambioPasswordComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  showPassword = false;
+  showConfirmPassword = false;
+
   enviando = signal(false);
   error = signal<string | null>(null);
 

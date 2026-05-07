@@ -15,6 +15,7 @@ import {
   getPasswordStrength,
   getStrengthLabel,
 } from '../../utils/password.utils';
+import { VerificationCodeInputComponent } from '../verification-code-input/verification-code-input';
 
 function confirmPasswordMatch(group: AbstractControl): ValidationErrors | null {
   const pass = group.get('nuevaPassword')?.value;
@@ -28,7 +29,7 @@ type Paso = 1 | 2 | 3;
 @Component({
   selector: 'app-recuperar-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, VerificationCodeInputComponent],
   templateUrl: './recuperar-password.html',
   styleUrl: './recuperar-password.css',
 })

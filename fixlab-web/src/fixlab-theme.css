@@ -1,0 +1,734 @@
+/* ===== FixLab — tema moderno unificado (alcance principal de la app) ===== */
+
+:root {
+  --fixlab-page-bg: #eef2f7;
+  --fixlab-page-bg2: #e8ecf3;
+  --fixlab-surface: #ffffff;
+  --fixlab-border: rgba(15, 23, 42, 0.07);
+  --fixlab-border-strong: rgba(15, 23, 42, 0.11);
+  --fixlab-radius: 14px;
+  --fixlab-radius-sm: 10px;
+  --fixlab-radius-xs: 10px;
+  --fixlab-shadow: 0 4px 22px rgba(15, 23, 42, 0.06);
+  --fixlab-shadow-md: 0 10px 36px rgba(15, 23, 42, 0.09);
+  --fixlab-text: #0f172a;
+  --fixlab-muted: #64748b;
+  --fixlab-input-radius: 12px;
+  --fixlab-input-bg: #fafbfc;
+  --fixlab-input-bg-readonly: #f1f5f9;
+  --fixlab-input-border: rgba(15, 23, 42, 0.1);
+}
+
+/* Contenido entre header y footer */
+.fixlab-shell {
+  background: linear-gradient(180deg, var(--fixlab-page-bg) 0%, var(--fixlab-page-bg2) 100%);
+  padding-bottom: 2rem;
+}
+
+/* Pantallas de autenticación (centradas) */
+.fixlab-auth-screen {
+  min-height: calc(100vh - 5rem);
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -30%, rgba(13, 110, 253, 0.11), transparent 55%),
+    linear-gradient(180deg, #f1f5f9 0%, #e8ecf3 100%);
+}
+
+.fixlab-auth-card {
+  border-radius: var(--fixlab-radius) !important;
+  border: 1px solid var(--fixlab-border) !important;
+  box-shadow: var(--fixlab-shadow-md) !important;
+}
+
+.fixlab-auth-card .card-body {
+  padding: 1.35rem 1.5rem !important;
+}
+
+@media (min-width: 576px) {
+  .fixlab-auth-card .card-body {
+    padding: 1.75rem 2rem !important;
+  }
+}
+
+/* Tipografía de contenido (no pisa text-white ni la landing hero) */
+.fixlab-shell h1:not([class*='text-white']):not(.landing-hero-title),
+.fixlab-shell .h1:not([class*='text-white']) {
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: var(--fixlab-text);
+}
+
+.fixlab-shell h2:not([class*='text-white']),
+.fixlab-shell .h2:not([class*='text-white']) {
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  color: var(--fixlab-text);
+}
+
+.fixlab-shell h3:not([class*='text-white']),
+.fixlab-shell .h3:not([class*='text-white']) {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--fixlab-text);
+}
+
+/* Cards Bootstrap */
+.fixlab-shell .card {
+  border-radius: var(--fixlab-radius);
+  border-color: var(--fixlab-border);
+  overflow: hidden;
+}
+
+.fixlab-shell .card.shadow-sm {
+  box-shadow: var(--fixlab-shadow) !important;
+}
+
+.fixlab-shell .card-header {
+  border-bottom-color: var(--fixlab-border);
+  font-weight: 600;
+}
+
+.fixlab-shell .card-header.bg-white {
+  background-color: var(--fixlab-surface) !important;
+}
+
+.fixlab-shell .list-group-item {
+  border-color: var(--fixlab-border);
+}
+
+.fixlab-shell .list-group-item:first-child {
+  border-top-left-radius: var(--fixlab-radius-sm);
+  border-top-right-radius: var(--fixlab-radius-sm);
+}
+
+.fixlab-shell .list-group-item:last-child {
+  border-bottom-left-radius: var(--fixlab-radius-sm);
+  border-bottom-right-radius: var(--fixlab-radius-sm);
+}
+
+/* Alertas */
+.fixlab-shell .alert {
+  border-radius: var(--fixlab-radius-sm);
+  border: 1px solid transparent;
+}
+
+.fixlab-shell .alert-light.border {
+  border-color: var(--fixlab-border) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Botones */
+.fixlab-shell .btn {
+  border-radius: var(--fixlab-radius-xs);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.fixlab-shell .btn-sm {
+  border-radius: calc(var(--fixlab-radius-xs) - 1px);
+}
+
+.fixlab-shell .btn-lg {
+  border-radius: var(--fixlab-radius-sm);
+}
+
+.fixlab-shell .btn-group .btn {
+  border-radius: 0;
+}
+
+.fixlab-shell .btn-group > .btn:first-child {
+  border-top-left-radius: var(--fixlab-radius-xs);
+  border-bottom-left-radius: var(--fixlab-radius-xs);
+}
+
+.fixlab-shell .btn-group > .btn:last-child {
+  border-top-right-radius: var(--fixlab-radius-xs);
+  border-bottom-right-radius: var(--fixlab-radius-xs);
+}
+
+/* Formularios — SaaS (inputs suaves, foco anillo, etiquetas claras) */
+.fixlab-shell .form-label,
+.modal .form-label,
+.fixlab-auth-screen .form-label,
+.register-page .form-group > label:not(.terms-label) {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--fixlab-text);
+  margin-bottom: 0.4rem;
+}
+
+.fixlab-shell .form-control,
+.fixlab-shell .form-select,
+.modal .form-control,
+.modal .form-select,
+.fixlab-auth-screen .form-control,
+.fixlab-auth-screen .form-select,
+.register-page .form-control,
+.register-page .form-select {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9375rem;
+  border-radius: var(--fixlab-input-radius);
+  background-color: var(--fixlab-input-bg);
+  border: 1px solid var(--fixlab-input-border);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.fixlab-shell .form-control::placeholder,
+.modal .form-control::placeholder,
+.fixlab-auth-screen .form-control::placeholder,
+.register-page .form-control::placeholder {
+  color: #94a3b8;
+}
+
+.fixlab-shell .form-control:hover:not(:disabled):not(:focus):not(:read-only),
+.fixlab-shell .form-select:hover:not(:disabled):not(:focus),
+.modal .form-control:hover:not(:disabled):not(:focus):not(:read-only),
+.modal .form-select:hover:not(:disabled):not(:focus),
+.fixlab-auth-screen .form-control:hover:not(:disabled):not(:focus):not(:read-only),
+.fixlab-auth-screen .form-select:hover:not(:disabled):not(:focus),
+.register-page .form-control:hover:not(:disabled):not(:focus):not(:read-only),
+.register-page .form-select:hover:not(:disabled):not(:focus) {
+  border-color: rgba(15, 23, 42, 0.14);
+  background-color: #fff;
+}
+
+.fixlab-shell .form-control:focus,
+.fixlab-shell .form-select:focus,
+.modal .form-control:focus,
+.modal .form-select:focus,
+.fixlab-auth-screen .form-control:focus,
+.fixlab-auth-screen .form-select:focus,
+.register-page .form-control:focus,
+.register-page .form-select:focus {
+  border-color: rgba(13, 110, 253, 0.45);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+  outline: none;
+}
+
+.fixlab-shell .form-control:disabled,
+.fixlab-shell .form-select:disabled,
+.modal .form-control:disabled,
+.modal .form-select:disabled,
+.fixlab-auth-screen .form-control:disabled,
+.fixlab-auth-screen .form-select:disabled,
+.register-page .form-control:disabled,
+.register-page .form-select:disabled {
+  background-color: #f1f5f9;
+  opacity: 0.88;
+}
+
+.fixlab-shell .form-control[readonly],
+.modal .form-control[readonly],
+.fixlab-auth-screen .form-control[readonly],
+.register-page .form-control[readonly] {
+  background-color: var(--fixlab-input-bg-readonly);
+}
+
+.fixlab-shell textarea.form-control,
+.modal textarea.form-control,
+.fixlab-auth-screen textarea.form-control,
+.register-page textarea.form-control {
+  min-height: 5rem;
+}
+
+.fixlab-shell .form-control-sm,
+.modal .form-control-sm,
+.fixlab-auth-screen .form-control-sm {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.875rem;
+  border-radius: var(--fixlab-radius-sm);
+}
+
+.fixlab-shell .form-control.is-invalid,
+.modal .form-control.is-invalid,
+.fixlab-auth-screen .form-control.is-invalid,
+.register-page .form-control.is-invalid {
+  border-color: rgba(220, 53, 69, 0.55);
+}
+
+.fixlab-shell .form-control.is-invalid:focus,
+.modal .form-control.is-invalid:focus,
+.fixlab-auth-screen .form-control.is-invalid:focus,
+.register-page .form-control.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.12);
+}
+
+.fixlab-shell .form-text,
+.modal .form-text,
+.fixlab-auth-screen .form-text {
+  color: var(--fixlab-muted);
+  font-size: 0.8125rem;
+  margin-top: 0.35rem;
+}
+
+.fixlab-shell .form-control[type='file'],
+.modal .form-control[type='file'],
+.register-page .form-control[type='file'] {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.fixlab-shell .input-group-text,
+.modal .input-group-text,
+.fixlab-auth-screen .input-group-text {
+  border-radius: var(--fixlab-input-radius);
+  border-color: var(--fixlab-input-border);
+  background-color: #f1f5f9;
+  color: var(--fixlab-muted);
+}
+
+.fixlab-shell .input-group .form-control:not(:first-child),
+.modal .input-group .form-control:not(:first-child),
+.fixlab-auth-screen .input-group .form-control:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.fixlab-shell .input-group .form-control:not(:last-child),
+.modal .input-group .form-control:not(:last-child),
+.fixlab-auth-screen .input-group .form-control:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.fixlab-shell .input-group > .input-group-text:first-child,
+.modal .input-group > .input-group-text:first-child,
+.fixlab-auth-screen .input-group > .input-group-text:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.fixlab-shell .input-group > .btn:last-child,
+.modal .input-group > .btn:last-child,
+.fixlab-auth-screen .input-group > .btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Campo contraseña con toggle (auth y formularios reutilizables) */
+.fixlab-password-inner {
+  position: relative;
+}
+
+.fixlab-password-inner > .form-control {
+  padding-right: 2.85rem;
+}
+
+.fixlab-password-toggle {
+  position: absolute;
+  right: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fixlab-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.fixlab-password-toggle:hover {
+  color: var(--fixlab-text);
+  background-color: rgba(15, 23, 42, 0.06);
+}
+
+.fixlab-password-toggle:focus-visible {
+  outline: 2px solid rgba(13, 110, 253, 0.45);
+  outline-offset: 2px;
+}
+
+/* Checkboxes y radios */
+.fixlab-shell .form-check-input,
+.modal .form-check-input,
+.fixlab-auth-screen .form-check-input,
+.register-page .form-check-input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.15rem;
+  border-radius: 6px;
+  border-color: rgba(15, 23, 42, 0.22);
+}
+
+.fixlab-shell .form-check-input:checked,
+.modal .form-check-input:checked,
+.fixlab-auth-screen .form-check-input:checked,
+.register-page .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.fixlab-shell .form-check-input:focus,
+.modal .form-check-input:focus,
+.fixlab-auth-screen .form-check-input:focus,
+.register-page .form-check-input:focus {
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
+}
+
+/* Indicadores de fortaleza de contraseña (registro, recuperar, etc.) */
+.fixlab-shell .password-hints,
+.modal .password-hints,
+.fixlab-auth-screen .password-hints,
+.register-page .password-hints {
+  margin-top: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(248, 250, 252, 0.96);
+  border: 1px solid var(--fixlab-border);
+  border-radius: var(--fixlab-radius-sm);
+  font-size: 0.8125rem;
+}
+
+.fixlab-shell .password-checklist,
+.modal .password-checklist,
+.fixlab-auth-screen .password-checklist,
+.register-page .password-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fixlab-shell .password-checklist li,
+.modal .password-checklist li,
+.fixlab-auth-screen .password-checklist li,
+.register-page .password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--fixlab-muted);
+  margin-bottom: 0.25rem;
+}
+
+.fixlab-shell .password-checklist li i,
+.modal .password-checklist li i,
+.fixlab-auth-screen .password-checklist li i,
+.register-page .password-checklist li i {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.fixlab-shell .password-checklist li.valid,
+.modal .password-checklist li.valid,
+.fixlab-auth-screen .password-checklist li.valid,
+.register-page .password-checklist li.valid {
+  color: #198754;
+}
+
+.fixlab-shell .password-checklist li.valid i,
+.modal .password-checklist li.valid i,
+.fixlab-auth-screen .password-checklist li.valid i,
+.register-page .password-checklist li.valid i {
+  color: #198754;
+}
+
+.fixlab-shell .password-checklist li:not(.valid) i.bi-circle,
+.modal .password-checklist li:not(.valid) i.bi-circle,
+.fixlab-auth-screen .password-checklist li:not(.valid) i.bi-circle,
+.register-page .password-checklist li:not(.valid) i.bi-circle {
+  color: #cbd5e1;
+}
+
+.fixlab-shell .password-strength,
+.modal .password-strength,
+.fixlab-auth-screen .password-strength,
+.register-page .password-strength {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--fixlab-border);
+}
+
+.fixlab-shell .password-strength .strength-label,
+.modal .password-strength .strength-label,
+.fixlab-auth-screen .password-strength .strength-label,
+.register-page .password-strength .strength-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8125rem;
+}
+
+.fixlab-shell .password-strength[data-strength='weak'] .strength-label,
+.modal .password-strength[data-strength='weak'] .strength-label,
+.fixlab-auth-screen .password-strength[data-strength='weak'] .strength-label,
+.register-page .password-strength[data-strength='weak'] .strength-label {
+  color: #dc3545;
+}
+
+.fixlab-shell .password-strength[data-strength='medium'] .strength-label,
+.modal .password-strength[data-strength='medium'] .strength-label,
+.fixlab-auth-screen .password-strength[data-strength='medium'] .strength-label,
+.register-page .password-strength[data-strength='medium'] .strength-label {
+  color: #fd7e14;
+}
+
+.fixlab-shell .password-strength[data-strength='strong'] .strength-label,
+.modal .password-strength[data-strength='strong'] .strength-label,
+.fixlab-auth-screen .password-strength[data-strength='strong'] .strength-label,
+.register-page .password-strength[data-strength='strong'] .strength-label {
+  color: #198754;
+}
+
+.fixlab-shell .strength-bar,
+.modal .strength-bar,
+.fixlab-auth-screen .strength-bar,
+.register-page .strength-bar {
+  height: 4px;
+  background: rgba(15, 23, 42, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fixlab-shell .strength-fill,
+.modal .strength-fill,
+.fixlab-auth-screen .strength-fill,
+.register-page .strength-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+
+.fixlab-shell .password-strength[data-strength='weak'] .strength-fill,
+.modal .password-strength[data-strength='weak'] .strength-fill,
+.fixlab-auth-screen .password-strength[data-strength='weak'] .strength-fill,
+.register-page .password-strength[data-strength='weak'] .strength-fill {
+  width: 33%;
+  background: #dc3545;
+}
+
+.fixlab-shell .password-strength[data-strength='medium'] .strength-fill,
+.modal .password-strength[data-strength='medium'] .strength-fill,
+.fixlab-auth-screen .password-strength[data-strength='medium'] .strength-fill,
+.register-page .password-strength[data-strength='medium'] .strength-fill {
+  width: 66%;
+  background: #fd7e14;
+}
+
+.fixlab-shell .password-strength[data-strength='strong'] .strength-fill,
+.modal .password-strength[data-strength='strong'] .strength-fill,
+.fixlab-auth-screen .password-strength[data-strength='strong'] .strength-fill,
+.register-page .password-strength[data-strength='strong'] .strength-fill {
+  width: 100%;
+  background: #198754;
+}
+
+/* Auth: ancho card y hero icon */
+.fixlab-auth-card-max {
+  width: 100%;
+  max-width: 420px;
+}
+
+.fixlab-auth-icon {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+/* Botón principal destacado (sin afectar btn-danger / btn-outline-danger) */
+.fixlab-shell .btn-primary:not(.btn-link),
+.modal .btn-primary:not(.btn-link),
+.fixlab-auth-screen .btn-primary:not(.btn-link),
+.register-page .btn-primary:not(.btn-link) {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  border: none;
+  box-shadow:
+    0 1px 2px rgba(13, 110, 253, 0.18),
+    0 6px 18px rgba(13, 110, 253, 0.22);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+
+.fixlab-shell .btn-primary:not(.btn-link):hover:not(:disabled):not(.disabled),
+.modal .btn-primary:not(.btn-link):hover:not(:disabled):not(.disabled),
+.fixlab-auth-screen .btn-primary:not(.btn-link):hover:not(:disabled):not(.disabled),
+.register-page .btn-primary:not(.btn-link):hover:not(:disabled):not(.disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow:
+    0 2px 4px rgba(13, 110, 253, 0.22),
+    0 10px 26px rgba(13, 110, 253, 0.28);
+}
+
+.fixlab-shell .btn-primary:not(.btn-link):active:not(:disabled),
+.modal .btn-primary:not(.btn-link):active:not(:disabled),
+.fixlab-auth-screen .btn-primary:not(.btn-link):active:not(:disabled),
+.register-page .btn-primary:not(.btn-link):active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.fixlab-shell .btn-primary:not(.btn-link):disabled,
+.modal .btn-primary:not(.btn-link):disabled,
+.fixlab-auth-screen .btn-primary:not(.btn-link):disabled,
+.register-page .btn-primary:not(.btn-link):disabled,
+.fixlab-shell .btn-primary:not(.btn-link).disabled,
+.modal .btn-primary:not(.btn-link).disabled,
+.fixlab-auth-screen .btn-primary:not(.btn-link).disabled,
+.register-page .btn-primary:not(.btn-link).disabled {
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.fixlab-shell .btn-outline-secondary,
+.modal .btn-outline-secondary,
+.fixlab-auth-screen .btn-outline-secondary,
+.register-page .btn-outline-secondary {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #475569;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.fixlab-shell .btn-outline-secondary:hover,
+.modal .btn-outline-secondary:hover,
+.fixlab-auth-screen .btn-outline-secondary:hover,
+.register-page .btn-outline-secondary:hover {
+  background-color: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.18);
+  color: var(--fixlab-text);
+}
+
+/* Tablas */
+.fixlab-shell .table {
+  --bs-table-bg: transparent;
+}
+
+.fixlab-shell .table thead th {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fixlab-muted);
+  border-bottom-color: var(--fixlab-border-strong);
+  white-space: nowrap;
+}
+
+.fixlab-shell .table-responsive {
+  border-radius: var(--fixlab-radius-sm);
+  border: 1px solid var(--fixlab-border);
+  background: var(--fixlab-surface);
+}
+
+/* Tabla dentro de una card: evita doble marco */
+.fixlab-shell .card .card-body > .table-responsive:first-child:last-child,
+.fixlab-shell .card > .table-responsive {
+  border: none;
+  background: transparent;
+}
+
+.fixlab-shell .table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-accent-bg: rgba(15, 23, 42, 0.02);
+}
+
+.fixlab-shell .table-hover > tbody > tr:hover > * {
+  --bs-table-accent-bg: rgba(13, 110, 253, 0.04);
+}
+
+/* Badges */
+.fixlab-shell .badge {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  padding: 0.35em 0.65em;
+}
+
+/* Nav pills / tabs en contenido */
+.fixlab-shell .nav-pills .nav-link {
+  border-radius: var(--fixlab-radius-xs);
+  font-weight: 600;
+}
+
+/* Breadcrumbs si se usan */
+.fixlab-shell .breadcrumb {
+  font-size: 0.875rem;
+}
+
+/* Paginación */
+.fixlab-shell .pagination .page-link {
+  border-radius: var(--fixlab-radius-xs);
+  margin: 0 2px;
+  border-color: var(--fixlab-border);
+}
+
+/* Modales (teleport a body — fuera de .fixlab-shell) */
+.modal-content {
+  border-radius: var(--fixlab-radius);
+  border: 1px solid var(--fixlab-border);
+  box-shadow: 0 24px 56px rgba(15, 23, 42, 0.14);
+}
+
+.modal-header {
+  border-bottom-color: var(--fixlab-border);
+}
+
+.modal-footer {
+  border-top-color: var(--fixlab-border);
+}
+
+/* Barra de filtros / herramientas en páginas de lista */
+.fixlab-shell .fixlab-toolbar {
+  padding: 1rem 1.25rem !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid var(--fixlab-border) !important;
+  border-radius: var(--fixlab-radius-sm) !important;
+  box-shadow: var(--fixlab-shadow);
+}
+
+/* Footer global */
+app-footer .fixlab-footer {
+  background: linear-gradient(180deg, #1e2328 0%, #15181c 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Legal / texto largo */
+.fixlab-legal {
+  max-width: 52rem;
+}
+
+.fixlab-legal .card {
+  border-radius: var(--fixlab-radius);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .fixlab-shell .btn,
+  .fixlab-shell .form-control,
+  .fixlab-shell .form-select,
+  .modal .btn-primary,
+  .modal .form-control,
+  .fixlab-auth-screen .btn-primary,
+  .fixlab-auth-screen .form-control,
+  .register-page .btn-primary,
+  .register-page .form-control,
+  .fixlab-password-toggle,
+  .fixlab-shell .strength-fill,
+  .register-page .strength-fill {
+    transition: none !important;
+  }
+
+  .fixlab-shell .btn-primary:not(.btn-link):hover:not(:disabled),
+  .modal .btn-primary:not(.btn-link):hover:not(:disabled),
+  .fixlab-auth-screen .btn-primary:not(.btn-link):hover:not(:disabled),
+  .register-page .btn-primary:not(.btn-link):hover:not(:disabled) {
+    transform: none;
+    filter: none;
+  }
+}

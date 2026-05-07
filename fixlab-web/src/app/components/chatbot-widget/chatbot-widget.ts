@@ -38,6 +38,7 @@ export class ChatbotWidgetComponent implements OnDestroy {
     effect(() => {
       if (!this.panelOpen()) return;
       this.messages();
+      this.enviando();
       if (isPlatformBrowser(this.platformId)) {
         requestAnimationFrame(() => this.scrollToBottom());
       }

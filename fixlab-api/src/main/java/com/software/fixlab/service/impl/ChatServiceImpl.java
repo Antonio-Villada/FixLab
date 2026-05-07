@@ -36,6 +36,7 @@ public class ChatServiceImpl implements ChatService {
     private final PedidoRepository pedidoRepository;
     private final ReparacionRepository reparacionRepository;
     private final OllamaChatClient ollamaChatClient;
+    private final PythonChatClient pythonChatClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,9 +66,14 @@ public class ChatServiceImpl implements ChatService {
 
         List<ChatMensaje> historialAsc = chatMensajeRepository.findByUsuarioEmailOrderByCreadoEnAsc(email);
         String contextoTurno = buildTurnContext(usuario, body);
-        var iaReply = ollamaChatClient
-                .generateReply(historialAsc, usuario.getRol(), contextoTurno)
+        var pyReply = pythonChatClient
+                .generateReply(historialAsc, usuario.getRol(), contextoTurno, t)
                 .filter(s -> !s.isBlank());
+        var iaReply = pyReply.isPresent()
+                ? pyReply
+                : ollamaChatClient.generateReply(historialAsc, usuario.getRol(), contextoTurno)
+                        .filter(s -> !s.isBlank());
+
         String replyText = iaReply.orElseGet(() -> ChatHybridResponder.reply(t, usuario.getRol(), contextoTurno));
         replyText = ChatReplySanitizer.stripLeakedContextEcho(replyText);
         String respuestaFuente = iaReply.isPresent() ? "IA" : "FAQ";

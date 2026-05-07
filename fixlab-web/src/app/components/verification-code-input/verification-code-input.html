@@ -1,0 +1,25 @@
+<div class="otp-root" [class.otp-root--error]="hasError" (focusout)="onHostFocusOut($event)">
+  @if (heading) {
+    <h2 class="otp-heading">{{ heading }}</h2>
+  }
+  <div class="otp-track" role="group" [attr.aria-label]="ariaLabel">
+    @for (i of indices; track i) {
+      <div class="otp-cell">
+        <span class="otp-focus-dot" aria-hidden="true"></span>
+        <input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="1"
+          class="otp-input"
+          [disabled]="disabled"
+          [attr.autocomplete]="i === 0 ? 'one-time-code' : 'off'"
+          [attr.aria-label]="'Dígito ' + (i + 1) + ' de ' + length"
+          (input)="onInput($event, i)"
+          (keydown)="onKeydown($event, i)"
+          (paste)="onPaste($event)"
+        />
+      </div>
+    }
+  </div>
+</div>

@@ -34,6 +34,11 @@ export class MisPqrsComponent implements OnInit {
 
   tipo: TipoSolicitudPqr = 'PETICION';
   origenDocumento: OrigenDocumentoPqr = 'FACTURA_PEDIDO';
+
+  /** Factura/ticket obligatorios solo para reclamo y solicitud de garantía. */
+  referenciaDocumentoRequerida(): boolean {
+    return this.tipo === 'RECLAMO' || this.tipo === 'SOLICITUD_GARANTIA';
+  }
   pedidoId: number | null = null;
   reparacionId: number | null = null;
   descripcion = '';
@@ -125,17 +130,50 @@ export class MisPqrsComponent implements OnInit {
     }
     const dto: SolicitudPqrCreateReqDTO = {
       tipo: this.tipo,
-      origenDocumento: this.origenDocumento,
+      origenDocumento: 'SIN_REFERENCIA',
       descripcion: this.descripcion.trim(),
       evidenciasUrls: this.evidenciasUrls(),
       consentimientoTratamientoDatos: true,
     };
-    if (this.origenDocumento === 'FACTURA_PEDIDO') {
-      dto.pedidoId = this.pedidoId ?? undefined;
-      dto.reparacionId = null;
-    } else {
-      dto.reparacionId = this.reparacionId ?? undefined;
+
+    const pid = this.pedidoId != null && this.pedidoId >= 1 ? this.pedidoId : null;
+    const rid = this.reparacionId != null && this.reparacionId >= 1 ? this.reparacionId : null;
+
+    if (this.referenciaDocumentoRequerida()) {
+      if (this.origenDocumento === 'FACTURA_PEDIDO') {
+        if (pid == null) {
+          this.errorForm.set('Indique el número de pedido (factura) asociado a su cuenta');
+          return;
+        }
+        dto.origenDocumento = 'FACTURA_PEDIDO';
+        dto.pedidoId = pid;
+        dto.reparacionId = null;
+      } else {
+        if (rid == null) {
+          this.errorForm.set('Indique el ID de la reparación (ticket de servicio) asociado a su cuenta');
+          return;
+        }
+        dto.origenDocumento = 'TICKET_REPARACION';
+        dto.reparacionId = rid;
+        dto.pedidoId = null;
+      }
+    } else if (!pid && !rid) {
+      dto.origenDocumento = 'SIN_REFERENCIA';
       dto.pedidoId = null;
+      dto.reparacionId = null;
+    } else if (pid && !rid && this.origenDocumento === 'FACTURA_PEDIDO') {
+      dto.origenDocumento = 'FACTURA_PEDIDO';
+      dto.pedidoId = pid;
+      dto.reparacionId = null;
+    } else if (rid && !pid && this.origenDocumento === 'TICKET_REPARACION') {
+      dto.origenDocumento = 'TICKET_REPARACION';
+      dto.reparacionId = rid;
+      dto.pedidoId = null;
+    } else {
+      this.errorForm.set(
+        'Si vincula un documento, indique solo un ID válido según la opción elegida (factura o ticket).'
+      );
+      return;
     }
     this.enviando.set(true);
     this.pqrService.crear(dto).subscribe({

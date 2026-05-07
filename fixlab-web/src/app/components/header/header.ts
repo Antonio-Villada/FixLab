@@ -49,6 +49,23 @@ export class HeaderComponent {
     return path.startsWith('/admin/taller');
   }
 
+  /** Menú Catálogo y Ventas (admin): pedidos, catálogo y maestros relacionados. */
+  catalogoVentasNavActivo(): boolean {
+    const path = (this.router.url.split('?')[0] ?? '').trim();
+    return (
+      path.startsWith('/admin/pedidos') ||
+      path.startsWith('/admin/productos') ||
+      path.startsWith('/admin/categorias') ||
+      path.startsWith('/admin/tipos-producto')
+    );
+  }
+
+  /** Menú Reportes (admin): rutas bajo /admin/reportes. */
+  reportesNavActivo(): boolean {
+    const path = (this.router.url.split('?')[0] ?? '').trim();
+    return path.startsWith('/admin/reportes');
+  }
+
   /** Iniciales para el avatar (nombre + apellido). */
   getInitials(): string {
     const p = this.usuarioService.currentUser();

@@ -1,8 +1,8 @@
-export type TipoSolicitudPqr = 'PETICION' | 'QUEJA' | 'RECLAMO' | 'SOLICITUD_GARANTIA';
+export type TipoSolicitudPqr = 'PETICION' | 'QUEJA' | 'RECLAMO' | 'SOLICITUD_GARANTIA' | 'SUGERENCIA';
 
 export type EstadoSolicitudPqr = 'ABIERTO' | 'EN_ANALISIS' | 'RESUELTO' | 'CERRADO';
 
-export type OrigenDocumentoPqr = 'FACTURA_PEDIDO' | 'TICKET_REPARACION';
+export type OrigenDocumentoPqr = 'FACTURA_PEDIDO' | 'TICKET_REPARACION' | 'SIN_REFERENCIA';
 
 export interface SolicitudPqrRespDTO {
   id: number;
@@ -50,6 +50,7 @@ export const TIPOS_PQR: { value: TipoSolicitudPqr; label: string }[] = [
   { value: 'PETICION', label: 'Petición' },
   { value: 'QUEJA', label: 'Queja' },
   { value: 'RECLAMO', label: 'Reclamo' },
+  { value: 'SUGERENCIA', label: 'Sugerencia' },
   { value: 'SOLICITUD_GARANTIA', label: 'Solicitud de garantía' },
 ];
 

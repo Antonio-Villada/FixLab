@@ -5,13 +5,14 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { LoginReqDTO } from '../../models/auth.model';
+import { VerificationCodeInputComponent } from '../verification-code-input/verification-code-input';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, VerificationCodeInputComponent],
   templateUrl: './login.html',
-  styleUrls: ['./login.css'],
+  styleUrls: ['./login.scss'],
 })
 export class Login implements OnInit {
   private authService = inject(AuthService);

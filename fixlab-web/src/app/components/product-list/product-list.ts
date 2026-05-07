@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+  PLATFORM_ID,
+} from '@angular/core';
 import { DecimalPipe, CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService } from '../../services/product';
@@ -42,6 +49,10 @@ export class ProductListComponent implements OnInit {
   filterCategoriaId = signal<number | null>(null);
   filterTipoProductoId = signal<number | null>(null);
 
+  /** Paginación (cliente). */
+  pageSize = signal<number>(9);
+  currentPage = signal<number>(1);
+
   isAdmin = computed(() => this.authService.isAdmin());
   /** Clientes: solo productos activos + filtros. Admin: todos. */
   productsToShow = computed(() => {
@@ -55,6 +66,44 @@ export class ProductListComponent implements OnInit {
     }
     return result;
   });
+
+  totalPages = computed(() => {
+    const total = this.productsToShow().length;
+    if (this.isAdmin()) return 1;
+    return Math.max(1, Math.ceil(total / this.pageSize()));
+  });
+
+  pagedProducts = computed(() => {
+    const list = this.productsToShow();
+    if (this.isAdmin()) return list;
+    const size = this.pageSize();
+    const page = this.currentPage();
+    const start = (page - 1) * size;
+    return list.slice(start, start + size);
+  });
+
+  visiblePages = computed(() => {
+    if (this.isAdmin()) return [];
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const windowSize = 7;
+    const half = Math.floor(windowSize / 2);
+    let start = Math.max(1, current - half);
+    let end = Math.min(total, start + windowSize - 1);
+    start = Math.max(1, end - windowSize + 1);
+    const pages: number[] = [];
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  });
+
+  private syncPagination(resetToFirstPage: boolean): void {
+    if (this.isAdmin()) return;
+    const total = this.totalPages();
+    const current = resetToFirstPage ? 1 : this.currentPage();
+    const clamped = Math.max(1, Math.min(total, current));
+    this.currentPage.set(clamped);
+  }
+
   isEditing = computed(() => this.editingProduct() !== null);
 
   form: FormGroup = this.fb.group({
@@ -81,6 +130,7 @@ export class ProductListComponent implements OnInit {
     this.productService.getProducts().subscribe({
       next: (data) => {
         this.products.set(data);
+        this.syncPagination(false);
         this.loading.set(false);
       },
       error: (err) => {
@@ -111,6 +161,41 @@ export class ProductListComponent implements OnInit {
       return;
     }
     this.cartService.addItem(product);
+  }
+
+  setPage(page: number): void {
+    if (this.isAdmin()) return;
+    const clamped = Math.max(1, Math.min(this.totalPages(), page));
+    this.currentPage.set(clamped);
+  }
+
+  prevPage(): void {
+    this.setPage(this.currentPage() - 1);
+  }
+
+  nextPage(): void {
+    this.setPage(this.currentPage() + 1);
+  }
+
+  onCategoriaChange(value: string): void {
+    this.filterCategoriaId.set(value === '' ? null : +value);
+    this.syncPagination(true);
+  }
+
+  onTipoProductoChange(value: string): void {
+    this.filterTipoProductoId.set(value === '' ? null : +value);
+    this.syncPagination(true);
+  }
+
+  onPageSizeChange(value: string): void {
+    this.pageSize.set(+value);
+    this.syncPagination(true);
+  }
+
+  clearFilters(): void {
+    this.filterCategoriaId.set(null);
+    this.filterTipoProductoId.set(null);
+    this.syncPagination(true);
   }
 
   openDetail(product: Product): void {

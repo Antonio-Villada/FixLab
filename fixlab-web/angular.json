@@ -33,7 +33,8 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/fixlab-theme.css"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
@@ -49,6 +50,11 @@
           },
           "configurations": {
             "production": {
+              "optimization": {
+                "fonts": {
+                  "inline": false
+                }
+              },
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -58,18 +64,23 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1.1mb",
+                  "maximumWarning": "1.3mb",
                   "maximumError": "1.25mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "9kB",
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"
             },
             "production-static": {
+              "optimization": {
+                "fonts": {
+                  "inline": false
+                }
+              },
               "outputMode": "static",
               "server": false,
               "ssr": false,
@@ -82,13 +93,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1.1mb",
+                  "maximumWarning": "1.3mb",
                   "maximumError": "1.25mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "9kB",
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"

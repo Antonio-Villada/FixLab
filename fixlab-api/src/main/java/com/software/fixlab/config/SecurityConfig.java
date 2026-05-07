@@ -84,7 +84,11 @@ public class SecurityConfig {
                 "http://104.196.160.2",
                 "http://104.196.160.2:*",
                 "https://104.196.160.2",
-                "https://104.196.160.2:*"
+                "https://104.196.160.2:*",
+                "http://34.24.231.207",
+                "http://34.24.231.207:*",
+                "https://34.24.231.207",
+                "https://34.24.231.207:*"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

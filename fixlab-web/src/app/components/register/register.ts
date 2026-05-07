@@ -10,6 +10,7 @@ import {
   getPasswordStrength,
   getStrengthLabel,
 } from '../../utils/password.utils';
+import { VerificationCodeInputComponent } from '../verification-code-input/verification-code-input';
 
 function confirmPasswordMatch(group: AbstractControl): ValidationErrors | null {
   const pass = group.get('password')?.value;
@@ -21,7 +22,7 @@ function confirmPasswordMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, VerificationCodeInputComponent],
   templateUrl: './register.html',
   styleUrls: ['./register.css'],
 })

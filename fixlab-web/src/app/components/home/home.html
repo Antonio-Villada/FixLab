@@ -1,42 +1,163 @@
-<header class="bg-primary text-white text-center py-4 py-md-5 shadow-sm">
-  <div class="container px-3 px-sm-5">
-    <h1 class="display-5 fw-bold mb-3">Tu taller de confianza, ahora digital</h1>
-    <p class="lead mb-4">Gestiona tus reparaciones y compra repuestos de alta calidad en un solo lugar.</p>
-    <div class="d-grid gap-2 gap-sm-3 d-sm-flex justify-content-sm-center">
-      <a href="#servicios" class="btn btn-light btn-lg px-4 fw-bold">Ver Servicios</a>
-      <a routerLink="/productos" class="btn btn-outline-light btn-lg px-4">Catálogo de Ventas</a>
-    </div>
-  </div>
-</header>
+<div class="landing-page">
+  <!-- Hero -->
+  <section class="landing-hero position-relative overflow-hidden" aria-labelledby="landing-hero-title">
+    <div class="landing-hero-grid" aria-hidden="true"></div>
+    <div class="landing-hero-glow landing-hero-glow--a" aria-hidden="true"></div>
+    <div class="landing-hero-glow landing-hero-glow--b" aria-hidden="true"></div>
 
-<section id="servicios" class="py-4 py-md-5 bg-light">
-  <div class="container px-3 px-md-0">
-    <div class="text-center mb-4 mb-md-5">
-      <h2 class="h4 fw-bolder">¿Qué ofrecemos en FixLab?</h2>
-      <p class="text-muted mb-0">Soluciones integrales para tus dispositivos tecnológicos</p>
-    </div>
-    <div class="row g-4 g-md-5">
-      <div class="col-lg-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
-          <div class="text-primary mb-3">
-            <i class="bi bi-cart-check-fill fs-1"></i>
+    <div class="container position-relative">
+      <div class="row align-items-center gy-5 landing-hero-row">
+        <div class="col-lg-6 text-center text-lg-start">
+          <p class="landing-eyebrow text-white text-opacity-75 mb-3">Taller · Tienda · Seguimiento en línea</p>
+          <h1 id="landing-hero-title" class="landing-hero-title text-white mb-4">
+            Tu taller de confianza, ahora <span class="landing-hero-highlight">digital</span>
+          </h1>
+          <p class="landing-hero-lead text-white text-opacity-90 mb-0 mx-auto mx-lg-0">
+            Gestiona reparaciones, compra repuestos y consulta el estado de tus equipos desde un solo panel claro y rápido.
+          </p>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="landing-mockup-wrap mx-auto" aria-hidden="true">
+            <div class="landing-mockup-chrome shadow-lg">
+              <div class="landing-mockup-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="landing-mockup-body">
+                <div class="landing-mockup-sidebar">
+                  <div class="landing-mockup-nav-item landing-mockup-nav-item--active">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Panel</span>
+                  </div>
+                  <div class="landing-mockup-nav-item">
+                    <i class="bi bi-tools"></i>
+                    <span>Taller</span>
+                  </div>
+                  <div class="landing-mockup-nav-item">
+                    <i class="bi bi-shop"></i>
+                    <span>Tienda</span>
+                  </div>
+                  <div class="landing-mockup-nav-item">
+                    <i class="bi bi-ticket-detailed"></i>
+                    <span>Tickets</span>
+                  </div>
+                </div>
+                <div class="landing-mockup-main">
+                  <div class="landing-mockup-toolbar mb-3">
+                    <span class="landing-mockup-toolbar-brand">FixLab</span>
+                    <div class="landing-mockup-toolbar-search" title=""></div>
+                    <span class="landing-mockup-toolbar-badge">En línea</span>
+                  </div>
+                  <div class="landing-mockup-cards">
+                    <div class="landing-mockup-card landing-mockup-kpi">
+                      <i class="bi bi-wrench-adjustable"></i>
+                      <small>En taller</small>
+                      <strong>18</strong>
+                    </div>
+                    <div class="landing-mockup-card landing-mockup-card--accent landing-mockup-kpi landing-mockup-kpi--accent">
+                      <i class="bi bi-bag-check"></i>
+                      <small>Pedidos</small>
+                      <strong>42</strong>
+                    </div>
+                    <div class="landing-mockup-card landing-mockup-kpi">
+                      <i class="bi bi-headset"></i>
+                      <small>PQRS</small>
+                      <strong>5</strong>
+                    </div>
+                  </div>
+                  <div class="landing-mockup-chart-row mt-3">
+                    <div class="landing-mockup-chart">
+                      <span class="landing-mockup-chart-label">Actividad · 7 días</span>
+                      <svg class="landing-mockup-sparkline" viewBox="0 0 140 36" preserveAspectRatio="none" aria-hidden="true">
+                        <defs>
+                          <linearGradient id="mockSparkFill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="rgba(13,110,253,0.25)" />
+                            <stop offset="100%" stop-color="rgba(13,110,253,0)" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d="M0 30 L22 24 L44 28 L66 14 L88 20 L110 10 L132 16 L140 12 L140 36 L0 36 Z"
+                          fill="url(#mockSparkFill)" />
+                        <path
+                          d="M0 30 L22 24 L44 28 L66 14 L88 20 L110 10 L132 16 L140 12"
+                          fill="none"
+                          stroke="rgba(13,110,253,0.55)"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                    <div class="landing-mockup-stat">
+                      <span class="landing-mockup-stat-label">Último seguimiento</span>
+                      <strong class="landing-mockup-stat-val">TK-9024</strong>
+                      <span class="landing-mockup-stat-meta">En diagnóstico</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <svg class="landing-hero-svg" viewBox="0 0 520 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="landingStroke" x1="60" y1="40" x2="460" y2="340" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="white" stop-opacity="0.35" />
+                  <stop offset="1" stop-color="white" stop-opacity="0.05" />
+                </linearGradient>
+              </defs>
+              <circle cx="420" cy="72" r="48" stroke="url(#landingStroke)" stroke-width="1.2" opacity="0.9" />
+              <circle cx="92" cy="310" r="72" stroke="url(#landingStroke)" stroke-width="1" opacity="0.65" />
+              <path d="M120 88 L380 120 L260 280 Z" stroke="url(#landingStroke)" stroke-width="1" opacity="0.45" />
+              <path d="M48 200 H472" stroke="white" stroke-opacity="0.08" stroke-width="1" stroke-dasharray="6 10" />
+            </svg>
           </div>
-          <h3 class="h4 fw-bold">Venta de Productos</h3>
-          <p class="text-muted">Explora nuestro catálogo basado en categorías de alta tecnología. Compra lo que necesites desde la comodidad de tu casa.</p>
-          <a routerLink="/productos" class="text-decoration-none fw-bold">Explorar tienda <i class="bi bi-arrow-right"></i></a>
         </div>
       </div>
-      
-      <div class="col-lg-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
-          <div class="text-success mb-3">
-            <i class="bi bi-gear-wide-connected fs-1"></i>
-          </div>
-          <h3 class="h4 fw-bold">Servicio Técnico</h3>
-          <p class="text-muted">Trae tus equipos a nuestros talleres asociados. Sigue el estado de tu reparación en tiempo real con tu número de orden.</p>
-          <a routerLink="/reparaciones" class="text-decoration-none fw-bold text-success">Consultar estado <i class="bi bi-arrow-right"></i></a>
+    </div>
+  </section>
+
+  <!-- Servicios -->
+  <section id="servicios" class="landing-services">
+    <div class="container px-3 px-lg-4">
+      <header class="text-center landing-services-header mx-auto landing-services-heading-margin">
+        <p class="landing-section-eyebrow mb-2">¿Qué hacemos en FixLab?</p>
+        <h2 class="landing-section-title mb-3">Todo tu ecosistema tecnológico, ordenado</h2>
+        <p class="landing-section-sub text-muted mb-0">
+          Herramientas pensadas para clientes y taller: claras, rápidas y sin fricción.
+        </p>
+      </header>
+
+      <div class="row g-4 g-lg-5 justify-content-center">
+        <div class="col-md-6">
+          <article class="landing-feature-card landing-feature-card--productos border-0 h-100 shadow-sm">
+            <div class="landing-feature-card-bg" aria-hidden="true"></div>
+            <div class="landing-feature-card-inner d-flex flex-column">
+              <i class="bi bi-cart-check-fill landing-feature-icon landing-feature-icon--primary" aria-hidden="true"></i>
+              <h3 class="landing-feature-heading mb-3">Venta de Productos</h3>
+              <p class="landing-feature-desc mb-4 flex-grow-1">
+                Explora nuestro catálogo basado en categorías de alta tecnología. Compra lo que necesites desde la comodidad de tu casa.
+              </p>
+              <a routerLink="/productos" class="landing-feature-cta landing-feature-cta--primary fw-bold text-decoration-none">
+                Explorar tienda&nbsp;<span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-md-6">
+          <article class="landing-feature-card landing-feature-card--tecnico border-0 h-100 shadow-sm">
+            <div class="landing-feature-card-bg" aria-hidden="true"></div>
+            <div class="landing-feature-card-inner d-flex flex-column">
+              <i class="bi bi-gear-wide-connected landing-feature-icon landing-feature-icon--success" aria-hidden="true"></i>
+              <h3 class="landing-feature-heading mb-3">Servicio Técnico</h3>
+              <p class="landing-feature-desc mb-4 flex-grow-1">
+                Trae tus equipos a nuestros talleres asociados. Sigue el estado de tu reparación en tiempo real con tu número de orden.
+              </p>
+              <a routerLink="/reparaciones" class="landing-feature-cta landing-feature-cta--success fw-bold text-decoration-none">
+                Consultar estado&nbsp;<span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </article>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</div>

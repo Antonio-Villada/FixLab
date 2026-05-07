@@ -1,8 +1,10 @@
-/* Página de registro - fondo blanco */
+/* Layout registro; campos y fortaleza de contraseña: fixlab-theme.css */
 
 .register-page {
-  min-height: 100vh;
-  background: #fff;
+  min-height: min(100vh, 960px);
+  background:
+    radial-gradient(ellipse 100% 80% at 100% 0%, rgba(13, 110, 253, 0.08), transparent 48%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
   position: relative;
   overflow-x: hidden;
 }
@@ -21,6 +23,7 @@
   .register-container {
     grid-template-columns: 1fr;
   }
+
   .promo-panel {
     display: none;
   }
@@ -30,12 +33,15 @@
   .form-panel {
     padding: 1.25rem 1rem 1.5rem;
   }
+
   .form-row {
     grid-template-columns: 1fr;
   }
+
   .form-title {
     font-size: 1.5rem;
   }
+
   .form-header {
     flex-direction: column;
     align-items: flex-start;
@@ -43,12 +49,11 @@
   }
 }
 
-/* Panel izquierdo: formulario */
 .form-panel {
   padding: 2.5rem 3rem 2rem;
   display: flex;
   flex-direction: column;
-  color: #1a1a1a;
+  color: var(--fixlab-text, #0f172a);
 }
 
 .form-header {
@@ -60,12 +65,12 @@
 
 .brand {
   font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .sign-in-link {
-  color: #333;
+  color: #475569;
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -76,7 +81,7 @@
 }
 
 .sign-in-link:hover {
-  color: #1a1a1a;
+  color: var(--fixlab-text, #0f172a);
 }
 
 .sign-in-link:hover strong {
@@ -86,8 +91,8 @@
 .form-title {
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0 1.75rem 0;
-  letter-spacing: -0.02em;
+  margin: 0 0 1.75rem;
+  letter-spacing: -0.03em;
 }
 
 .register-form {
@@ -109,21 +114,9 @@
   gap: 0.35rem;
 }
 
-.form-group label {
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group input[type="password"] {
-  padding: 0.65rem 0.85rem;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background: #fff;
-  color: #1a1a1a;
+.form-group .error {
+  font-size: 0.8125rem;
+  color: #dc3545;
 }
 
 .password-input-wrap {
@@ -131,122 +124,40 @@
   display: flex;
   align-items: stretch;
 }
-.password-input-wrap input {
-  flex: 1;
-  padding-right: 2.5rem;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background: #fff;
-  color: #1a1a1a;
+
+.password-input-wrap input.form-control {
+  padding-right: 2.85rem;
 }
+
 .password-input-wrap .password-toggle {
   position: absolute;
-  right: 0.5rem;
+  right: 0.35rem;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  padding: 0.25rem;
-  cursor: pointer;
-  color: #555;
-  font-size: 1.1rem;
-}
-.password-input-wrap .password-toggle:hover {
-  color: #1a4d5c;
-}
-
-.form-group input::placeholder {
-  color: #888;
-}
-
-.form-group .error {
-  font-size: 0.8rem;
-  color: #dc3545;
-}
-
-/* Indicadores de contraseña en tiempo real */
-.password-hints {
-  margin-top: 0.5rem;
-  padding: 0.6rem 0.75rem;
-  background: #f8f9fa;
-  border-radius: 6px;
-  font-size: 0.8rem;
-}
-
-.password-checklist {
-  list-style: none;
-  margin: 0 0 0.5rem 0;
-  padding: 0;
-}
-
-.password-checklist li {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  color: #6c757d;
-  margin-bottom: 0.25rem;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fixlab-muted, #64748b);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
-.password-checklist li i {
-  font-size: 0.9rem;
-  flex-shrink: 0;
+.password-input-wrap .password-toggle:hover {
+  color: var(--fixlab-text, #0f172a);
+  background-color: rgba(15, 23, 42, 0.06);
 }
 
-.password-checklist li.valid {
-  color: #198754;
-}
-
-.password-checklist li.valid i {
-  color: #198754;
-}
-
-.password-checklist li:not(.valid) i.bi-circle {
-  color: #adb5bd;
-}
-
-.password-strength {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #e9ecef;
-}
-
-.strength-label {
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.35rem;
-}
-
-.password-strength[data-strength="weak"] .strength-label { color: #dc3545; }
-.password-strength[data-strength="medium"] .strength-label { color: #fd7e14; }
-.password-strength[data-strength="strong"] .strength-label { color: #198754; }
-
-.strength-bar {
-  height: 4px;
-  background: #e9ecef;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.strength-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width 0.2s, background 0.2s;
-}
-
-.password-strength[data-strength="weak"] .strength-fill {
-  width: 33%;
-  background: #dc3545;
-}
-
-.password-strength[data-strength="medium"] .strength-fill {
-  width: 66%;
-  background: #fd7e14;
-}
-
-.password-strength[data-strength="strong"] .strength-fill {
-  width: 100%;
-  background: #198754;
+.password-input-wrap .password-toggle:focus-visible {
+  outline: 2px solid rgba(13, 110, 253, 0.45);
+  outline-offset: 2px;
 }
 
 .terms-group {
@@ -262,11 +173,11 @@
   font-weight: 400;
 }
 
-.terms-label input[type="checkbox"] {
+.terms-label input[type='checkbox'] {
   margin-top: 0.2rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: #1a4d5c;
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: #0d6efd;
 }
 
 .terms-label strong {
@@ -284,42 +195,19 @@
   color: #0a58ca;
 }
 
-.btn-create {
-  margin-top: 0.5rem;
-  padding: 0.85rem 1.5rem;
-  background: #1a4d5c;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-create:hover:not(:disabled) {
-  background: #234d5c;
-}
-
-.btn-create:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
 .footer-copy {
   margin-top: 1.5rem;
   font-size: 0.75rem;
-  color: #6c757d;
+  color: var(--fixlab-muted, #64748b);
 }
 
-/* Panel derecho: logo FixLab */
 .promo-panel {
   padding: 2.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  border-left: 1px solid #e9ecef;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(241, 245, 249, 0.96) 100%);
+  border-left: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .logo-wrap {
@@ -340,16 +228,16 @@
 .register-foto-preview-wrap {
   margin-top: 0.75rem;
   padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
+  background: rgba(248, 250, 252, 0.95);
+  border-radius: var(--fixlab-radius-sm, 10px);
+  border: 1px solid rgba(15, 23, 42, 0.07);
 }
 
 .register-foto-preview-label {
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #495057;
+  color: var(--fixlab-muted, #64748b);
   margin-bottom: 0.5rem;
 }
 
@@ -361,7 +249,7 @@
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #dee2e6;
+  border: 2px solid rgba(15, 23, 42, 0.08);
   background: #fff;
 }
 

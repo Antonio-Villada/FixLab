@@ -3,8 +3,9 @@
     <i class="bi bi-inbox me-2"></i>Mis solicitudes (PQRS y garantías)
   </h1>
   <p class="text-muted small mb-4">
-    Radica peticiones, quejas, reclamos o solicitudes de garantía vinculadas a una factura de compra o a un ticket de servicio
-    tuyo. Los datos se tratan según nuestra
+    Radica peticiones, quejas, reclamos, sugerencias o solicitudes de garantía. Para <strong>reclamos</strong> y
+    <strong>solicitudes de garantía</strong> debes indicar tu factura de compra o ticket de servicio; para petición, queja o sugerencia
+    ese vínculo es opcional. Los datos se tratan según nuestra
     <a routerLink="/politica-de-privacidad">política de privacidad</a> y la Ley 1581 de 2012.
   </p>
 
@@ -35,7 +36,14 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Documento de respaldo</label>
+            <label class="form-label">
+              Documento de respaldo
+              @if (referenciaDocumentoRequerida()) {
+                <span class="text-danger">*</span>
+              } @else {
+                <span class="text-muted fw-normal small">(opcional)</span>
+              }
+            </label>
             <div class="form-check">
               <input
                 class="form-check-input"

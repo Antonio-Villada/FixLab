@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractContro
 import { UsuarioService } from '../../services/usuario.service';
 import { CheckoutService } from '../../services/checkout.service';
 import { AuthService } from '../../services/auth';
-import { PedidoRespDTO } from '../../models/checkout.model';
+import { DetallePedidoRespDTO, PedidoRespDTO } from '../../models/checkout.model';
 import { environment } from '../../../environments/environment';
 
 function confirmNewPasswordMatch(group: AbstractControl): ValidationErrors | null {
@@ -20,7 +20,7 @@ function confirmNewPasswordMatch(group: AbstractControl): ValidationErrors | nul
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
   public usuarioService = inject(UsuarioService);
@@ -114,6 +114,7 @@ export class Dashboard implements OnInit {
     });
   }
 
+  /** Clases Bootstrap legacy (factura u otros); el panel usa estilos suaves vía estadoVisualClass. */
   estadoBadgeClass(estado: string): string {
     if (!estado) return 'bg-secondary';
     const e = estado.toUpperCase();
@@ -121,6 +122,40 @@ export class Dashboard implements OnInit {
     if (e === 'ENVIADO' || e === 'ENTREGADO') return 'bg-info';
     if (e === 'CANCELADO') return 'bg-danger';
     return 'bg-secondary';
+  }
+
+  /** Badge de estado con paleta contenida (SCSS `.dashboard-estado-badge.*`). */
+  estadoVisualClass(estado: string | undefined | null): string {
+    if (!estado) return 'estado-muted';
+    const e = estado.toUpperCase();
+    if (e === 'PAGADO') return 'estado-ok';
+    if (e === 'ENVIADO' || e === 'ENTREGADO') return 'estado-info';
+    if (e === 'CANCELADO') return 'estado-danger';
+    return 'estado-muted';
+  }
+
+  primerDetalle(ped: PedidoRespDTO): DetallePedidoRespDTO | undefined {
+    return ped.detalles?.[0];
+  }
+
+  pedidoTituloPrincipal(ped: PedidoRespDTO): string {
+    const d = this.primerDetalle(ped);
+    return d?.nombreProducto?.trim() || `Pedido #${ped.id}`;
+  }
+
+  pedidoMasItemsCount(ped: PedidoRespDTO): number {
+    const n = ped.detalles?.length ?? 0;
+    return n > 1 ? n - 1 : 0;
+  }
+
+  thumbHue(productoId: number | undefined): number {
+    return Math.abs(((productoId ?? 0) * 47) % 360);
+  }
+
+  inicialesUsuario(nombre?: string | null, apellido?: string | null): string {
+    const a = (nombre?.trim().charAt(0) || '').toUpperCase();
+    const b = (apellido?.trim().charAt(0) || '').toUpperCase();
+    return (a + b) || '?';
   }
 
   startEdit(): void {

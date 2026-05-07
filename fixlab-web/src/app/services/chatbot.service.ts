@@ -104,6 +104,11 @@ export class ChatbotService {
     if (!trimmed) return;
 
     if (this.hasToken()) {
+      const optimisticId = `opt-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      this.messages.update((list) => [
+        ...list,
+        { id: optimisticId, role: 'user', text: trimmed, at: Date.now() },
+      ]);
       this.enviando.set(true);
       this.http
         .post<ChatEnviarRespDTO>(`${this.baseUrl}/mensaje`, {
@@ -111,21 +116,27 @@ export class ChatbotService {
           ...this.buildChatContextPayload(),
         })
         .subscribe({
-        next: (res) => {
-          const botFuente =
-            res.respuestaFuente === 'IA' || res.respuestaFuente === 'FAQ' ? res.respuestaFuente : undefined;
-          this.messages.update((list) => [
-            ...list,
-            this.mapApiToMessage(res.userMessage),
-            this.mapApiToMessage(res.botMessage, botFuente),
-          ]);
-          this.enviando.set(false);
-        },
-        error: () => {
-          this.enviando.set(false);
-          this.pushLocalUserAndBot(trimmed);
-        },
-      });
+          next: (res) => {
+            const botFuente =
+              res.respuestaFuente === 'IA' || res.respuestaFuente === 'FAQ'
+                ? res.respuestaFuente
+                : undefined;
+            this.messages.update((list) => {
+              const rest = list.filter((m) => m.id !== optimisticId);
+              return [
+                ...rest,
+                this.mapApiToMessage(res.userMessage),
+                this.mapApiToMessage(res.botMessage, botFuente),
+              ];
+            });
+            this.enviando.set(false);
+          },
+          error: () => {
+            this.messages.update((list) => list.filter((m) => m.id !== optimisticId));
+            this.enviando.set(false);
+            this.pushLocalUserAndBot(trimmed);
+          },
+        });
       return;
     }
 
@@ -164,9 +175,13 @@ export class ChatbotService {
   }
 
   private pushLocalUserAndBot(trimmed: string): void {
+    this.enviando.set(true);
     this.pushMessage({ role: 'user', text: trimmed });
     const reply = this.hybridReply(trimmed, this.buildChatContextPayload());
-    window.setTimeout(() => this.pushMessage({ role: 'bot', text: reply }), 280);
+    window.setTimeout(() => {
+      this.pushMessage({ role: 'bot', text: reply });
+      this.enviando.set(false);
+    }, 420);
   }
 
   private pushMessage(partial: Omit<ChatMessage, 'id' | 'at'>): void {
@@ -183,6 +198,19 @@ export class ChatbotService {
       .toLowerCase()
       .normalize('NFD')
       .replace(/\p{M}/gu, '');
+  }
+
+  private fechaHoyDispositivo(): string {
+    try {
+      return new Intl.DateTimeFormat('es-CO', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(new Date());
+    } catch {
+      return new Date().toLocaleDateString('es-CO');
+    }
   }
 
   private hybridReply(
@@ -203,6 +231,26 @@ export class ChatbotService {
     }
     if (/\b(gracias|thank)\b/.test(n)) {
       return '¡Con gusto! Si necesitas algo más, aquí estaré.';
+    }
+
+    if (/\b(que|qu[eé])\s+es\s+fixlab\b/.test(n) || (/\bfixlab\b/.test(n) && n.length < 40)) {
+      return (
+        pantalla +
+        'FixLab es la plataforma de esta tienda y taller en línea: catálogo, pedidos con pagos (Wompi), ' +
+        'tu cuenta en [Tu panel](/dashboard) y reparaciones en [Seguimiento](/reparaciones).'
+      );
+    }
+
+    if (
+      /(que\s+dia\s+es\s+hoy|que\s+dia\s+es\b|fecha\s+de\s+hoy|dia\s+de\s+hoy|what\s+day\s+is\s+today|today'?s?\s+date)/.test(
+        n,
+      )
+    ) {
+      return (
+        pantalla +
+        `Hoy es **${this.fechaHoyDispositivo()}** (fecha según tu dispositivo). ` +
+        'Para FixLab: pedidos, pagos o [productos](/productos).'
+      );
     }
 
     if (/(pedido|orden|compra realizada|estado del pedido|mis compras)/.test(n)) {

@@ -1,0 +1,114 @@
+.otp-root {
+  --otp-border: 1px solid rgba(15, 23, 42, 0.12);
+  --otp-border-focus: 1px solid rgba(13, 110, 253, 0.55);
+  --otp-slot-bg: #fafbfc;
+  --otp-heading: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.otp-heading {
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--otp-heading);
+  margin: 0 0 0.75rem;
+  line-height: 1.3;
+}
+
+.otp-track {
+  display: flex;
+  gap: 0.45rem;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.otp-root--error .otp-input {
+  border-color: #dc3545;
+}
+
+.otp-root--error .otp-input:focus {
+  border-color: #b02a37;
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.25);
+}
+
+.otp-cell {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 3rem;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-focus-dot {
+  position: absolute;
+  top: 0.12rem;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.08s ease;
+}
+
+.otp-cell:focus-within .otp-focus-dot {
+  opacity: 1;
+}
+
+.otp-input {
+  width: 100%;
+  height: 100%;
+  min-height: 2.55rem;
+  border: var(--otp-border);
+  border-radius: 12px;
+  background: var(--otp-slot-bg);
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  outline: none;
+  box-shadow: none;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.otp-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.otp-input:hover:not(:disabled):not(:focus) {
+  border-color: rgba(15, 23, 42, 0.16);
+  background: #fff;
+}
+
+.otp-input:focus {
+  border: var(--otp-border-focus);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+}
+
+@media (max-width: 380px) {
+  .otp-track {
+    gap: 0.35rem;
+  }
+
+  .otp-input {
+    font-size: 1.1rem;
+    min-height: 2.35rem;
+  }
+}

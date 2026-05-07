@@ -1,76 +1,105 @@
-<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light px-3 py-3">
-  <div class="card shadow-lg border-0 w-100 login-card-compact" style="max-width: 380px;">
-    <div class="card-body p-3 p-sm-4">
-      <div class="text-center mb-3">
-        <img src="images/Logo.jpeg" alt="FixLab" class="login-logo">
-        <p class="text-muted small mb-0 mt-2">Gestión de Soporte y Ventas</p>
-      </div>
+<div class="login-page">
+  <div class="login-page__glow" aria-hidden="true"></div>
+  <div class="login-page__grid" aria-hidden="true"></div>
 
-      @if (loginStep === 'credenciales') {
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-          <div class="mb-2">
-            <label class="form-label fw-semibold small">Correo Electrónico</label>
-            <div class="input-group">
-              <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
-              <input type="email" formControlName="email" class="form-control" 
-                     [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
-                     placeholder="correo@ejemplo.com">
+  <div class="login-page__inner">
+    <div class="card login-card border-0 w-100">
+      <div class="card-body p-4 p-sm-4 px-sm-5 pb-sm-4">
+        <header class="login-brand text-center mb-4">
+          <img src="images/Logo.jpeg" alt="FixLab" class="login-logo" width="128" height="76" />
+          <p class="login-tagline mb-0">Gestión de soporte y ventas</p>
+        </header>
+
+        @if (loginStep === 'credenciales') {
+          <h1 class="login-heading text-center">Iniciar sesión</h1>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="login-field">
+              <label class="login-label" for="login-email">Correo electrónico</label>
+              <input
+                id="login-email"
+                type="email"
+                formControlName="email"
+                class="form-control login-input border-0 shadow-none"
+                autocomplete="email"
+                [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                placeholder="correo@ejemplo.com"
+              />
+              <div class="invalid-feedback">Por favor ingrese un correo válido.</div>
             </div>
-            <div class="invalid-feedback">Por favor ingrese un correo válido.</div>
-          </div>
 
-          <div class="mb-2">
-            <label class="form-label fw-semibold small">Contraseña</label>
-            <div class="input-group">
-              <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
-              <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control"
-                     [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
-                     placeholder="********">
-              <button type="button" class="btn btn-outline-secondary input-group-text bg-white" (click)="showPassword = !showPassword"
-                      [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'" title="{{ showPassword ? 'Ocultar' : 'Ver contraseña' }}">
-                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
-              </button>
+            <div class="login-field">
+              <label class="login-label" for="login-password">Contraseña</label>
+              <div class="login-input-wrap">
+                <input
+                  id="login-password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  class="form-control login-input login-input--has-action border-0 shadow-none"
+                  autocomplete="current-password"
+                  [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  class="login-input-toggle"
+                  (click)="showPassword = !showPassword"
+                  [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'"
+                  title="{{ showPassword ? 'Ocultar' : 'Ver contraseña' }}"
+                >
+                  <i class="bi fs-5" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                <div class="text-danger small mt-1">La contraseña debe tener al menos 6 caracteres.</div>
+              }
             </div>
-            <div class="invalid-feedback">La contraseña debe ser de al menos 6 caracteres.</div>
-          </div>
 
-          <button type="submit" [disabled]="loginForm.invalid || iniciandoSesion" class="btn btn-primary w-100 py-2 fw-bold shadow-sm login-submit-btn">
-            @if (iniciandoSesion) {
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Enviando código…
-            } @else {
-              <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
-            }
-          </button>
-        </form>
-      } @else {
-        <p class="text-muted small mb-3">
-          Enviamos un código de 6 dígitos a <strong>{{ emailMascarado }}</strong>. Revísalo e introdúcelo aquí.
-        </p>
-        <form [formGroup]="codigoForm" (ngSubmit)="onSubmitCodigo()">
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">Código de acceso</label>
-            <input type="text" formControlName="codigo" class="form-control text-center fs-5 tracking-wider"
-                   maxlength="6" inputmode="numeric" autocomplete="one-time-code"
-                   placeholder="000000"
-                   [ngClass]="{'is-invalid': codigoForm.get('codigo')?.invalid && codigoForm.get('codigo')?.touched}">
-            <div class="invalid-feedback">Introduce los 6 dígitos del correo.</div>
-          </div>
-          <button type="submit" [disabled]="codigoForm.invalid" class="btn btn-primary w-100 py-2 fw-bold shadow-sm mb-2">
-            <i class="bi bi-shield-check me-2"></i> Confirmar e iniciar sesión
-          </button>
-          <button type="button" class="btn btn-outline-secondary w-100 py-2" (click)="volverACredenciales()">
-            Volver
-          </button>
-        </form>
-      }
+            <button
+              type="submit"
+              [disabled]="loginForm.invalid || iniciandoSesion"
+              class="btn btn-primary w-100 login-btn-primary"
+            >
+              @if (iniciandoSesion) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Enviando código…
+              } @else {
+                Continuar
+              }
+            </button>
+          </form>
+        } @else {
+          <h1 class="login-heading text-center">Verifica tu correo</h1>
+          <p class="login-code-intro mb-4 text-center">
+            Enviamos un código de 6 dígitos a <strong>{{ emailMascarado }}</strong>. Introdúcelo para entrar.
+          </p>
+          <form [formGroup]="codigoForm" (ngSubmit)="onSubmitCodigo()">
+            <div class="mb-3">
+              <app-verification-code-input
+                formControlName="codigo"
+                heading="Código de acceso"
+                ariaLabel="Código de acceso de seis dígitos"
+                [hasError]="!!(codigoForm.get('codigo')?.invalid && codigoForm.get('codigo')?.touched)"
+              />
+              @if (codigoForm.get('codigo')?.invalid && codigoForm.get('codigo')?.touched) {
+                <div class="text-danger small mt-2 text-center">Introduce los 6 dígitos del correo.</div>
+              }
+            </div>
+            <button type="submit" [disabled]="codigoForm.invalid" class="btn btn-primary w-100 login-btn-primary mb-2">
+              Confirmar e iniciar sesión
+            </button>
+            <button type="button" class="btn btn-outline-secondary w-100 login-btn-secondary" (click)="volverACredenciales()">
+              Volver
+            </button>
+          </form>
+        }
 
-      <div class="text-center mt-3 d-flex flex-wrap justify-content-center gap-2 gap-sm-3 small">
-        <a routerLink="/register" class="text-primary fw-semibold text-decoration-none">Regístrate aquí</a>
-        <span class="text-muted">·</span>
-        <a routerLink="/recuperar-password" class="text-secondary text-decoration-none">¿Olvidaste tu contraseña?</a>
+        <footer class="login-footer text-center mt-4 d-flex flex-wrap justify-content-center gap-2 gap-sm-3 small">
+          <a routerLink="/register" class="login-footer-primary text-decoration-none">Crear cuenta</a>
+          <span class="text-muted user-select-none">·</span>
+          <a routerLink="/recuperar-password" class="login-footer-muted text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </footer>
       </div>
-      
     </div>
   </div>
 </div>

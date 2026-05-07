@@ -65,8 +65,9 @@
 
 .legal-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 6px 28px rgba(15, 23, 42, 0.07);
   overflow: hidden;
   padding: 2rem 2.5rem;
 }

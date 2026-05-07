@@ -22,13 +22,13 @@
     </div>
   } @else {
     @if (!isAdmin()) {
-      <div class="d-flex flex-wrap align-items-center gap-3 mb-4 p-3 bg-light rounded">
+      <div class="fixlab-toolbar d-flex flex-wrap align-items-center gap-3 mb-4">
         <span class="fw-semibold text-muted">Filtrar:</span>
         <div class="d-flex flex-wrap align-items-center gap-2">
           <label class="small text-muted mb-0">Categoría</label>
           <select class="form-select form-select-sm" style="width: auto; min-width: 160px;"
             [value]="filterCategoriaId() ?? ''"
-            (change)="filterCategoriaId.set($any($event.target).value === '' ? null : +$any($event.target).value)">
+            (change)="onCategoriaChange($any($event.target).value)">
             <option value="">Todas</option>
             @for (c of categorias(); track c.id) {
               <option [value]="c.id">{{ c.nombre }}</option>
@@ -39,7 +39,7 @@
           <label class="small text-muted mb-0">Tipo de producto</label>
           <select class="form-select form-select-sm" style="width: auto; min-width: 160px;"
             [value]="filterTipoProductoId() ?? ''"
-            (change)="filterTipoProductoId.set($any($event.target).value === '' ? null : +$any($event.target).value)">
+            (change)="onTipoProductoChange($any($event.target).value)">
             <option value="">Todos</option>
             @for (t of tiposProducto(); track t.id) {
               <option [value]="t.id">{{ t.nombre }}</option>
@@ -47,92 +47,147 @@
           </select>
         </div>
         @if (filterCategoriaId() !== null || filterTipoProductoId() !== null) {
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="filterCategoriaId.set(null); filterTipoProductoId.set(null)">
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
             Ver todos
           </button>
         }
+
+        <div class="ms-auto d-flex flex-wrap align-items-center gap-2">
+          <label class="small text-muted mb-0">Por página</label>
+          <select
+            class="form-select form-select-sm"
+            style="width: auto; min-width: 120px;"
+            [value]="pageSize()"
+            (change)="onPageSizeChange($any($event.target).value)"
+          >
+            <option [value]="6">6</option>
+            <option [value]="9">9</option>
+            <option [value]="12">12</option>
+            <option [value]="24">24</option>
+          </select>
+        </div>
       </div>
     }
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-      @for (product of productsToShow(); track product.id ?? product.sku) {
-        <div class="col">
-          <div class="card h-100 shadow-sm border-0">
-            @if (product.imagenUrl) {
-              <img [src]="product.imagenUrl" class="card-img-top" [alt]="product.nombre" style="height: 200px; object-fit: contain; padding: 10px;">
-            } @else {
-              <div class="bg-light text-center py-5">Sin imagen</div>
-            }
-
-            <div class="card-body">
-              <h5 class="card-title fw-bold">{{ product.nombre }}</h5>
-              @if (product.categoria || product.tipoProducto) {
-                <p class="card-text text-muted small mb-1">
-                  @if (product.categoria) {
-                    <span class="me-2">{{ product.categoria.nombre }}</span>
-                  }
-                  @if (product.tipoProducto) {
-                    <span>{{ product.tipoProducto.nombre }}</span>
-                  }
-                </p>
-              }
-              <p class="card-text text-muted small text-truncate">{{ product.descripcion }}</p>
-              <p class="fs-4 fw-bold text-primary mb-0">${{ product.precio | number:'1.2-2' }}</p>
-              <small class="text-muted d-block">
-                Stock: {{ product.stock }}
-                @if (!isAdmin() && product.stock <= 0) {
-                  <span class="badge bg-secondary ms-1">Agotado</span>
-                }
-              </small>
-              @if (isAdmin()) {
-                <div class="mt-2">
-                  @if (product.activo !== false) {
-                    <span class="badge bg-success">Activo</span>
-                  } @else {
-                    <span class="badge bg-secondary">Inactivo</span>
-                  }
-                </div>
-              }
-            </div>
-
-            <div class="card-footer bg-transparent border-top-0 pb-3">
-              @if (isAdmin()) {
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openEdit(product)">
-                    <i class="bi bi-pencil me-1"></i> Editar
-                  </button>
-                  <button type="button" class="btn btn-outline-danger" (click)="confirmDelete(product)" title="Desactivar">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
+    @if (productsToShow().length === 0) {
+      <div class="text-center">
+        <div class="alert alert-info py-5">
+          <i class="bi bi-search fs-1 d-block mb-3"></i>
+          No hay productos disponibles.
+          @if (isAdmin()) {
+            <p class="mb-0 mt-2">Crea uno con <strong>Nuevo producto</strong>.</p>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        @for (product of pagedProducts(); track product.id ?? product.sku) {
+          <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+              @if (product.imagenUrl) {
+                <img [src]="product.imagenUrl" class="card-img-top" [alt]="product.nombre" style="height: 200px; object-fit: contain; padding: 10px;">
               } @else {
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openDetail(product)">Ver detalles</button>
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    [disabled]="!puedeAgregarAlCarrito(product)"
-                    [title]="puedeAgregarAlCarrito(product) ? 'Agregar al carrito' : 'Sin stock disponible'"
-                    (click)="addToCart(product)"
-                  >
-                    <i class="bi bi-cart-plus fs-5"></i>
-                  </button>
-                </div>
+                <div class="bg-light text-center py-5">Sin imagen</div>
               }
+
+              <div class="card-body">
+                <h5 class="card-title fw-bold">{{ product.nombre }}</h5>
+                @if (product.categoria || product.tipoProducto) {
+                  <p class="card-text text-muted small mb-1">
+                    @if (product.categoria) {
+                      <span class="me-2">{{ product.categoria.nombre }}</span>
+                    }
+                    @if (product.tipoProducto) {
+                      <span>{{ product.tipoProducto.nombre }}</span>
+                    }
+                  </p>
+                }
+                <p class="card-text text-muted small text-truncate">{{ product.descripcion }}</p>
+                <p class="fs-4 fw-bold text-primary mb-0">${{ product.precio | number:'1.2-2' }}</p>
+                <small class="text-muted d-block">
+                  Stock: {{ product.stock }}
+                  @if (!isAdmin() && product.stock <= 0) {
+                    <span class="badge bg-secondary ms-1">Agotado</span>
+                  }
+                </small>
+                @if (isAdmin()) {
+                  <div class="mt-2">
+                    @if (product.activo !== false) {
+                      <span class="badge bg-success">Activo</span>
+                    } @else {
+                      <span class="badge bg-secondary">Inactivo</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="card-footer bg-transparent border-top-0 pb-3">
+                @if (isAdmin()) {
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openEdit(product)">
+                      <i class="bi bi-pencil me-1"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" (click)="confirmDelete(product)" title="Desactivar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                } @else {
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary flex-grow-1" (click)="openDetail(product)">Ver detalles</button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      [disabled]="!puedeAgregarAlCarrito(product)"
+                      [title]="puedeAgregarAlCarrito(product) ? 'Agregar al carrito' : 'Sin stock disponible'"
+                      (click)="addToCart(product)"
+                    >
+                      <i class="bi bi-cart-plus fs-5"></i>
+                    </button>
+                  </div>
+                }
+              </div>
             </div>
           </div>
-        </div>
-      } @empty {
-        <div class="col-12 text-center">
-          <div class="alert alert-info py-5">
-            <i class="bi bi-search fs-1 d-block mb-3"></i>
-            No hay productos disponibles.
-            @if (isAdmin()) {
-              <p class="mb-0 mt-2">Crea uno con <strong>Nuevo producto</strong>.</p>
+        }
+      </div>
+
+      @if (!isAdmin() && totalPages() > 1) {
+        <nav class="fixlab-pagination mt-4" aria-label="Paginación de productos">
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <button type="button" class="page-link" (click)="prevPage()" [disabled]="currentPage() === 1">Anterior</button>
+            </li>
+
+            @if (visiblePages()[0] > 1) {
+              <li class="page-item">
+                <button type="button" class="page-link" (click)="setPage(1)">1</button>
+              </li>
+              @if (visiblePages()[0] > 2) {
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+              }
             }
-          </div>
-        </div>
+
+            @for (p of visiblePages(); track p) {
+              <li class="page-item" [class.active]="p === currentPage()">
+                <button type="button" class="page-link" (click)="setPage(p)">{{ p }}</button>
+              </li>
+            }
+
+            @if (visiblePages()[visiblePages().length - 1] < totalPages()) {
+              @if (visiblePages()[visiblePages().length - 1] < totalPages() - 1) {
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+              }
+              <li class="page-item">
+                <button type="button" class="page-link" (click)="setPage(totalPages())">{{ totalPages() }}</button>
+              </li>
+            }
+
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <button type="button" class="page-link" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Siguiente</button>
+            </li>
+          </ul>
+        </nav>
       }
-    </div>
+    }
   }
 
   <!-- Modal Ver detalles (cliente) -->
