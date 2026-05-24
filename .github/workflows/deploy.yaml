@@ -17,6 +17,7 @@ jobs:
           distribution: 'temurin'
           
       - name: Compilar y probar Spring Boot
+	cd fixlab-api
         run: mvn clean package
       
       # (Si Angular está en la misma build, agregarías los pasos de npm aquí)
