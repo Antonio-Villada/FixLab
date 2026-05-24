@@ -2,7 +2,7 @@ name: FixLab CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, ivan, cristian, antonio ]
+    branches: [ main, ivanbanol, cristiancastano, antoniovillada ]
 
 jobs:
   build-and-test:
