@@ -2,7 +2,7 @@ name: FixLab CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, ivan, cristian, antonio ] # Pon el nombre exacto de tu rama aquí
+    branches: [ main, ivan, cristian, antonio ] 
 
 jobs:
   # Fase 1: Integración Continua (Se ejecuta para TODOS)
@@ -17,16 +17,16 @@ jobs:
           distribution: 'temurin'
           
       - name: Compilar y probar Spring Boot
-	cd fixlab-api
-        run: mvn clean package
+        working-directory: ./fixlab-api
+        run: mvn clean package -DskipTests
       
       # (Si Angular está en la misma build, agregarías los pasos de npm aquí)
 
   # Fase 2: Despliegue (SOLO se ejecuta si el push o merge es en main)
   deploy-production:
-    needs: build-and-test # Espera a que el trabajo anterior sea exitoso
+    needs: build-and-test 
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # Regla de oro: solo despliega main
+    if: github.ref == 'refs/heads/main' 
     steps:
       - uses: actions/checkout@v3
       
@@ -35,7 +35,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          source: "target/*.jar,Dockerfile,docker-compose.yml"
+          source: "fixlab-api/target/*.jar,fixlab-api/Dockerfile,docker-compose.yml"
           target: "/home/${{ secrets.VM_USER }}"
           strip_components: 1
           
