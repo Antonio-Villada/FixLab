@@ -8,6 +8,7 @@
     "build:gcp": "ng build --configuration production-static",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "sonar": "sonar",
     "serve:ssr:fixlab-web": "node dist/fixlab-web/server/server.mjs"
   },
   "prettier": {
@@ -40,6 +41,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@sonar/scan": "^4.3.5",
     "@angular/build": "^21.1.5",
     "@angular/cli": "^21.1.5",
     "@angular/compiler-cli": "^21.1.0",

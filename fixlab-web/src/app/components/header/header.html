@@ -11,7 +11,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/home" routerLinkActive="active">Inicio</a>
+          <a class="nav-link px-3" routerLink="/home" routerLinkActive="active" (click)="closeMobileMenu()">Inicio</a>
         </li>
         @if (authService.isAdmin()) {
           <li class="nav-item dropdown">
@@ -42,36 +42,36 @@
           </li>
         } @else {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active">Productos</a>
+            <a class="nav-link px-3" routerLink="/productos" routerLinkActive="active" (click)="closeMobileMenu()">Productos</a>
           </li>
         }
         @if (!authService.isAdmin()) {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/reparaciones" routerLinkActive="active">Seguimiento</a>
+            <a class="nav-link px-3" routerLink="/reparaciones" routerLinkActive="active" (click)="closeMobileMenu()">Seguimiento</a>
           </li>
         }
         @if (authService.isLoggedInSignal() && authService.isCliente()) {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/mis-compras" routerLinkActive="active">Mis Compras</a>
+            <a class="nav-link px-3" routerLink="/mis-compras" routerLinkActive="active" (click)="closeMobileMenu()">Mis Compras</a>
           </li>
         }
         @if (enablePostventaModule && authService.isCliente()) {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/mis-pqrs" routerLinkActive="active">Soporte y Garantías</a>
+            <a class="nav-link px-3" routerLink="/mis-pqrs" routerLinkActive="active" (click)="closeMobileMenu()">Soporte y Garantías</a>
           </li>
         }
         @if (authService.isTecnico() && !authService.isAdmin()) {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/taller/lista" [class.active]="tallerNavActivo()">Taller</a>
+            <a class="nav-link px-3" routerLink="/admin/taller/lista" [class.active]="tallerNavActivo()" (click)="closeMobileMenu()">Taller</a>
           </li>
         }
         @if (authService.isRecepcionista() && !authService.isAdmin()) {
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/recepcion" routerLinkActive="active">Recepción</a>
+            <a class="nav-link px-3" routerLink="/admin/recepcion" routerLinkActive="active" (click)="closeMobileMenu()">Recepción</a>
           </li>
           @if (enablePostventaModule) {
             <li class="nav-item">
-              <a class="nav-link px-3" routerLink="/admin/recepcion/postventa" routerLinkActive="active">Soporte y garantías</a>
+              <a class="nav-link px-3" routerLink="/admin/recepcion/postventa" routerLinkActive="active" (click)="closeMobileMenu()">Soporte y garantías</a>
             </li>
           }
         }
@@ -206,11 +206,11 @@
           </li>
           @if (enablePostventaModule) {
             <li class="nav-item">
-              <a class="nav-link px-3" routerLink="/admin/postventa" routerLinkActive="active">Soporte y garantías</a>
+              <a class="nav-link px-3" routerLink="/admin/postventa" routerLinkActive="active" (click)="closeMobileMenu()">Soporte y garantías</a>
             </li>
           }
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+            <a class="nav-link px-3" routerLink="/admin/usuarios" routerLinkActive="active" (click)="closeMobileMenu()">Usuarios</a>
           </li>
         }
       </ul>
@@ -232,7 +232,7 @@
 
         <div class="d-flex align-items-center gap-2 border-start ps-3">
           @if (!authService.isLoggedInSignal()) {
-            <a routerLink="/login" class="btn btn-outline-light btn-nav-modern d-flex align-items-center">
+            <a routerLink="/login" class="btn btn-outline-light btn-nav-modern d-flex align-items-center" (click)="closeMobileMenu()">
               <i class="bi bi-person-fill me-2"></i> Iniciar sesión
             </a>
           } @else {

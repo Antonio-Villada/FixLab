@@ -6,6 +6,8 @@ import { CartService } from '../../services/cart.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { environment } from '../../../environments/environment';
 
+declare const bootstrap: any;
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -41,6 +43,19 @@ export class HeaderComponent {
 
   goToCart(): void {
     this.router.navigate(['/carrito']);
+    this.closeMobileMenu();
+  }
+
+  closeMobileMenu(): void {
+    const el = document.getElementById('navbarNav');
+    if (!el || !el.classList.contains('show')) return;
+
+    try {
+      bootstrap?.Collapse?.getOrCreateInstance(el)?.hide();
+    } catch {
+      // Si por algún motivo no está Bootstrap JS, al menos quitamos la clase.
+      el.classList.remove('show');
+    }
   }
 
   /** Pestaña Taller (admin): rutas bajo /admin/taller. */

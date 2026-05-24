@@ -1,0 +1,53 @@
+# SonarQube Server (Community Edition) + PostgreSQL dedicada.
+# Uso: desde esta carpeta → docker compose up -d
+# UI: http://localhost:9000 (usuario/contraseña inicial: admin / admin; cámbialo al primer acceso)
+#
+# Migración 9.x → 26.x: primero imagen 25.12 (solo si NUNCA arrancaste 26.x antes en estos volúmenes).
+# Si ya arrancó 26.x: Elasticsearch queda en 8.19; 25.12 usa ES 8.16 → "cannot downgrade" (ERR_EMPTY_RESPONSE).
+# Estado bloqueado (BD pide 25.12 pero ES ya es 8.19): no hay salida con Community sin soporte; reset:
+#   docker compose down -v && docker compose up -d
+# (borra proyectos e historial de Sonar; conserva solo lo que tengas fuera de Docker).
+#
+# Token de análisis: Administración → Seguridad → Usuarios → Tokens (variable SONAR_TOKEN en CI/local).
+
+services:
+  sonarqube-db:
+    image: postgres:16-alpine
+    container_name: sonarqube-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonarqube_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U sonar -d sonar']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  sonarqube:
+    # Por defecto: última Community. Sobrescribe con archivo .env (ver comentarios arriba).
+    image: ${SONARQUBE_IMAGE:-sonarqube:community}
+    container_name: sonarqube
+    restart: unless-stopped
+    depends_on:
+      sonarqube-db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    ports:
+      - '9000:9000'
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+volumes:
+  sonarqube_db_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
